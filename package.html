@@ -146,7 +146,7 @@
                             </select>
                         </div>
 
-                        <!-- Fecha inicial -->
+                        <!-- Fecha de salida -->
                         <div class="col-md-2">
                             <input type="text" id="fecha-calendario" class="form-control p-4" placeholder="Fecha de salida" readonly style="background-color: white; cursor: pointer;">
                         </div>
@@ -222,9 +222,10 @@
     let flatpickrTour = flatpickr(fechasTourInput, {
         mode: "multiple",
         dateFormat: "Y-m-d",
-        clickOpens: false,
+        clickOpens: true,
         allowInput: false,
         enable: [],
+        disableMobile: true
     });
 
     regionSelect.addEventListener('change', function () {
@@ -236,18 +237,20 @@
             option.textContent = dest;
             destinoSelect.appendChild(option);
         });
+
+        // Limpiar selección previa
         flatpickrSalida.set("enable", []);
-        flatpickrTour.setDate([]);
-        fechaInput.value = '';
+        flatpickrSalida.clear();
+        flatpickrTour.clear();
         fechasTourInput.value = '';
     });
 
     destinoSelect.addEventListener('change', function () {
         const destino = this.value;
         const fechas = fechasDisponibles[destino] || [];
-        flatpickrSalida.setDate(null);
         flatpickrSalida.set("enable", fechas);
-        flatpickrTour.setDate([]);
+        flatpickrSalida.clear();
+        flatpickrTour.clear();
         fechasTourInput.value = '';
     });
 
@@ -261,6 +264,7 @@
             fechasTour.push(fechaNueva.toISOString().split('T')[0]);
         }
 
+        flatpickrTour.set("enable", fechasTour);
         flatpickrTour.setDate(fechasTour);
         fechasTourInput.value = fechasTour.join(", ");
         updateCotizarLink();
