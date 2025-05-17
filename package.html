@@ -175,9 +175,29 @@
         "Internacional": ["Cartagena", "Cancún", "Machu Picchu"]
     };
 
+    const fechasSalidaCuenca = [
+        "2025-05-22",
+        "2025-05-29",
+        "2025-06-12",
+        "2025-06-26"
+    ];
+
+    function generarFechasExtendidas(baseFechas) {
+        const extendidas = [];
+        baseFechas.forEach(fecha => {
+            const base = new Date(fecha);
+            for (let i = 0; i < 4; i++) {
+                const nuevaFecha = new Date(base);
+                nuevaFecha.setDate(base.getDate() + i);
+                extendidas.push(nuevaFecha.toISOString().split('T')[0]);
+            }
+        });
+        return [...new Set(extendidas)];
+    }
+
     const fechasDisponibles = {
+        "Cuenca": generarFechasExtendidas(fechasSalidaCuenca),
         "Cotopaxi": ["2025-05-22", "2025-06-10"],
-        "Cuenca": ["2025-06-01", "2025-06-15"],
         "Montañita": ["2025-05-30"],
         "Tena": ["2025-06-05"],
         "Cartagena": ["2025-06-15"]
@@ -202,7 +222,7 @@
             option.textContent = dest;
             destinoSelect.appendChild(option);
         });
-        flatpickrInstance.set("enable", []); // Resetear calendario
+        flatpickrInstance.set("enable", []);
         fechaInput.value = '';
     });
 
