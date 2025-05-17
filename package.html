@@ -114,6 +114,12 @@
     <!-- Header End -->
 
 
+<!-- inicio eliminar  -->
+    
+<!-- Flatpickr CSS y JS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
 <!-- Booking Start -->
 <div class="container-fluid booking mt-5 pb-5">
     <div class="container pb-5">
@@ -121,53 +127,45 @@
             <div class="row align-items-center" style="min-height: 60px;">
                 <div class="col-md-10">
                     <div class="row">
-                        <!-- Selección de Región -->
-                        <div class="col-md-4">
-                            <div class="mb-3 mb-md-0">
-                                <select id="region-select" class="custom-select px-4" style="height: 47px;">
-                                    <option selected disabled>Elige una región</option>
-                                    <option value="Costa">Costa</option>
-                                    <option value="Sierra">Sierra</option>
-                                    <option value="Amazonía">Amazonía</option>
-                                    <option value="Galápagos">Galápagos</option>
-                                    <option value="Internacional">Internacional</option>
-                                </select>
-                            </div>
+                        <!-- Región -->
+                        <div class="col-md-3">
+                            <select id="region-select" class="custom-select px-4" style="height: 47px;">
+                                <option selected disabled>Elige una región</option>
+                                <option value="Costa">Costa</option>
+                                <option value="Sierra">Sierra</option>
+                                <option value="Amazonía">Amazonía</option>
+                                <option value="Galápagos">Galápagos</option>
+                                <option value="Internacional">Internacional</option>
+                            </select>
                         </div>
 
-                        <!-- Destinos según región -->
-                        <div class="col-md-4">
-                            <div class="mb-3 mb-md-0">
-                                <select id="destino-select" class="custom-select px-4" style="height: 47px;">
-                                    <option selected disabled>Selecciona un destino</option>
-                                </select>
-                            </div>
+                        <!-- Destinos -->
+                        <div class="col-md-3">
+                            <select id="destino-select" class="custom-select px-4" style="height: 47px;">
+                                <option selected disabled>Selecciona un destino</option>
+                            </select>
                         </div>
 
-                        <!-- Fecha según destino -->
-                        <div class="col-md-4">
-                            <div class="mb-3 mb-md-0">
-                                <select id="fecha-select" class="custom-select px-4" style="height: 47px;">
-                                    <option selected disabled>Selecciona una fecha</option>
-                                </select>
-                            </div>
+                        <!-- Calendario dinámico -->
+                        <div class="col-md-3">
+                            <input type="text" id="fecha-calendario" class="form-control p-4" placeholder="Selecciona una fecha" readonly style="background-color: white; cursor: pointer;">
+                        </div>
+
+                        <!-- Botón Cotizar -->
+                        <div class="col-md-3">
+                            <a id="btn-cotizar" class="btn btn-primary btn-block" href="#" target="_blank" style="height: 47px; margin-top: 0; color: rgb(246, 246, 246);">
+                                Cotizar
+                            </a>
                         </div>
                     </div>
                 </div>
-
-                <!-- Botón Cotizar -->
-                <div class="col-md-2 mt-3">
-                    <a id="btn-cotizar" class="btn btn-primary btn-block" href="#" target="_blank" style="height: 40px; color: rgb(246, 246, 246);">
-                        Cotizar
-                    </a>
-                </div>
             </div>
         </div>
-    </div>
+    </div>    
 </div>
 <!-- Booking End -->
 
-<!-- Script dinámico -->
+<!-- Script -->
 <script>
     const regiones = {
         "Costa": ["Montañita", "Playas", "Manta"],
@@ -179,7 +177,7 @@
 
     const fechasDisponibles = {
         "Cotopaxi": ["2025-05-22", "2025-06-10"],
-        "Cuenca": ["2025-06-01"],
+        "Cuenca": ["2025-06-01", "2025-06-15"],
         "Montañita": ["2025-05-30"],
         "Tena": ["2025-06-05"],
         "Cartagena": ["2025-06-15"]
@@ -187,43 +185,50 @@
 
     const regionSelect = document.getElementById('region-select');
     const destinoSelect = document.getElementById('destino-select');
-    const fechaSelect = document.getElementById('fecha-select');
+    const fechaInput = document.getElementById('fecha-calendario');
     const btnCotizar = document.getElementById('btn-cotizar');
 
-    regionSelect.addEventListener('change', function () {
-        const destinos = regiones[this.value];
-        destinoSelect.innerHTML = '<option selected disabled>Selecciona un destino</option>';
-        fechaSelect.innerHTML = '<option selected disabled>Selecciona una fecha</option>';
+    let flatpickrInstance = flatpickr(fechaInput, {
+        enable: [],
+        dateFormat: "Y-m-d",
+    });
 
+    regionSelect.addEventListener('change', function () {
+        const destinos = regiones[this.value] || [];
+        destinoSelect.innerHTML = '<option selected disabled>Selecciona un destino</option>';
         destinos.forEach(dest => {
             const option = document.createElement('option');
             option.value = dest;
             option.textContent = dest;
             destinoSelect.appendChild(option);
         });
+        flatpickrInstance.set("enable", []); // Resetear calendario
+        fechaInput.value = '';
     });
 
     destinoSelect.addEventListener('change', function () {
-        const fechas = fechasDisponibles[this.value] || [];
-        fechaSelect.innerHTML = '<option selected disabled>Selecciona una fecha</option>';
-
-        fechas.forEach(fecha => {
-            const option = document.createElement('option');
-            const fechaTexto = new Date(fecha).toLocaleDateString('es-EC', { day: 'numeric', month: 'long', year: 'numeric' });
-            option.value = fecha;
-            option.textContent = fechaTexto;
-            fechaSelect.appendChild(option);
-        });
+        const destino = this.value;
+        const fechas = fechasDisponibles[destino] || [];
+        flatpickrInstance.setDate(null);
+        flatpickrInstance.set("enable", fechas);
+        fechaInput.value = '';
     });
 
-    fechaSelect.addEventListener('change', function () {
+    fechaInput.addEventListener('change', updateCotizarLink);
+
+    function updateCotizarLink() {
         const region = regionSelect.value;
         const destino = destinoSelect.value;
-        const fecha = this.value;
-        const mensaje = `Hola, estoy interesado en viajar a ${destino} (${region}) en la fecha ${fecha}. ¿Todavía hay cupos disponibles?`;
-        const url = `https://wa.me/593995225646?text=${encodeURIComponent(mensaje)}`;
-        btnCotizar.href = url;
-    });
+        const fecha = fechaInput.value;
+        if (region && destino && fecha) {
+            const mensaje = `Hola, estoy interesado en viajar a ${destino} (${region}) en la fecha ${fecha}. ¿Todavía hay cupos disponibles?`;
+            const url = `https://wa.me/593995225646?text=${encodeURIComponent(mensaje)}`;
+            btnCotizar.href = url;
+        }
+    }
+
+    regionSelect.addEventListener('change', updateCotizarLink);
+    destinoSelect.addEventListener('change', updateCotizarLink);
 </script>
     <!-- fin eliminar  -->
 
