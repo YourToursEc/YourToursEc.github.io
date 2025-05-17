@@ -151,9 +151,9 @@
                             <input type="text" id="fecha-calendario" class="form-control p-4" placeholder="Fecha de salida" readonly style="background-color: white; cursor: pointer;">
                         </div>
 
-                        <!-- Fechas del tour (4 días) -->
+                        <!-- Fechas del tour (calendario animado) -->
                         <div class="col-md-3">
-                            <input type="text" id="fechas-tour" class="form-control p-4" placeholder="Fechas del tour" readonly>
+                            <input type="text" id="fechas-tour" class="form-control p-4" placeholder="Fechas del tour" readonly style="background-color: white; cursor: pointer;">
                         </div>
 
                         <!-- Botón Cotizar -->
@@ -214,9 +214,17 @@
     const fechasTourInput = document.getElementById('fechas-tour');
     const btnCotizar = document.getElementById('btn-cotizar');
 
-    let flatpickrInstance = flatpickr(fechaInput, {
+    let flatpickrSalida = flatpickr(fechaInput, {
         enable: [],
         dateFormat: "Y-m-d"
+    });
+
+    let flatpickrTour = flatpickr(fechasTourInput, {
+        mode: "multiple",
+        dateFormat: "Y-m-d",
+        clickOpens: false,
+        allowInput: false,
+        enable: [],
     });
 
     regionSelect.addEventListener('change', function () {
@@ -228,7 +236,8 @@
             option.textContent = dest;
             destinoSelect.appendChild(option);
         });
-        flatpickrInstance.set("enable", []);
+        flatpickrSalida.set("enable", []);
+        flatpickrTour.setDate([]);
         fechaInput.value = '';
         fechasTourInput.value = '';
     });
@@ -236,9 +245,9 @@
     destinoSelect.addEventListener('change', function () {
         const destino = this.value;
         const fechas = fechasDisponibles[destino] || [];
-        flatpickrInstance.setDate(null);
-        flatpickrInstance.set("enable", fechas);
-        fechaInput.value = '';
+        flatpickrSalida.setDate(null);
+        flatpickrSalida.set("enable", fechas);
+        flatpickrTour.setDate([]);
         fechasTourInput.value = '';
     });
 
@@ -251,7 +260,9 @@
             fechaNueva.setDate(base.getDate() + i);
             fechasTour.push(fechaNueva.toISOString().split('T')[0]);
         }
-        fechasTourInput.value = fechasTour.join(" - ");
+
+        flatpickrTour.setDate(fechasTour);
+        fechasTourInput.value = fechasTour.join(", ");
         updateCotizarLink();
     });
 
