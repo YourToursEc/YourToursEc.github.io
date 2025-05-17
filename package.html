@@ -125,10 +125,10 @@
     <div class="container pb-5">
         <div class="bg-light shadow" style="padding: 30px;">
             <div class="row align-items-center" style="min-height: 60px;">
-                <div class="col-md-10">
+                <div class="col-md-12">
                     <div class="row">
                         <!-- Región -->
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <select id="region-select" class="custom-select px-4" style="height: 47px;">
                                 <option selected disabled>Elige una región</option>
                                 <option value="Costa">Costa</option>
@@ -139,21 +139,26 @@
                             </select>
                         </div>
 
-                        <!-- Destinos -->
-                        <div class="col-md-3">
+                        <!-- Destino -->
+                        <div class="col-md-2">
                             <select id="destino-select" class="custom-select px-4" style="height: 47px;">
                                 <option selected disabled>Selecciona un destino</option>
                             </select>
                         </div>
 
-                        <!-- Calendario dinámico -->
+                        <!-- Fecha inicial -->
+                        <div class="col-md-2">
+                            <input type="text" id="fecha-calendario" class="form-control p-4" placeholder="Fecha de salida" readonly style="background-color: white; cursor: pointer;">
+                        </div>
+
+                        <!-- Fechas del tour (4 días) -->
                         <div class="col-md-3">
-                            <input type="text" id="fecha-calendario" class="form-control p-4" placeholder="Selecciona una fecha" readonly style="background-color: white; cursor: pointer;">
+                            <input type="text" id="fechas-tour" class="form-control p-4" placeholder="Fechas del tour" readonly>
                         </div>
 
                         <!-- Botón Cotizar -->
                         <div class="col-md-3">
-                            <a id="btn-cotizar" class="btn btn-primary btn-block" href="#" target="_blank" style="height: 47px; margin-top: 0; color: rgb(246, 246, 246);">
+                            <a id="btn-cotizar" class="btn btn-primary btn-block" href="#" target="_blank" style="height: 47px; color: rgb(246, 246, 246);">
                                 Cotizar
                             </a>
                         </div>
@@ -206,11 +211,12 @@
     const regionSelect = document.getElementById('region-select');
     const destinoSelect = document.getElementById('destino-select');
     const fechaInput = document.getElementById('fecha-calendario');
+    const fechasTourInput = document.getElementById('fechas-tour');
     const btnCotizar = document.getElementById('btn-cotizar');
 
     let flatpickrInstance = flatpickr(fechaInput, {
         enable: [],
-        dateFormat: "Y-m-d",
+        dateFormat: "Y-m-d"
     });
 
     regionSelect.addEventListener('change', function () {
@@ -224,6 +230,7 @@
         });
         flatpickrInstance.set("enable", []);
         fechaInput.value = '';
+        fechasTourInput.value = '';
     });
 
     destinoSelect.addEventListener('change', function () {
@@ -232,16 +239,30 @@
         flatpickrInstance.setDate(null);
         flatpickrInstance.set("enable", fechas);
         fechaInput.value = '';
+        fechasTourInput.value = '';
     });
 
-    fechaInput.addEventListener('change', updateCotizarLink);
+    fechaInput.addEventListener('change', function () {
+        const fechaSeleccionada = fechaInput.value;
+        const fechasTour = [];
+        const base = new Date(fechaSeleccionada);
+        for (let i = 0; i < 4; i++) {
+            const fechaNueva = new Date(base);
+            fechaNueva.setDate(base.getDate() + i);
+            fechasTour.push(fechaNueva.toISOString().split('T')[0]);
+        }
+        fechasTourInput.value = fechasTour.join(" - ");
+        updateCotizarLink();
+    });
 
     function updateCotizarLink() {
         const region = regionSelect.value;
         const destino = destinoSelect.value;
         const fecha = fechaInput.value;
+        const fechasTour = fechasTourInput.value;
+
         if (region && destino && fecha) {
-            const mensaje = `Hola, estoy interesado en viajar a ${destino} (${region}) en la fecha ${fecha}. ¿Todavía hay cupos disponibles?`;
+            const mensaje = `Hola, estoy interesado en viajar a ${destino} (${region}). Fecha de salida: ${fecha}. Fechas del tour: ${fechasTour}`;
             const url = `https://wa.me/593995225646?text=${encodeURIComponent(mensaje)}`;
             btnCotizar.href = url;
         }
