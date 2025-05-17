@@ -123,10 +123,10 @@
                     <div class="row">
                         <div class="col-md-3">
                             <div class="mb-3 mb-md-0">
-                                <select id="destino" class="custom-select px-4" style="height: 47px;">
-                                    <option selected>Destinos</option>
-                                    <option value="Costa">Costa</option>
-                                    <option value="Sierra">Sierra</option>
+                                <select id="destino-select" class="custom-select px-4" style="height: 47px;">
+                                    <option selected disabled>Destinos</option>
+                                    <option value="Cotopaxi">Cotopaxi</option>
+                                    <option value="Baños">Baños</option>
                                     <option value="Amazonía">Amazonía</option>
                                     <option value="Galápagos">Galápagos</option>
                                     <option value="Internacional">Internacional</option>
@@ -135,83 +135,98 @@
                         </div>
                         <div class="col-md-3">
                             <div class="mb-3 mb-md-0">
-                                <div class="date" id="date1" data-target-input="nearest">
-                                    <input id="depart" type="text" class="form-control p-4 datetimepicker-input" placeholder="Depart Date" data-target="#date1" data-toggle="datetimepicker"/>
-                                </div>
+                                <select id="fecha-select" class="custom-select px-4" style="height: 47px;">
+                                    <option selected disabled>Selecciona fecha</option>
+                                </select>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="mb-3 mb-md-0">
-                                <div class="date" id="date2" data-target-input="nearest">
-                                    <input id="return" type="text" class="form-control p-4 datetimepicker-input" placeholder="Return Date" data-target="#date2" data-toggle="datetimepicker"/>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="mb-3 mb-md-0">
-                                <select class="custom-select px-4" style="height: 47px;">
-                                    <option selected>Duratción</option>
+                                <select id="duracion-select" class="custom-select px-4" style="height: 47px;">
+                                    <option selected>Duración</option>
                                     <option value="1">Full day</option>
                                     <option value="2">2 Días</option>
                                     <option value="3">Más de 2 días</option>
                                 </select>
                             </div>
                         </div>
+                        <div class="col-md-3">
+                            <a id="btn-cotizar" class="btn btn-primary btn-block" href="#" target="_blank" style="height: 40px; margin-top: -2px; color: rgb(246, 246, 246);">
+                                Cotizar
+                            </a>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-2">
-                    <!-- Botón Cotizar (WhatsApp) -->
-                    <a class="btn btn-primary btn-block" href="https://wa.me/593995225646" target="_blank" style="height: 40px; margin-top: -2px; color: rgb(246, 246, 246);">
-                        Cotizar
-                    </a>
-
-                    <!-- Nuevo botón: Agregar a Google Calendar -->
-                    <a href="#" id="google-calendar-btn" class="btn btn-success btn-block mt-2" style="height: 40px;">
-                        Agregar a Google Calendar
-                    </a>
-                </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Mensaje de selección -->
+    <div class="container mt-3" id="info-seleccionada" style="display: none;">
+        <div class="alert alert-success text-center" role="alert">
+            <span id="mensaje-confirmacion"></span>
         </div>
     </div>
 </div>
 <!-- Booking End -->
 
-<!-- Script para Google Calendar -->
+<!-- Script personalizado -->
 <script>
-    document.getElementById('google-calendar-btn').addEventListener('click', function (e) {
-        e.preventDefault();
+    // Fechas personalizadas por destino
+    const salidasDisponibles = {
+        Cotopaxi: [
+            { fecha: "2025-05-22", cupos: 8 },
+            { fecha: "2025-06-05", cupos: 5 }
+        ],
+        Baños: [
+            { fecha: "2025-05-25", cupos: 4 },
+            { fecha: "2025-06-02", cupos: 6 }
+        ]
+    };
 
-        // Obtener valores del formulario
-        const destino = document.getElementById('destino').value || "Destino";
-        const departDate = document.getElementById('depart').value;
-        const returnDate = document.getElementById('return').value;
+    const destinoSelect = document.getElementById('destino-select');
+    const fechaSelect = document.getElementById('fecha-select');
+    const btnCotizar = document.getElementById('btn-cotizar');
+    const mensajeConfirmacion = document.getElementById('mensaje-confirmacion');
+    const infoSeleccionada = document.getElementById('info-seleccionada');
 
-        if (!departDate || !returnDate) {
-            alert("Por favor selecciona ambas fechas.");
-            return;
+    // Cargar fechas según destino
+    destinoSelect.addEventListener('change', function () {
+        const destino = this.value;
+        fechaSelect.innerHTML = '<option selected disabled>Selecciona fecha</option>';
+
+        if (salidasDisponibles[destino]) {
+            salidasDisponibles[destino].forEach(salida => {
+                const option = document.createElement('option');
+                const fechaTexto = new Date(salida.fecha).toLocaleDateString('es-EC', { day: 'numeric', month: 'long', year: 'numeric' });
+                option.value = salida.fecha;
+                option.text = `${fechaTexto} (${salida.cupos} cupos)`;
+                fechaSelect.appendChild(option);
+            });
         }
+    });
 
-        // Convertir a formato YYYYMMDD (Google Calendar acepta eso para eventos de día completo)
-        function formatDate(dateStr) {
-            const date = new Date(dateStr);
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            return `${year}${month}${day}`;
-        }
+    // Generar enlace a WhatsApp
+    fechaSelect.addEventListener('change', function () {
+        const destino = destinoSelect.value;
+        const fecha = this.value;
+        const duracion = document.getElementById('duracion-select').value;
 
-        const start = formatDate(departDate);
-        const end = formatDate(returnDate);
+        const mensaje = `Hola, estoy interesado en el tour a ${destino} el ${fecha}. ¿Todavía hay cupos disponibles? Duración: ${duracion}`;
+        const url = `https://wa.me/593995225646?text=${encodeURIComponent(mensaje)}`;
+        btnCotizar.href = url;
 
-        // URL de Google Calendar
-        const googleUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=Viaje+a+${encodeURIComponent(destino)}&dates=${start}/${end}&details=Reservado+con+Your+Tours&location=Ecuador`;
-
-        // Abrir ventana de Google Calendar
-        window.open(googleUrl, '_blank');
+        // Mostrar mensaje de confirmación
+        const fechaTexto = new Date(fecha).toLocaleDateString('es-EC', { day: 'numeric', month: 'long', year: 'numeric' });
+        mensajeConfirmacion.textContent = `Seleccionaste: ${destino} - ${fechaTexto}`;
+        infoSeleccionada.style.display = 'block';
     });
 </script>
+    <!-- fin eliminar  -->
 
 
+
+    
     <!-- Packages Start -->
     <div class="container-fluid py-5">
         <div class="container pt-5 pb-3">
