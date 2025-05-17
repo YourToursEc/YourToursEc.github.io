@@ -121,110 +121,111 @@
             <div class="row align-items-center" style="min-height: 60px;">
                 <div class="col-md-10">
                     <div class="row">
-                        <div class="col-md-3">
+                        <!-- Selección de Región -->
+                        <div class="col-md-4">
                             <div class="mb-3 mb-md-0">
-                                <select id="destino-select" class="custom-select px-4" style="height: 47px;">
-                                    <option selected disabled>Destinos</option>
-                                    <option value="Cotopaxi">Cotopaxi</option>
-                                    <option value="Baños">Baños</option>
+                                <select id="region-select" class="custom-select px-4" style="height: 47px;">
+                                    <option selected disabled>Elige una región</option>
+                                    <option value="Costa">Costa</option>
+                                    <option value="Sierra">Sierra</option>
                                     <option value="Amazonía">Amazonía</option>
                                     <option value="Galápagos">Galápagos</option>
                                     <option value="Internacional">Internacional</option>
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-3">
+
+                        <!-- Destinos según región -->
+                        <div class="col-md-4">
+                            <div class="mb-3 mb-md-0">
+                                <select id="destino-select" class="custom-select px-4" style="height: 47px;">
+                                    <option selected disabled>Selecciona un destino</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Fecha según destino -->
+                        <div class="col-md-4">
                             <div class="mb-3 mb-md-0">
                                 <select id="fecha-select" class="custom-select px-4" style="height: 47px;">
-                                    <option selected disabled>Selecciona fecha</option>
+                                    <option selected disabled>Selecciona una fecha</option>
                                 </select>
                             </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="mb-3 mb-md-0">
-                                <select id="duracion-select" class="custom-select px-4" style="height: 47px;">
-                                    <option selected>Duración</option>
-                                    <option value="1">Full day</option>
-                                    <option value="2">2 Días</option>
-                                    <option value="3">Más de 2 días</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <a id="btn-cotizar" class="btn btn-primary btn-block" href="#" target="_blank" style="height: 40px; margin-top: -2px; color: rgb(246, 246, 246);">
-                                Cotizar
-                            </a>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Mensaje de selección -->
-    <div class="container mt-3" id="info-seleccionada" style="display: none;">
-        <div class="alert alert-success text-center" role="alert">
-            <span id="mensaje-confirmacion"></span>
+                <!-- Botón Cotizar -->
+                <div class="col-md-2 mt-3">
+                    <a id="btn-cotizar" class="btn btn-primary btn-block" href="#" target="_blank" style="height: 40px; color: rgb(246, 246, 246);">
+                        Cotizar
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 <!-- Booking End -->
 
-<!-- Script personalizado -->
+<!-- Script dinámico -->
 <script>
-    // Fechas personalizadas por destino
-    const salidasDisponibles = {
-        Cotopaxi: [
-            { fecha: "2025-05-22", cupos: 8 },
-            { fecha: "2025-06-05", cupos: 5 }
-        ],
-        Baños: [
-            { fecha: "2025-05-25", cupos: 4 },
-            { fecha: "2025-06-02", cupos: 6 }
-        ]
+    const regiones = {
+        "Costa": ["Montañita", "Playas", "Manta"],
+        "Sierra": ["Cuenca", "Cotopaxi", "Chimborazo"],
+        "Amazonía": ["Tena", "Puyo", "Cuyabeno"],
+        "Galápagos": ["Isabela", "Santa Cruz", "San Cristóbal"],
+        "Internacional": ["Cartagena", "Cancún", "Machu Picchu"]
     };
 
+    const fechasDisponibles = {
+        "Cotopaxi": ["2025-05-22", "2025-06-10"],
+        "Cuenca": ["2025-06-01"],
+        "Montañita": ["2025-05-30"],
+        "Tena": ["2025-06-05"],
+        "Cartagena": ["2025-06-15"]
+    };
+
+    const regionSelect = document.getElementById('region-select');
     const destinoSelect = document.getElementById('destino-select');
     const fechaSelect = document.getElementById('fecha-select');
     const btnCotizar = document.getElementById('btn-cotizar');
-    const mensajeConfirmacion = document.getElementById('mensaje-confirmacion');
-    const infoSeleccionada = document.getElementById('info-seleccionada');
 
-    // Cargar fechas según destino
-    destinoSelect.addEventListener('change', function () {
-        const destino = this.value;
-        fechaSelect.innerHTML = '<option selected disabled>Selecciona fecha</option>';
+    regionSelect.addEventListener('change', function () {
+        const destinos = regiones[this.value];
+        destinoSelect.innerHTML = '<option selected disabled>Selecciona un destino</option>';
+        fechaSelect.innerHTML = '<option selected disabled>Selecciona una fecha</option>';
 
-        if (salidasDisponibles[destino]) {
-            salidasDisponibles[destino].forEach(salida => {
-                const option = document.createElement('option');
-                const fechaTexto = new Date(salida.fecha).toLocaleDateString('es-EC', { day: 'numeric', month: 'long', year: 'numeric' });
-                option.value = salida.fecha;
-                option.text = `${fechaTexto} (${salida.cupos} cupos)`;
-                fechaSelect.appendChild(option);
-            });
-        }
+        destinos.forEach(dest => {
+            const option = document.createElement('option');
+            option.value = dest;
+            option.textContent = dest;
+            destinoSelect.appendChild(option);
+        });
     });
 
-    // Generar enlace a WhatsApp
+    destinoSelect.addEventListener('change', function () {
+        const fechas = fechasDisponibles[this.value] || [];
+        fechaSelect.innerHTML = '<option selected disabled>Selecciona una fecha</option>';
+
+        fechas.forEach(fecha => {
+            const option = document.createElement('option');
+            const fechaTexto = new Date(fecha).toLocaleDateString('es-EC', { day: 'numeric', month: 'long', year: 'numeric' });
+            option.value = fecha;
+            option.textContent = fechaTexto;
+            fechaSelect.appendChild(option);
+        });
+    });
+
     fechaSelect.addEventListener('change', function () {
+        const region = regionSelect.value;
         const destino = destinoSelect.value;
         const fecha = this.value;
-        const duracion = document.getElementById('duracion-select').value;
-
-        const mensaje = `Hola, estoy interesado en el tour a ${destino} el ${fecha}. ¿Todavía hay cupos disponibles? Duración: ${duracion}`;
+        const mensaje = `Hola, estoy interesado en viajar a ${destino} (${region}) en la fecha ${fecha}. ¿Todavía hay cupos disponibles?`;
         const url = `https://wa.me/593995225646?text=${encodeURIComponent(mensaje)}`;
         btnCotizar.href = url;
-
-        // Mostrar mensaje de confirmación
-        const fechaTexto = new Date(fecha).toLocaleDateString('es-EC', { day: 'numeric', month: 'long', year: 'numeric' });
-        mensajeConfirmacion.textContent = `Seleccionaste: ${destino} - ${fechaTexto}`;
-        infoSeleccionada.style.display = 'block';
     });
 </script>
     <!-- fin eliminar  -->
-
-
 
     
     <!-- Packages Start -->
