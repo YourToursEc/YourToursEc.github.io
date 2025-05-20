@@ -115,7 +115,6 @@
 
 
 <!-- inicio eliminar  -->
-    
 <!-- Flatpickr CSS y JS -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -151,7 +150,7 @@
                             <input type="text" id="fecha-calendario" class="form-control p-4" placeholder="Fecha de salida" readonly style="background-color: white; cursor: pointer;">
                         </div>
 
-                        <!-- Fechas del tour (calendario animado) -->
+                        <!-- Fechas del tour -->
                         <div class="col-md-3">
                             <input type="text" id="fechas-tour" class="form-control p-4" placeholder="Fechas del tour" readonly style="background-color: white; cursor: pointer;">
                         </div>
@@ -159,7 +158,7 @@
                         <!-- Botón Cotizar -->
                         <div class="col-md-3">
                             <a id="btn-cotizar" class="btn btn-primary btn-block" href="#" target="_blank" style="height: 47px; color: rgb(246, 246, 246);">
-                                Cotizar
+                                Cotizar por WhatsApp
                             </a>
                         </div>
                     </div>
@@ -238,11 +237,11 @@
             destinoSelect.appendChild(option);
         });
 
-        // Limpiar selección previa
         flatpickrSalida.set("enable", []);
         flatpickrSalida.clear();
         flatpickrTour.clear();
         fechasTourInput.value = '';
+        updateCotizarLink();
     });
 
     destinoSelect.addEventListener('change', function () {
@@ -252,6 +251,7 @@
         flatpickrSalida.clear();
         flatpickrTour.clear();
         fechasTourInput.value = '';
+        updateCotizarLink();
     });
 
     fechaInput.addEventListener('change', function () {
@@ -277,9 +277,11 @@
         const fechasTour = fechasTourInput.value;
 
         if (region && destino && fecha) {
-            const mensaje = Hola, estoy interesado en viajar a ${destino} (${region}). Fecha de salida: ${fecha}. Fechas del tour: ${fechasTour};
-            const url = https://wa.me/593995225646?text=${encodeURIComponent(mensaje)};
+            const mensaje = `Hola, estoy interesado en viajar a ${destino} (${region}). Fecha de salida: ${fecha}. Fechas del tour: ${fechasTour}`;
+            const url = `https://wa.me/593995225646?text=${encodeURIComponent(mensaje)}`;
             btnCotizar.href = url;
+        } else {
+            btnCotizar.href = "#";
         }
     }
 
