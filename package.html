@@ -116,12 +116,66 @@
 
 <!-- inicio eliminar  -->
     
+<!-- Flatpickr CSS y JS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<!-- Booking Start -->
+<div class="container-fluid booking mt-5 pb-5">
+    <div class="container pb-5">
+        <div class="bg-light shadow" style="padding: 30px;">
+            <div class="row align-items-center" style="min-height: 60px;">
+                <div class="col-md-12">
+                    <div class="row">
+                        <!-- Región -->
+                        <div class="col-md-2">
+                            <select id="region-select" class="custom-select px-4" style="height: 47px;">
+                                <option selected disabled>Elige una región</option>
+                                <option value="Costa">Costa</option>
+                                <option value="Sierra">Sierra</option>
+                                <option value="Amazonía">Amazonía</option>
+                                <option value="Galápagos">Galápagos</option>
+                                <option value="Internacional">Internacional</option>
+                            </select>
+                        </div>
+
+                        <!-- Destino -->
+                        <div class="col-md-2">
+                            <select id="destino-select" class="custom-select px-4" style="height: 47px;">
+                                <option selected disabled>Selecciona un destino</option>
+                            </select>
+                        </div>
+
+                        <!-- Fecha de salida -->
+                        <div class="col-md-2">
+                            <input type="text" id="fecha-calendario" class="form-control p-4" placeholder="Fecha de salida" readonly style="background-color: white; cursor: pointer;">
+                        </div>
+
+                        <!-- Fechas del tour (calendario animado) -->
+                        <div class="col-md-3">
+                            <input type="text" id="fechas-tour" class="form-control p-4" placeholder="Fechas del tour" readonly style="background-color: white; cursor: pointer;">
+                        </div>
+
+                        <!-- Botón Cotizar -->
+                        <div class="col-md-3">
+                            <a id="btn-cotizar" class="btn btn-primary btn-block" href="#" target="_blank" style="height: 47px; color: rgb(246, 246, 246);">
+                                Cotizar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    
+</div>
+<!-- Booking End -->
+
 <!-- Script -->
 <script>
     const regiones = {
-        "Costa": ["Atacames", "Puerto Lopes", "Manta"],
+        "Costa": ["Montañita", "Playas", "Manta"],
         "Sierra": ["Cuenca", "Cotopaxi", "Chimborazo"],
-        "Amazonía": ["Misahualli", "Baños de Agua Santa", "Cuyabeno"],
+        "Amazonía": ["Tena", "Puyo", "Cuyabeno"],
         "Galápagos": ["Isabela", "Santa Cruz", "San Cristóbal"],
         "Internacional": ["Cartagena", "Cancún", "Machu Picchu"]
     };
@@ -184,11 +238,11 @@
             destinoSelect.appendChild(option);
         });
 
+        // Limpiar selección previa
         flatpickrSalida.set("enable", []);
         flatpickrSalida.clear();
         flatpickrTour.clear();
         fechasTourInput.value = '';
-        updateCotizarLink(); // actualiza link si se cambia la región
     });
 
     destinoSelect.addEventListener('change', function () {
@@ -198,7 +252,6 @@
         flatpickrSalida.clear();
         flatpickrTour.clear();
         fechasTourInput.value = '';
-        updateCotizarLink(); // actualiza link si se cambia el destino
     });
 
     fechaInput.addEventListener('change', function () {
@@ -224,18 +277,16 @@
         const fechasTour = fechasTourInput.value;
 
         if (region && destino && fecha) {
-            const mensaje = `Hola, estoy interesado en viajar a ${destino} (${region}). Fecha de salida: ${fecha}. Fechas del tour: ${fechasTour}`;
-            const url = `https://wa.me/593995225646?text=${encodeURIComponent(mensaje)}`;
+            const mensaje = Hola, estoy interesado en viajar a ${destino} (${region}). Fecha de salida: ${fecha}. Fechas del tour: ${fechasTour};
+            const url = https://wa.me/593995225646?text=${encodeURIComponent(mensaje)};
             btnCotizar.href = url;
-        } else {
-            btnCotizar.href = "#";
         }
     }
 
     regionSelect.addEventListener('change', updateCotizarLink);
     destinoSelect.addEventListener('change', updateCotizarLink);
 </script>
-
+    <!-- fin eliminar  -->
 <!--  eliminar  -->
     
 <!-- Script -->
