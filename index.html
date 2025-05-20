@@ -501,63 +501,78 @@
     <!-- Packages End -->
 
 
-    <!-- Registration Start -->
-    <div class="container-fluid bg-registration py-5" style="margin: 90px 0;">
-        <div class="container py-5">
-            <div class="row align-items-center">
-                <div class="col-lg-7 mb-5 mb-lg-0">
-                    <div class="mb-4">
-                        <h6 class="text-primary text-uppercase" style="letter-spacing: 5px;">Mega Oferta</h6>
-                        <h1 class="text-white"><span class="text-primary">15% OFF</span> En Grupos de 10 Personas</h1>
-                    </div>
-                    <p class="text-white">¡Aprovecha nuestro exclusivo descuento del 30% al viajar con 5 amigos o más! Disfruta de un viaje inolvidable junto a tus seres queridos, disfrutado de la diversión en grupo y creando recuerdos inolvidables, a precios más accesibles gracias a nuestra oferta especial para ti.</p>
-                    <ul class="list-inline text-white m-0">
-                        <li class="py-2"><i class="fa fa-check text-primary mr-3"></i>Diversión garantizada</li>
-                        <li class="py-2"><i class="fa fa-check text-primary mr-3"></i>Precios accesibles</li>
-                        <li class="py-2"><i class="fa fa-check text-primary mr-3"></i>Experiencias inolvidables junto a tus seres queridos</li>
-                    </ul>
+    <!-- Registration Start  eliminar -->
+<div class="container-fluid bg-registration py-5" style="margin: 90px 0;">
+    <div class="container py-5">
+        <div class="row align-items-center">
+            <div class="col-lg-7 mb-5 mb-lg-0">
+                <div class="mb-4">
+                    <h6 class="text-primary text-uppercase" style="letter-spacing: 5px;">Mega Oferta</h6>
+                    <h1 class="text-white"><span class="text-primary">15% OFF</span> En Grupos de 10 Personas</h1>
                 </div>
-                <div class="col-lg-5">
-                    <div class="card border-0">
-                        <div class="card-header bg-primary text-center p-4">
-                            <h1 class="text-white m-0">Envíanos un Mensaje</h1>
-                        </div>
-
-                        
-                        <form action="https://formsubmit.co/Youre_tours@outlook.com" method="POST" target="_blank">
-
-
-                            <div class="card-body rounded-bottom bg-white p-5">
-                        
-                                    <div class="form-group">
-                                        <input type="text" name="name" class="form-control p-4" placeholder="Nombre" required="required" />
-                                    </div>
-                                    <div class="form-group">
-                                        <input type="number" name="celular" class="form-control p-4" placeholder="Numero celular" required="required" />
-                                    </div>
-                                    <div class="form-group">
-                                        <select class="custom-select px-4" name="Destino" style="height: 47px;">
-                                            <option selected>Seleccione un destino</option>
-                                            <option value="1">Costa</option>
-                                            <option value="2">Sierra</option>
-                                            <option value="3">Amazonía</option>
-                                            <option value="4">Galápagos</option>
-                                            <option value="5">Internacional</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <button class="btn btn-primary btn-block py-3" type="submit">Enviar</button>
-                                    </div>
-    
-                                </form>
-                        </div>
+                <p class="text-white">¡Aprovecha nuestro exclusivo descuento del 30% al viajar con 5 amigos o más! Disfruta de un viaje inolvidable junto a tus seres queridos, disfrutado de la diversión en grupo y creando recuerdos inolvidables, a precios más accesibles gracias a nuestra oferta especial para ti.</p>
+                <ul class="list-inline text-white m-0">
+                    <li class="py-2"><i class="fa fa-check text-primary mr-3"></i>Diversión garantizada</li>
+                    <li class="py-2"><i class="fa fa-check text-primary mr-3"></i>Precios accesibles</li>
+                    <li class="py-2"><i class="fa fa-check text-primary mr-3"></i>Experiencias inolvidables junto a tus seres queridos</li>
+                </ul>
+            </div>
+            <div class="col-lg-5">
+                <div class="card border-0">
+                    <div class="card-header bg-primary text-center p-4">
+                        <h1 class="text-white m-0">Envíanos un Mensaje</h1>
                     </div>
+
+                    <div class="card-body rounded-bottom bg-white p-5">
+                        <form id="whatsapp-form">
+                            <div class="form-group">
+                                <input type="text" id="nombre" class="form-control p-4" placeholder="Nombre" required />
+                            </div>
+                            <div class="form-group">
+                                <input type="number" id="celular" class="form-control p-4" placeholder="Número celular" required />
+                            </div>
+                            <div class="form-group">
+                                <select id="destino" class="custom-select px-4" style="height: 47px;" required>
+                                    <option selected disabled>Seleccione un destino</option>
+                                    <option value="Costa">Costa</option>
+                                    <option value="Sierra">Sierra</option>
+                                    <option value="Amazonía">Amazonía</option>
+                                    <option value="Galápagos">Galápagos</option>
+                                    <option value="Internacional">Internacional</option>
+                                </select>
+                            </div>
+                            <div>
+                                <a id="enviarWhatsapp" class="btn btn-primary btn-block py-3" target="_blank">Enviar</a>
+                            </div>
+                        </form>
+                    </div>
+
                 </div>
             </div>
         </div>
     </div>
-    <!-- Registration End -->
+</div>
+<!-- Registration End -->
 
+<!-- Script para WhatsApp -->
+<script>
+    document.getElementById('enviarWhatsapp').addEventListener('click', function () {
+        const nombre = document.getElementById('nombre').value.trim();
+        const celular = document.getElementById('celular').value.trim();
+        const destino = document.getElementById('destino').value;
+
+        if (!nombre || !celular || !destino) {
+            alert('Por favor, completa todos los campos.');
+            return;
+        }
+
+        const mensaje = `Hola, soy ${nombre}. Mi número es ${celular}. Estoy interesado en un viaje a ${destino}.`;
+        const url = `https://wa.me/593995225646?text=${encodeURIComponent(mensaje)}`;
+        window.open(url, '_blank');
+    });
+</script>
+
+<!-- Script para WhatsApp eliminar -->
 
     <!-- Team Start -->
     <div class="container-fluid py-5">
