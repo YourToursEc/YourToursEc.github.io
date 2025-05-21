@@ -1,0 +1,8 @@
+[build]
+  functions = "functions"
+  publish = "."
+
+[[redirects]]
+  from = "/api/payphone"
+  to = "/.netlify/functions/payphone"
+  status = 200
