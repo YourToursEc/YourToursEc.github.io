@@ -116,177 +116,163 @@
 
 <!-- inicio eliminar  -->
 <!-- Flatpickr CSS y JS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <!-- Booking Start -->
 <div class="container-fluid booking mt-5 pb-5">
-    <div class="container pb-5">
-        <div class="bg-light shadow" style="padding: 30px;">
-            <div class="row align-items-center" style="min-height: 60px;">
-                <div class="col-md-12">
-                    <div class="row">
-                        <!-- Región -->
-                        <div class="col-md-2">
-                            <select id="region-select" class="custom-select px-4" style="height: 47px;">
-                                <option selected disabled>Elige una región</option>
-                                <option value="Costa">Costa</option>
-                                <option value="Sierra">Sierra</option>
-                                <option value="Amazonía">Amazonía</option>
-                                <option value="Galápagos">Galápagos</option>
-                                <option value="Internacional">Internacional</option>
-                            </select>
-                        </div>
-
-                        <!-- Destino -->
-                        <div class="col-md-2">
-                            <select id="destino-select" class="custom-select px-4" style="height: 47px;">
-                                <option selected disabled>Selecciona un destino</option>
-                            </select>
-                        </div>
-
-                        <!-- Fecha de salida -->
-                        <div class="col-md-2">
-                            <input type="text" id="fecha-calendario" class="form-control p-4" placeholder="Fecha de salida" readonly style="background-color: white; cursor: pointer;">
-                        </div>
-
-                        <!-- Fechas del tour -->
-                        <div class="col-md-3">
-                            <input type="text" id="fechas-tour" class="form-control p-4" placeholder="Fechas del tour" readonly style="background-color: white; cursor: pointer;">
-                        </div>
-
-                        <!-- Botón Cotizar -->
-                        <div class="col-md-3">
-                            <a id="btn-cotizar" class="btn btn-primary btn-block" href="#" target="_blank" style="height: 47px; color: rgb(246, 246, 246);">
-                                Cotizar por WhatsApp
-                            </a>
-                        </div>
-                    </div>
-                </div>
+  <div class="container pb-5">
+    <div class="bg-light shadow" style="padding: 30px;">
+      <div class="row align-items-center" style="min-height: 60px;">
+        <div class="col-md-12">
+          <div class="row">
+            <!-- Región -->
+            <div class="col-md-3">
+              <select id="region-select" class="custom-select px-4" style="height: 47px;">
+                <option selected disabled>Elige una región</option>
+                <option value="Costa">Costa</option>
+                <option value="Sierra">Sierra</option>
+                <option value="Amazonía">Amazonía</option>
+                <option value="Galápagos">Galápagos</option>
+                <option value="Internacional">Internacional</option>
+              </select>
             </div>
+
+            <!-- Destino -->
+            <div class="col-md-3">
+              <select id="destino-select" class="custom-select px-4" style="height: 47px;">
+                <option selected disabled>Selecciona un destino</option>
+              </select>
+            </div>
+
+            <!-- Fecha de salida -->
+            <div class="col-md-3">
+              <input
+                type="text"
+                id="fecha-calendario"
+                class="form-control p-4"
+                placeholder="Fecha de salida"
+                readonly
+                style="background-color: white; cursor: pointer"
+              />
+            </div>
+
+            <!-- Botón Pagar -->
+            <div class="col-md-3">
+              <button id="btn-pagar" class="btn btn-success btn-block" style="height: 47px" disabled>
+                Pagar con Tarjeta
+              </button>
+            </div>
+          </div>
         </div>
-    </div>    
+      </div>
+    </div>
+  </div>
 </div>
 <!-- Booking End -->
 
-<!-- Script -->
 <script>
-    const regiones = {
-        "Costa": ["Puerto Lopes", "Playas", "Manta"],
-        "Sierra": ["Cuenca", "Cotopaxi", "Chimborazo"],
-        "Amazonía": ["Tena", "Puyo", "Cuyabeno"],
-        "Galápagos": ["Isabela", "Santa Cruz", "San Cristóbal"],
-        "Internacional": ["Cartagena", "Cancún", "Machu Picchu"]
-    };
+  const regiones = {
+    Costa: ["Puerto Lopes", "Playas", "Manta"],
+    Sierra: ["Cuenca", "Cotopaxi", "Chimborazo"],
+    Amazonía: ["Tena", "Puyo", "Cuyabeno"],
+    Galápagos: ["Isabela", "Santa Cruz", "San Cristóbal"],
+    Internacional: ["Cartagena", "Cancún", "Machu Picchu"],
+  };
 
-    const fechasSalidaCuenca = [
-        "2025-05-22",
-        "2025-05-29",
-        "2025-06-12",
-        "2025-06-26"
-    ];
+  const preciosBase = {
+    Cuenca: 180,
+    Cotopaxi: 49,
+    Chimborazo: 39,
+  };
 
-    function generarFechasExtendidas(baseFechas) {
-        const extendidas = [];
-        baseFechas.forEach(fecha => {
-            const base = new Date(fecha);
-            for (let i = 0; i < 4; i++) {
-                const nuevaFecha = new Date(base);
-                nuevaFecha.setDate(base.getDate() + i);
-                extendidas.push(nuevaFecha.toISOString().split('T')[0]);
-            }
-        });
-        return [...new Set(extendidas)];
+  function calcularPrecio(destino) {
+    const base = preciosBase[destino] || 0;
+    return Math.round(base * 1.07 * 100) / 100;
+  }
+
+  const fechasDisponibles = {
+    Cuenca: ["2025-05-22", "2025-05-29", "2025-06-12", "2025-06-26"],
+    Cotopaxi: ["2025-05-22", "2025-06-10"],
+    Chimborazo: ["2025-06-05"],
+  };
+
+  const regionSelect = document.getElementById("region-select");
+  const destinoSelect = document.getElementById("destino-select");
+  const fechaInput = document.getElementById("fecha-calendario");
+  const btnPagar = document.getElementById("btn-pagar");
+
+  let flatpickrSalida = flatpickr(fechaInput, {
+    enable: [],
+    dateFormat: "Y-m-d",
+  });
+
+  regionSelect.addEventListener("change", function () {
+    const destinos = regiones[this.value] || [];
+    destinoSelect.innerHTML = '<option selected disabled>Selecciona un destino</option>';
+    destinos.forEach((dest) => {
+      const option = document.createElement("option");
+      option.value = dest;
+      option.textContent = dest;
+      destinoSelect.appendChild(option);
+    });
+
+    flatpickrSalida.set("enable", []);
+    flatpickrSalida.clear();
+    fechaInput.value = "";
+    btnPagar.disabled = true;
+  });
+
+  destinoSelect.addEventListener("change", function () {
+    const destino = this.value;
+    const fechas = fechasDisponibles[destino] || [];
+    flatpickrSalida.set("enable", fechas);
+    flatpickrSalida.clear();
+    fechaInput.value = "";
+    btnPagar.disabled = true;
+  });
+
+  fechaInput.addEventListener("change", () => {
+    btnPagar.disabled = !(regionSelect.value && destinoSelect.value && fechaInput.value);
+  });
+
+  btnPagar.addEventListener("click", async () => {
+    const region = regionSelect.value;
+    const destino = destinoSelect.value;
+    const fecha = fechaInput.value;
+    const precio = calcularPrecio(destino);
+
+    if (!region || !destino || !fecha) {
+      alert("Por favor, selecciona región, destino y fecha.");
+      return;
     }
 
-    const fechasDisponibles = {
-        "Cuenca": generarFechasExtendidas(fechasSalidaCuenca),
-        "Cotopaxi": ["2025-05-22", "2025-06-10"],
-        "Montañita": ["2025-05-30"],
-        "Tena": ["2025-06-05"],
-        "Cartagena": ["2025-06-15"]
-    };
+    // Llamamos al backend para crear la transacción y obtener el link de pago
+    try {
+      const response = await fetch("/api/payphone", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          destino,
+          region,
+          fecha,
+          monto: precio,
+        }),
+      });
 
-    const regionSelect = document.getElementById('region-select');
-    const destinoSelect = document.getElementById('destino-select');
-    const fechaInput = document.getElementById('fecha-calendario');
-    const fechasTourInput = document.getElementById('fechas-tour');
-    const btnCotizar = document.getElementById('btn-cotizar');
+      if (!response.ok) throw new Error("Error en el servidor");
 
-    let flatpickrSalida = flatpickr(fechaInput, {
-        enable: [],
-        dateFormat: "Y-m-d"
-    });
+      const data = await response.json();
 
-    let flatpickrTour = flatpickr(fechasTourInput, {
-        mode: "multiple",
-        dateFormat: "Y-m-d",
-        clickOpens: true,
-        allowInput: false,
-        enable: [],
-        disableMobile: true
-    });
-
-    regionSelect.addEventListener('change', function () {
-        const destinos = regiones[this.value] || [];
-        destinoSelect.innerHTML = '<option selected disabled>Selecciona un destino</option>';
-        destinos.forEach(dest => {
-            const option = document.createElement('option');
-            option.value = dest;
-            option.textContent = dest;
-            destinoSelect.appendChild(option);
-        });
-
-        flatpickrSalida.set("enable", []);
-        flatpickrSalida.clear();
-        flatpickrTour.clear();
-        fechasTourInput.value = '';
-        updateCotizarLink();
-    });
-
-    destinoSelect.addEventListener('change', function () {
-        const destino = this.value;
-        const fechas = fechasDisponibles[destino] || [];
-        flatpickrSalida.set("enable", fechas);
-        flatpickrSalida.clear();
-        flatpickrTour.clear();
-        fechasTourInput.value = '';
-        updateCotizarLink();
-    });
-
-    fechaInput.addEventListener('change', function () {
-        const fechaSeleccionada = fechaInput.value;
-        const fechasTour = [];
-        const base = new Date(fechaSeleccionada);
-        for (let i = 0; i < 4; i++) {
-            const fechaNueva = new Date(base);
-            fechaNueva.setDate(base.getDate() + i);
-            fechasTour.push(fechaNueva.toISOString().split('T')[0]);
-        }
-
-        flatpickrTour.set("enable", fechasTour);
-        flatpickrTour.setDate(fechasTour);
-        fechasTourInput.value = fechasTour.join(", ");
-        updateCotizarLink();
-    });
-
-    function updateCotizarLink() {
-        const region = regionSelect.value;
-        const destino = destinoSelect.value;
-        const fecha = fechaInput.value;
-        const fechasTour = fechasTourInput.value;
-
-        if (region && destino && fecha) {
-            const mensaje = `Hola, estoy interesado en viajar a ${destino} (${region}). Fecha de salida: ${fecha}. Fechas del tour: ${fechasTour}`;
-            const url = `https://wa.me/593995225646?text=${encodeURIComponent(mensaje)}`;
-            btnCotizar.href = url;
-        } else {
-            btnCotizar.href = "#";
-        }
+      if (data.urlPago) {
+        window.location.href = data.urlPago; // Redirige a la página de pago
+      } else {
+        alert("No se pudo obtener el enlace de pago.");
+      }
+    } catch (error) {
+      alert("Error al crear la transacción: " + error.message);
     }
-
-    regionSelect.addEventListener('change', updateCotizarLink);
-    destinoSelect.addEventListener('change', updateCotizarLink);
+  });
 </script>
     <!-- fin eliminar  -->
 <!--  eliminar  -->
