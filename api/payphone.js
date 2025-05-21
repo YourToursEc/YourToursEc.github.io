@@ -3,30 +3,47 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: 'Método no permitido' });
   }
 
-  const { region, destino, fecha, precio } = req.body;
+  const { region, destino, fecha } = req.body;
 
-  if (!region || !destino || !fecha || !precio) {
+  if (!region || !destino || !fecha) {
     return res.status(400).json({ message: 'Faltan datos requeridos' });
   }
 
-  try {
-    const token = process.env.PAYPHONE_TOKEN; // <- guarda tu token en Vercel (Settings > Environment Variables)
+  // Precios base según destino
+  const preciosBase = {
+    "Cuenca": 180,
+    "Cotopaxi": 49,
+    "Chimborazo": 39
+    // Puedes agregar más destinos si los defines en frontend también
+  };
 
-    const response = await fetch('https://pay.payphonetodoesposible.com/api/button/Prepare', {
+  // Validación de destino
+  const precioBase = preciosBase[destino];
+  if (!precioBase) {
+    return res.status(400).json({ message: 'Destino no válido o sin precio definido' });
+  }
+
+  // Aplica recargo del 7%
+  const precioConRecargo = Math.round(precioBase * 1.07 * 100); // en centavos
+
+  try {
+    const token = process.env.PAYPHONE_TOKEN; // Token de PRUEBAS
+
+    const response = await fetch('https://sandbox.payphonetodoesposible.com/api/button/Prepare', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        amount: Math.round(precio * 100), // PayPhone espera centavos
-        amountWithoutTax: Math.round(precio * 100),
+        amount: precioConRecargo,
+        amountWithoutTax: precioConRecargo,
         currency: "USD",
         clientTransactionId: `tour-${Date.now()}`,
-        responseUrl: "https://yourtours.vercel.app/gracias", // <- cambia esto por tu página de gracias o confirmación
-        cancellationUrl: "https://yourtours.vercel.app/cancelado", // <- opcional
-        reference: `Tour ${destino} - ${fecha}`,
-        storeId: "YOUR_STORE_ID" // <- Opcional, si te lo pide PayPhone
+        responseUrl: "https://yourtours.vercel.app/gracias",
+        cancellationUrl: "https://yourtours.vercel.app/cancelado",
+        reference: `Tour ${destino} - ${fecha}`
+        // storeId: "TU_STORE_ID" // solo si te lo dieron
       })
     });
 
@@ -39,7 +56,7 @@ export default async function handler(req, res) {
     return res.status(200).json({ paymentUrl: data.paymentUrl });
 
   } catch (error) {
-    console.error('Error en la API de PayPhone:', error);
+    console.error('Error en PayPhone:', error);
     return res.status(500).json({ message: 'Error en el servidor', error: error.message });
   }
 }
