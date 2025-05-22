@@ -305,7 +305,30 @@
         }
     });
 </script>
+ <!-- inicio boton eliminar 1 -->
+     <!-- Contenedor para el botón de PayPhone -->
+<div id="contenedor-payphone"></div>
 
+<!-- Script oficial de PayPhone -->
+<script src="https://cdn.payphonetodoesposible.com/api/button/js/payphone-button.js"></script>
+
+<script>
+  // Este código crea el botón de pago con los datos mínimos requeridos
+  payphone.Button({
+    token: "TU_TOKEN_DE_PRUEBA_AQUI", // ⚠️ Reemplaza con tu token de pruebas
+    btnHorizontal: true,
+    btnCard: true,
+    showQr: true,
+    amount: 5000, // Monto en CENTAVOS (por ejemplo 5000 = $50,00)
+    amountWithoutTax: 5000,
+    reference: "Reserva Your Tours",
+    clientTransactionId: "yourtours-" + Date.now(),
+    responseUrl: "https://yourtours.vercel.app/gracias", // URL donde redirige al pagar
+    cancellationUrl: "https://yourtours.vercel.app/cancelado", // (opcional)
+    container: "contenedor-payphone"
+  });
+</script>
+     <!-- fin eliminar  boton 1  -->
 </body>
 </html>
     <!-- fin eliminar  -->
