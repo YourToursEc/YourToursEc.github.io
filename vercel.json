@@ -2,8 +2,8 @@
   "version": 2,
   "build": {
     "env": {
-      "NEXT_PUBLIC_PAYPHONE_TOKEN": "@payphone-token",
-      "NEXT_PUBLIC_PAYPHONE_STORE_ID": "@payphone-store-id"
+      "NEXT_PUBLIC_PAYPHONE_TOKEN": "wMFh1Vp4XBOEb82HZuaP_8aVn-pz7VchsoM19YjKf_0DKu-PL1HP3cOS9joTWevrbUiRkn1jpf6_qL--EIUsoKGIEdss9gu-J9V1eERpWOOLZh_yki9cp-qPIoVPyQLosuJmZSO1tXiNRaXtU1pCZ-unUFScmfi2BNxU2eFNc7I3KHANaUIlWYoI96YuzpLRY7ctJPIqiN0Meo0lJ5JMdIZtwEemgahfOEZCKeS6dQidbQ3FxsukfLRGp0aFUdJMQrcajPMIcZOMabHkJFW28_zYSpUgOollggobMEjbuz505U_5VoRGgIM13RE47PXjKh-0Zd4RD3XuNwSCpEB8h4TvmJ0",
+      "NEXT_PUBLIC_PAYPHONE_STORE_ID": "336d7073-bce8-4462-81fe-e91fb343c10d"
     }
   }
 }
