@@ -447,8 +447,8 @@
       ajustarAlturaIframe(600);
       generarBotonPago(priceBaseCentavos, fechaInput.value);
     });
-    
- function generarBotonPago(priceBase, fechaViaje) {
+
+    function generarBotonPago(priceBase, fechaViaje) {
       const ivaNormal = Math.round(priceBase * 0.15);
       const subtotal = priceBase + ivaNormal;
       const comision = Math.round(subtotal * 0.05);
@@ -480,6 +480,10 @@
       setTimeout(() => {
         ajustarAlturaIframe(1000);
       }, 500);
+    }
+
+    function ajustarAlturaIframe(altura) {
+      window.parent.postMessage({ tipo: 'ajustarAltura', altura }, '*');
     }
   </script>
 </body>
