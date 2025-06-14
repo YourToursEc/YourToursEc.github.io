@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reserva y Pago</title>
+  <!-- PayPhone -->
+  <script src="https://cdn.payphonetodoesposible.com/box/v1.1/payphone-payment-box.js" type="module"></script>
+  <link href="https://cdn.payphonetodoesposible.com/box/v1.1/payphone-payment-box.css" rel="stylesheet" />
+  <!-- Flatpickr -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+   <link href="css/style.css" rel="stylesheet" />
+  <style>
+    
+
+    body {
+      margin-top: 0rem; 
+    }
+    .container-fluid.booking {
+      margin-top: 2rem;
+      padding-bottom: 0rem;
+    }
+    .custom-select, .form-control {
+      height: 47px;
+       transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* Transición más suave */
+    }
+    #btn-pagar {
+      margin-top: 1rem;
+      height: 47px;
+      width: 100%;
+     background: linear-gradient(135deg, #28a745 0%, #5cb85c 100%); /* Degradado verde */
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+        letter-spacing: 0.5px; /* Mejor espaciado de letras */
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3); /* Sombra verde */
+    }
+    #btn-pagar:hover {
+      background: linear-gradient(135deg, #2dca4f 0%, #5cd85c 100%);
+      transform: translateY(-2px); /* Efecto de levitación */
+      box-shadow: 0 6px 16px rgba(45, 202, 79, 0.4);
+    }
+     #btn-pagar:active {
+      transform: translateY(0);
+    }
+    .flex-row-inputs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    .flex-row-inputs > * {
+      flex: 1 1 100%;
+    }
+    @media (min-width: 768px) {
+      body {
+        margin-top: 7rem;
+      }
+      .flex-row-inputs > * {
+        flex: 1 1 0;
+      }
+    }
+    
+    #region-select, #destino-select, #fecha-calendario, 
+    #precio-pagar, #tipo-experiencia, #numero-personas {
+      flex: 1 1 0;
+      padding: 12px 15px;
+      font-size: 1rem;
+      border: 2px solid #b9b9b9;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(25, 135, 84, 0.2);
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      background-color: #f9fff9;
+       color: var(--text-dark);
+      font-weight: 600;
+      outline: none;
+      background-repeat: no-repeat;
+      background-position: right 15px center;
+      background-size: 20px;
+        
+    }
+    
+   
+  
+   /* #destino-select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2328a745'%3E%3Cpath d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z'/%3E%3C/svg%3E");
+    }*/
+    
+    #fecha-calendario {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2328a745'%3E%3Cpath d='M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM9 10H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z'/%3E%3C/svg%3E");
+    }
+    
+    
+    #numero-personas {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2328a745'%3E%3Cpath d='M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V18c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-1.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05.02.01.03.03.04.04 1.14.83 1.93 1.94 1.93 3.41V18c0 .35-.07.69-.18 1H22c.55 0 1-.45 1-1v-1.5c0-2.33-4.67-3.5-7-3.5z'/%3E%3C/svg%3E");
+    }
+    
+    #precio-pagar {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2328a745'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z'/%3E%3C/svg%3E");
+      background-color: var(--primary-light);
+      cursor: not-allowed;
+    }
+
+    
+    #region-select:focus, #destino-select:focus, 
+    #fecha-calendario:focus, #precio-pagar:focus, 
+    #tipo-experiencia:focus, #numero-personas:focus {
+      border-color: #0f5132;
+      box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.2); /* Efecto outline */
+      background-color: #e6f4ea;
+    }
+    #precio-pagar {
+      background-color: #d4edda;
+      cursor: not-allowed;
+    }
+    #fecha-calendario::placeholder,
+    #precio-pagar::placeholder {
+      color: #6c757d;
+      font-weight: 400;
+    }
+    .fechas-disponibles {
+      background-color: #d4edda !important;
+      color: #155724 !important;
+      border-radius: 50% !important;
+      transition: all 0.2s ease;
+    }
+    .fechas-disponibles:hover {
+       
+      border: 2px solid #28a745 !important;
+      box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.3) !important;
+       background-color: #a5d6a7 !important; /* Verde pastel */
+      transform: scale(1.05); /* Efecto de zoom */
+      cursor: pointer;
+    }
+    
+  </style>
+</head>
+<body>
+  <div>
+    <div class="container-fluid booking">
+      <div class="container">
+        <div class="row align-items-center" style="min-height: 60px;">
+          <div class="col-md-12">
+            <div class="flex-row-inputs">
+              <select id="region-select">
+                <option selected disabled>Elige una región</option>
+                <option value="Sierra">Sierra</option>
+                <option value="Costa">Costa</option>
+                <option value="Amazonía">Amazonía</option>
+                <option value="Internacional">Internacional</option>
+              </select>
+
+              <select id="destino-select" disabled>
+                <option selected disabled>Elige destino</option>
+              </select>
+
+              <select id="tipo-experiencia" disabled>
+                <option selected disabled>Tipo de experiencia</option>
+              </select>
+
+              <input type="text" id="fecha-calendario" placeholder="Fecha salida" readonly disabled />
+              <div style="position: relative; flex: 1 1 0; max-width: 100%;">
+                <input
+                  type="number"
+                  id="numero-personas"
+                  min="1"
+                  max="99"
+                  value="1"
+                  placeholder="Número de personas"
+                  style="padding-left: 30xp; padding-right: 60px; width: 100%; font-size: 1rem; border: 2px solid #b9b9b9; border-radius: 12px; box-shadow: 0 4px 6px rgba(25, 135, 84, 0.2); transition: border-color 0.3s ease, box-shadow 0.3s ease; background-color: #f9fff9; color: #155724; font-weight: 600; outline: none; height: 48px; direction: rtl;">
+                <span
+                  style="position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #6c757d; pointer-events: none; font-weight: 600; font-size: 1.2rem;">
+                  
+                </span>
+              </div>
+              <input type="text" id="precio-pagar" placeholder="Total a pagar" readonly />
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <button id="btn-pagar" class="btn btn-success btn-block" style="height: 47px;">
+                  Pagar con Tarjeta
+                </button>
+                <div id="pp-button"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>    
+    </div>
+  </div>
+
+  <script>
+    // Funciones para generar fechas disponibles
+    function generarFechasBañosTodoIncluido() {
+      const fechasManuales = [
+ 
+  '2025-06-01', '2025-06-07', '2025-06-08', '2025-06-14', '2025-06-15', '2025-06-21', '2025-06-22', '2025-06-28', '2025-06-29',
+  '2025-07-05', '2025-07-06', '2025-07-12', '2025-07-13', '2025-07-19', '2025-07-20', '2025-07-26', '2025-07-27',
+  '2025-08-02', '2025-08-03', '2025-08-09', '2025-08-10', '2025-08-16', '2025-08-17', '2025-08-23', '2025-08-24', '2025-08-30', '2025-08-31',
+  '2025-09-06', '2025-09-07', '2025-09-13', '2025-09-14', '2025-09-20', '2025-09-21', '2025-09-27', '2025-09-28',
+  '2025-10-04', '2025-10-05', '2025-10-11', '2025-10-12', '2025-10-18', '2025-10-19', '2025-10-25', '2025-10-26',
+  // Noviembre 2025
+  '2025-11-01', '2025-11-02', '2025-11-08', '2025-11-09', '2025-11-15', '2025-11-16', '2025-11-22', '2025-11-23', '2025-11-29', '2025-11-30',
+  // Diciembre 2025
+  '2025-12-06', '2025-12-07', '2025-12-13', '2025-12-14', '2025-12-20', '2025-12-21', '2025-12-27', '2025-12-28',
+  // Enero 2026
+  '2026-01-04', '2026-01-05', '2026-01-11', '2026-01-12', '2026-01-18', '2026-01-19', '2026-01-25', '2026-01-26',
+  // Febrero 2026
+  '2026-02-01', '2026-02-02', '2026-02-08', '2026-02-09', '2026-02-15', '2026-02-16', '2026-02-22', '2026-02-23',
+  // Marzo 2026
+  '2026-03-01', '2026-03-02', '2026-03-08', '2026-03-09', '2026-03-15', '2026-03-16', '2026-03-22', '2026-03-23', '2026-03-29', '2026-03-30',
+  // Abril 2026
+  '2026-04-05', '2026-04-06', '2026-04-12', '2026-04-13', '2026-04-19', '2026-04-20', '2026-04-26', '2026-04-27',
+  // Mayo 2026
+  '2026-05-03', '2026-05-04', '2026-05-10', '2026-05-11', '2026-05-17', '2026-05-18', '2026-05-24', '2026-05-25', '2026-05-31'
+]
+
+      
+      const fechasValidas = [];
+      const ahora = new Date();
+      
+      for (const fechaStr of fechasManuales) {
+        const fecha = new Date(fechaStr);
+        const fechaCorte = new Date(fecha);
+        fechaCorte.setDate(fechaCorte.getDate() - 1);
+        fechaCorte.setHours(17, 0, 0, 0);
+        
+        if (ahora <= fechaCorte) {
+          fechasValidas.push(fechaStr);
+        }
+      }
+      
+      return fechasValidas;
+    }
+
+    function generarFechasBañosCompartido() {
+      const fechasManuales = [
+  // Junio 2025
+  '2025-06-04', '2025-06-06', '2025-06-11', '2025-06-13', '2025-06-18', '2025-06-20', '2025-06-25', '2025-06-27',
+  // Julio 2025
+  '2025-07-02', '2025-07-04', '2025-07-09', '2025-07-11', '2025-07-16', '2025-07-18', '2025-07-23', '2025-07-25', '2025-07-30',
+  // Agosto 2025
+  '2025-08-01', '2025-08-06', '2025-08-08', '2025-08-13', '2025-08-15', '2025-08-20', '2025-08-22', '2025-08-27', '2025-08-29',
+  // Septiembre 2025
+  '2025-09-03', '2025-09-05', '2025-09-10', '2025-09-12', '2025-09-17', '2025-09-19', '2025-09-24', '2025-09-26',
+  // Octubre 2025
+  '2025-10-01', '2025-10-03', '2025-10-08', '2025-10-10', '2025-10-15', '2025-10-17', '2025-10-22', '2025-10-24', '2025-10-29', '2025-10-31',
+  // Noviembre 2025
+  '2025-11-05', '2025-11-07', '2025-11-12', '2025-11-14', '2025-11-19', '2025-11-21', '2025-11-26', '2025-11-28',
+  // Diciembre 2025
+  '2025-12-03', '2025-12-05', '2025-12-10', '2025-12-12', '2025-12-17', '2025-12-19', '2025-12-24', '2025-12-26', '2025-12-31',
+  // Enero 2026
+  '2026-01-02', '2026-01-07', '2026-01-09', '2026-01-14', '2026-01-16', '2026-01-21', '2026-01-23', '2026-01-28', '2026-01-30',
+  // Febrero 2026
+  '2026-02-04', '2026-02-06', '2026-02-11', '2026-02-13', '2026-02-18', '2026-02-20', '2026-02-25', '2026-02-27',
+  // Marzo 2026
+  '2026-03-04', '2026-03-06', '2026-03-11', '2026-03-13', '2026-03-18', '2026-03-20', '2026-03-25', '2026-03-27',
+  // Abril 2026
+  '2026-04-01', '2026-04-03', '2026-04-08', '2026-04-10', '2026-04-15', '2026-04-17', '2026-04-22', '2026-04-24', '2026-04-29',
+  // Mayo 2026
+  '2026-05-01', '2026-05-06', '2026-05-08', '2026-05-13', '2026-05-15', '2026-05-20', '2026-05-22', '2026-05-27', '2026-05-29'
+]
+
+      
+      const fechasValidas = [];
+      const ahora = new Date();
+      
+      for (const fechaStr of fechasManuales) {
+        const fecha = new Date(fechaStr);
+        const fechaCorte = new Date(fecha);
+        fechaCorte.setDate(fechaCorte.getDate() - 1);
+        fechaCorte.setHours(17, 0, 0, 0);
+        
+        if (ahora <= fechaCorte) {
+          fechasValidas.push(fechaStr);
+        }
+      }
+      
+      return fechasValidas;
+    }
+
+     function generarFechasCotopaxi() {
+      const fechas = [];
+      const ahora = new Date();
+      const inicio = new Date();
+      const fin = new Date();
+      fin.setMonth(fin.getMonth() + 12);
+
+      let actual = new Date(inicio);
+      actual.setHours(0, 0, 0, 0);
+
+      while (actual <= fin) {
+        const fechaCorte = new Date(actual);
+        fechaCorte.setDate(fechaCorte.getDate() - 1);
+        fechaCorte.setHours(17, 0, 0, 0);
+
+        if (ahora <= fechaCorte) {
+          fechas.push(actual.toISOString().split('T')[0]);
+        }
+
+        actual.setDate(actual.getDate() + 1);
+      }
+
+      return fechas;
+    }
+
+     // Funciones para generar fechas disponibles
+    function generarFechasCuenca() {
+      const fechas = [];
+      const hoy = new Date();
+      const limite = new Date(hoy.getFullYear(), hoy.getMonth() + 12, hoy.getDate());
+
+      const primera = new Date('2025-06-19');
+      fechas.push(new Date(primera));
+
+      let siguiente = new Date('2025-06-19');
+      while (siguiente <= limite) {
+        fechas.push(new Date(siguiente));
+        siguiente.setDate(siguiente.getDate() + 14);
+      }
+
+      
+      return fechas.map(f => f.toISOString().split('T')[0]);
+    }
+
+    function generarFechasFinesDeSemanaConSalto(fechaInicioStr) {
+      const fechas = [];
+      const hoy = new Date();
+      const limite = new Date(hoy.getFullYear(), hoy.getMonth() + 14, hoy.getDate());
+
+      let fechaInicio = new Date(fechaInicioStr);
+      while (fechaInicio.getDay() !== 5) {
+        fechaInicio.setDate(fechaInicio.getDate() + 1);
+      }
+
+      while (fechaInicio <= limite) {
+        fechas.push(new Date(fechaInicio));
+        const domingo = new Date(fechaInicio);
+        domingo.setDate(domingo.getDate() + 1);
+        if (domingo <= limite) fechas.push(domingo);
+
+        fechaInicio.setDate(fechaInicio.getDate() + 14);
+      }
+
+      return fechas.map(f => f.toISOString().split('T')[0]);
+    }
+
+
+
+     function generarFechasQuilotoa(tipoExperiencia) {
+      const ahora = new Date();
+      const fechasManuales = [
+        {fecha: '2025-06-15', tipo: 'Privado'},
+      {fecha: '2025-06-03', tipo: 'Compartido'},
+{fecha: '2025-06-05', tipo: 'Compartido'},
+{fecha: '2025-06-07', tipo: 'Compartido'},
+{fecha: '2025-06-10', tipo: 'Compartido'},
+{fecha: '2025-06-12', tipo: 'Compartido'},
+{fecha: '2025-06-14', tipo: 'Compartido'},
+{fecha: '2025-06-17', tipo: 'Compartido'},
+{fecha: '2025-06-19', tipo: 'Compartido'},
+{fecha: '2025-06-21', tipo: 'Compartido'},
+{fecha: '2025-06-24', tipo: 'Compartido'},
+{fecha: '2025-06-26', tipo: 'Compartido'},
+{fecha: '2025-06-28', tipo: 'Compartido'},
+{fecha: '2025-07-01', tipo: 'Compartido'},
+{fecha: '2025-07-03', tipo: 'Compartido'},
+{fecha: '2025-07-05', tipo: 'Compartido'},
+{fecha: '2025-07-08', tipo: 'Compartido'},
+{fecha: '2025-07-10', tipo: 'Compartido'},
+{fecha: '2025-07-12', tipo: 'Compartido'},
+{fecha: '2025-07-15', tipo: 'Compartido'},
+{fecha: '2025-07-17', tipo: 'Compartido'},
+{fecha: '2025-07-19', tipo: 'Compartido'},
+{fecha: '2025-07-22', tipo: 'Compartido'},
+{fecha: '2025-07-24', tipo: 'Compartido'},
+{fecha: '2025-07-26', tipo: 'Compartido'},
+{fecha: '2025-07-29', tipo: 'Compartido'},
+{fecha: '2025-07-31', tipo: 'Compartido'},
+{fecha: '2025-08-02', tipo: 'Compartido'},
+{fecha: '2025-08-05', tipo: 'Compartido'},
+{fecha: '2025-08-07', tipo: 'Compartido'},
+{fecha: '2025-08-09', tipo: 'Compartido'},
+{fecha: '2025-08-12', tipo: 'Compartido'},
+{fecha: '2025-08-14', tipo: 'Compartido'},
+{fecha: '2025-08-16', tipo: 'Compartido'},
+{fecha: '2025-08-19', tipo: 'Compartido'},
+{fecha: '2025-08-21', tipo: 'Compartido'},
+{fecha: '2025-08-23', tipo: 'Compartido'},
+{fecha: '2025-08-26', tipo: 'Compartido'},
+{fecha: '2025-08-28', tipo: 'Compartido'},
+{fecha: '2025-08-30', tipo: 'Compartido'},
+
+        ];
+
+      const fechasDisponibles = [];
+
+      fechasManuales.forEach(item => {
+        const fecha = new Date(item.fecha);
+        const fechaLimite = new Date(fecha);
+        fechaLimite.setDate(fecha.getDate() - 0);
+        fechaLimite.setHours(17, 0, 0, 0);
+
+        if (ahora < fechaLimite && item.tipo === tipoExperiencia) {
+          fechasDisponibles.push(item.fecha);
+        }
+      });
+
+      return fechasDisponibles;
+    }
+
+     function generarFechasPapallacta(tipoExperiencia) {
+      const ahora = new Date();
+      const fechasManuales = [
+    
+  {fecha: '2025-06-15', tipo: 'Todo Incluido'},
+  {fecha: '2025-06-22', tipo: 'Todo Incluido'},
+  {fecha: '2025-06-29', tipo: 'Todo Incluido'},
+  {fecha: '2025-07-06', tipo: 'Todo Incluido'},
+  {fecha: '2025-07-13', tipo: 'Todo Incluido'},
+  {fecha: '2025-07-20', tipo: 'Todo Incluido'},
+  {fecha: '2025-07-27', tipo: 'Todo Incluido'},
+  {fecha: '2025-08-03', tipo: 'Todo Incluido'},
+  {fecha: '2025-08-10', tipo: 'Todo Incluido'},
+  {fecha: '2025-08-17', tipo: 'Todo Incluido'},
+  {fecha: '2025-08-24', tipo: 'Todo Incluido'},
+  {fecha: '2025-08-31', tipo: 'Todo Incluido'},
+  {fecha: '2025-09-07', tipo: 'Todo Incluido'}
+];
+
+
+      const fechasDisponibles = [];
+
+      fechasManuales.forEach(item => {
+        const fecha = new Date(item.fecha);
+        const fechaLimite = new Date(fecha);
+        fechaLimite.setDate(fecha.getDate() - 0);
+        fechaLimite.setHours(17, 0, 0, 0);
+
+        if (ahora < fechaLimite && item.tipo === tipoExperiencia) {
+          fechasDisponibles.push(item.fecha);
+        }
+      });
+
+      return fechasDisponibles;
+    }
+
+    
+
+
+     function generarFechasMisahualli() {
+  // Lista de fechas manuales (formato YYYY-MM-DD)
+ const fechasManuales = [
+  '2025-06-15',  // Primer domingo después de hoy
+  '2025-06-22',
+  '2025-06-29',
+  '2025-07-06',
+  '2025-07-13',
+  '2025-07-20',
+  '2025-07-27',
+  '2025-08-03',
+  '2025-08-10',
+  '2025-08-17',
+  '2025-08-24',
+  '2025-08-31',
+  '2025-09-07',
+  '2025-09-14',
+  '2025-09-21',
+  '2025-09-28',
+  '2025-10-05',
+  '2025-10-12',
+  '2025-10-19',
+  '2025-10-26',
+  '2025-11-02',
+  '2025-11-09',
+  '2025-11-16',
+  '2025-11-23',
+  '2025-11-30',
+  '2025-12-07',
+  '2025-12-14',
+  '2025-12-21',
+  '2025-12-28'
+]
+  const fechasValidas = [];
+  const ahora = new Date();
+
+  for (const fechaStr of fechasManuales) {
+    const fecha = new Date(fechaStr);
+    const fechaCorte = new Date(fecha);
+    fechaCorte.setDate(fechaCorte.getDate() - 1);
+    fechaCorte.setHours(17, 0, 0, 0); // Corte a las 17:00 del día anterior
+
+    if (ahora <= fechaCorte) {
+      fechasValidas.push(fechaStr);
+    }
+  }
+
+  return fechasValidas;
+}
+
+
+    // Datos de la aplicación
+    const fechasDisponibles = {
+        "Cuenca": generarFechasCuenca(),
+
+        "Cotopaxi": function(tipoExperiencia) {
+        return generarFechasCotopaxi(tipoExperiencia);
+      },
+
+      "Chimborazo": generarFechasFinesDeSemanaConSalto('2025-06-11'),
+
+      "Quilotoa": function(tipoExperiencia) {
+        return generarFechasQuilotoa(tipoExperiencia);
+      },
+      "Papallacta": function(tipoExperiencia) {
+        return generarFechasPapallacta(tipoExperiencia);
+      },
+
+      "Mitad del Mundo": generarFechasCotopaxi(),
+
+      "Puerto Lopez": generarFechasCuenca(),
+
+      "Atacames":generarFechasCuenca(),
+      
+
+
+
+      "Baños de Agua Santa": function(tipoExperiencia) {
+        if (tipoExperiencia === "Todo Incluido") {
+          return generarFechasBañosTodoIncluido();
+        } else if (tipoExperiencia === "Compartido") {
+          return generarFechasBañosCompartido();
+        }
+        return [];
+      },
+
+      "Cotundo" :generarFechasMisahualli,
+      "Misahualli": generarFechasMisahualli(),
+      // Otras funciones de fechas...
+    };
+
+    const regiones = {
+      "Sierra": ["Cotopaxi", "Cuenca", "Chimborazo", "Quilotoa", "Papallacta", "Mitad del Mundo"],
+      "Amazonía": ["Misahualli", "Baños de Agua Santa", "Cotundo"],
+      "Internacional": ["Proximamente"],
+      "Costa": ["Puerto Lopez", "Atacames"]
+    };
+
+    const tiposExperiencia = {
+        "Cotopaxi": ["Compartido"],
+        "Quilotoa": ["Compartido"],
+        "Papallacta": ["Todo Incluido"],
+        "Mitad del Mundo": ["PREMIUM", "GOLD"],
+        "Baños de Agua Santa": ["Todo Incluido", "Compartido"],
+
+      // Otros tipos de experiencia...
+      "_default": ["Todo Incluido"]
+    };
+
+    const preciosBase = {
+         "Cotopaxi":   42.61,
+    
+         "Cuenca": 156.52,
+         "Chimborazo": 33.04,
+         "Quilotoa": 42.61,
+        //finDeSemana: 55.00,
+        //entreSemana: 40.00
+     // },
+         "Papallacta": {
+         "Todo Incluido": 51.30,
+        //"Privado": 150
+      },
+         "Mitad del Mundo": {
+         "PREMIUM": {
+          finDeSemana: 21.74,
+          entreSemana: 21.74
+        },
+        "GOLD": {
+          finDeSemana: 39.13,
+          entreSemana: 39.13
+        }
+      },
+         "Puerto Lopez": 152.17,
+         "Atacames": 113.04,
+      
+
+         "Baños de Agua Santa": {
+         "Todo Incluido": {
+          finDeSemana: 33.91,
+          entreSemana: 33.91
+        },
+        "Compartido": {
+          finDeSemana: 60,
+          entreSemana: 60
+        }
+      },
+
+         "Cotundo": 33.91,
+         "Misahualli": 33.91
+      // Otros precios...
+    };
+
+    // Elementos del DOM
+    const regionSelect = document.getElementById('region-select');
+    const destinoSelect = document.getElementById('destino-select');
+    const tipoExperienciaSelect = document.getElementById('tipo-experiencia');
+    const fechaInput = document.getElementById('fecha-calendario');
+    const numeroPersonasInput = document.getElementById('numero-personas');
+    const precioInput = document.getElementById('precio-pagar');
+    const btnPagar = document.getElementById('btn-pagar');
+
+    // Variables globales
+    let priceBaseCentavos = 0;
+    let numeroPersonas = 1;
+    let calendario;
+
+    // Event Listeners
+    regionSelect.addEventListener('change', () => {
+      const destinos = regiones[regionSelect.value] || [];
+      destinoSelect.innerHTML = '<option selected disabled>Elige destino</option>';
+      destinos.forEach(dest => {
+        const opt = document.createElement('option');
+        opt.value = dest;
+        opt.textContent = dest;
+        destinoSelect.appendChild(opt);
+      });
+      destinoSelect.disabled = destinos.length === 0;
+      tipoExperienciaSelect.innerHTML = '<option selected disabled>Tipo de experiencia</option>';
+      tipoExperienciaSelect.disabled = true;
+      fechaInput.value = '';
+      fechaInput.disabled = true;
+      precioInput.value = '';
+      if (calendario) calendario.destroy();
+      document.getElementById("pp-button").innerHTML = "";
+    });
+
+    destinoSelect.addEventListener('change', () => {
+      const destino = destinoSelect.value;
+      const tipos = tiposExperiencia[destino] || tiposExperiencia["_default"];
+      tipoExperienciaSelect.innerHTML = '<option selected disabled>Tipo de experiencia</option>';
+      tipos.forEach(tipo => {
+        const opt = document.createElement('option');
+        opt.value = tipo;
+        opt.textContent = tipo;
+        tipoExperienciaSelect.appendChild(opt);
+      });
+      tipoExperienciaSelect.disabled = tipos.length === 0;
+      fechaInput.value = '';
+      fechaInput.disabled = true;
+      precioInput.value = '';
+      if (calendario) calendario.destroy();
+      document.getElementById("pp-button").innerHTML = "";
+    });
+
+    tipoExperienciaSelect.addEventListener('change', () => {
+      const destino = destinoSelect.value;
+      const tipoExperiencia = tipoExperienciaSelect.value;
+      
+      let fechas;
+      if (typeof fechasDisponibles[destino] === 'function') {
+        fechas = fechasDisponibles[destino](tipoExperiencia);
+      } else {
+        fechas = fechasDisponibles[destino];
+      }
+      
+      if (calendario) calendario.destroy();
+
+      if (fechas) {
+        calendario = flatpickr(fechaInput, {
+          dateFormat: "Y-m-d",
+          minDate: "today",
+          enable: fechas,
+          onOpen: () => {
+            ajustarAlturaIframe(400);
+          },
+          onClose: () => {
+            ajustarAlturaIframe(190);
+          },
+          onDayCreate: function (dObj, dStr, fp, dayElem) {
+            const fecha = dayElem.dateObj.toISOString().split('T')[0];
+            if (fechas.includes(fecha)) {
+              dayElem.classList.add('fechas-disponibles');
+            }
+          }
+        });
+      } else {
+        calendario = flatpickr(fechaInput, {
+          dateFormat: "Y-m-d",
+          minDate: "today",
+          onOpen: () => {
+            ajustarAlturaIframe(400);
+          },
+          onClose: () => {
+            ajustarAlturaIframe(190);
+          }
+        });
+      }
+
+      fechaInput.disabled = false;
+      precioInput.value = '';
+      document.getElementById("pp-button").innerHTML = "";
+    });
+
+    fechaInput.addEventListener('change', () => {
+      calcularYMostrarPrecio();
+      document.getElementById("pp-button").innerHTML = "";
+    });
+
+    numeroPersonasInput.addEventListener('change', () => {
+      if (fechaInput.value) {
+        calcularYMostrarPrecio();
+        document.getElementById("pp-button").innerHTML = "";
+      }
+    });
+
+    // Función para calcular el precio corregida
+    function calcularYMostrarPrecio() {
+      const destino = destinoSelect.value;
+      const tipoExperiencia = tipoExperienciaSelect.value;
+      const fecha = fechaInput.value;
+      numeroPersonas = parseInt(numeroPersonasInput.value) || 1;
+      
+      if (!destino || !fecha) {
+        precioInput.value = '';
+        return;
+      }
+
+      const fechaObj = new Date(fecha);
+      const diaSemana = fechaObj.getDay();
+      const esFinDeSemana = (diaSemana === 5 || diaSemana === 6); // 0 es domingo, 6 es sábado
+
+      let precioBase;
+      const precioDestino = preciosBase[destino];
+
+      // Lógica específica para Baños de Agua Santa
+      if (destino === "Baños de Agua Santa","Mitad del Mundo","Cotopaxi" && precioDestino && precioDestino[tipoExperiencia]) {
+        precioBase = esFinDeSemana ? 
+          precioDestino[tipoExperiencia].finDeSemana : 
+          precioDestino[tipoExperiencia].entreSemana;
+      } 
+      // Lógica para otros destinos...
+      else if (typeof precioDestino === 'object' && precioDestino[tipoExperiencia] !== undefined) {
+        precioBase = precioDestino[tipoExperiencia];
+      } else if (typeof precioDestino === 'number') {
+        precioBase = precioDestino;
+      } else {
+        precioBase = 0;
+      }
+
+      if (!precioBase) {
+        precioInput.value = 'Consultar';
+        return;
+      }
+
+      priceBaseCentavos = Math.round(precioBase * 100) * numeroPersonas;
+
+      const iva = priceBaseCentavos * 0.15;
+      const subtotal = priceBaseCentavos + iva;
+      const comision = subtotal * 0.05;
+      const ivaComision = comision * 0.15;
+      const total = subtotal + comision + ivaComision;
+
+      precioInput.value = `$${(total / 100).toFixed(2)} (${numeroPersonas} persona${numeroPersonas !== 1 ? 's' : ''})`;
+    }
+
+    // Resto del código (event listeners para el botón de pago, etc.)
+    btnPagar.addEventListener('click', () => {
+      if (!regionSelect.value) {
+        alert("Por favor, selecciona una región.");
+        regionSelect.focus();
+        return;
+      }
+      
+      if (!destinoSelect.value || destinoSelect.value === "Elige destino") {
+        alert("Por favor, selecciona un destino.");
+        destinoSelect.focus();
+        return;
+      }
+      
+      const destino = destinoSelect.value;
+      if (tiposExperiencia[destino] && (!tipoExperienciaSelect.value || tipoExperienciaSelect.value === "Tipo de experiencia")) {
+        alert("Por favor, selecciona un tipo de experiencia.");
+        tipoExperienciaSelect.focus();
+        return;
+      }
+      
+      if (!fechaInput.value) {
+        alert("Por favor, selecciona una fecha de viaje.");
+        fechaInput.focus();
+        return;
+      }
+      
+      if (!priceBaseCentavos || precioInput.value === 'Consultar') {
+        alert("Por favor, completa todos los campos correctamente para calcular el precio.");
+        return;
+      }
+      
+      ajustarAlturaIframe(600);
+      generarBotonPago(priceBaseCentavos, fechaInput.value);
+    });
+
+    function generarBotonPago(priceBase, fechaViaje) {
+      const ivaNormal = Math.round(priceBase * 0.15);
+      const subtotal = priceBase + ivaNormal;
+      const comision = Math.round(subtotal * 0.05);
+      const ivaComision = Math.round(comision * 0.15);
+      const amountWithTax = comision + ivaComision;
+      const totalAmount = subtotal + amountWithTax;
+
+      const destinoSeleccionado = destinoSelect.value;
+      const tipoExperiencia = tipoExperienciaSelect.value || "Estándar";
+
+      document.getElementById("pp-button").innerHTML = "";
+
+      const pago = new PPaymentButtonBox({
+  token: process.env.NEXT_PUBLIC_PAYPHONE_TOKEN || '0',
+        clientTransactionId: `TRANS-${Date.now()}-${Math.floor(Math.random() * 100000)}`,
+  amount: totalAmount,
+        amountWithoutTax: priceBase,
+        amountWithTax: amountWithTax,
+        tax: ivaNormal,
+        currency: "USD",
+        storeId: process.env.NEXT_PUBLIC_PAYPHONE_STORE_ID || '11212', // Store ID desde Vercel
+        reference: `Reserva para ${destinoSeleccionado} (${tipoExperiencia}) - ${numeroPersonas} persona${numeroPersonas !== 1 ? 's' : ''} - Fecha de viaje: ${fechaViaje}`
+      });
+
+      pago.render('pp-button');
+
+      setTimeout(() => {
+        ajustarAlturaIframe(1000);
+      }, 500);
+    }
+
+    function ajustarAlturaIframe(altura) {
+      window.parent.postMessage({ tipo: 'ajustarAltura', altura }, '*');
+    }
+
+    document.getElementById('btn-pagar').addEventListener('click', function() {
+  this.classList.add('processing');
+  setTimeout(() => this.classList.remove('processing'), 3000); // Simula 3 seg de carga
+});
+  </script>
+</body>
+</html>
