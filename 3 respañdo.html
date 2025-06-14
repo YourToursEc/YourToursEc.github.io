@@ -447,60 +447,39 @@
       ajustarAlturaIframe(600);
       generarBotonPago(priceBaseCentavos, fechaInput.value);
     });
+    
+ function generarBotonPago(priceBase, fechaViaje) {
+      const ivaNormal = Math.round(priceBase * 0.15);
+      const subtotal = priceBase + ivaNormal;
+      const comision = Math.round(subtotal * 0.05);
+      const ivaComision = Math.round(comision * 0.15);
+      const amountWithTax = comision + ivaComision;
+      const totalAmount = subtotal + amountWithTax;
 
-async function generarBotonPago(priceBase, fechaViaje) {
-  const ivaNormal = Math.round(priceBase * 0.15);
-  const subtotal = priceBase + ivaNormal;
-  const comision = Math.round(subtotal * 0.05);
-  const ivaComision = Math.round(comision * 0.15);
-  const totalAmount = subtotal + comision + ivaComision;
+      const destinoSeleccionado = destinoSelect.value;
+      const tipoExperiencia = tipoExperienciaSelect.value || "Estándar";
 
-  const destinoSeleccionado = destinoSelect.value;
-  const tipoExperiencia = tipoExperienciaSelect.value || "Estándar";
+      document.getElementById("pp-button").innerHTML = "";
 
-  try {
-    // 1. Llama a tu backend en Vercel
-    const response = await fetch('https://tudominio.vercel.app/api/payphone', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
+      
+       const pago = new PPaymentButtonBox({
+        token: process.env.PAYPHONE_PRIVATE_KEY,
+        clientTransactionId: `TRANS-${Date.now()}-${Math.floor(Math.random() * 100000)}`,
         amount: totalAmount,
         amountWithoutTax: priceBase,
-        amountWithTax: comision + ivaComision,
+        amountWithTax: amountWithTax,
         tax: ivaNormal,
         currency: "USD",
-        reference: `Reserva para ${destinoSeleccionado} (${tipoExperiencia}) - ${numeroPersonas} persona${numeroPersonas !== 1 ? 's' : ''} - Fecha: ${fechaViaje}`
-      })
-    });
+        storeId: process.env.PAYPHONE_STORE_ID,
+        reference: `Reserva para ${destinoSeleccionado} (${tipoExperiencia}) - ${numeroPersonas} persona${numeroPersonas !== 1 ? 's' : ''} - Fecha de viaje: ${fechaViaje}`
+      });
 
-    const data = await response.json();
-    if (!data.success) throw new Error(data.error || 'Error en el pago');
 
-    // 2. Renderiza el botón con la respuesta
-    document.getElementById("pp-button").innerHTML = "";
-    const pago = new PPaymentButtonBox({
-      token: data.token,
-      clientTransactionId: data.clientTransactionId,
-      amount: totalAmount,
-      amountWithoutTax: priceBase,
-      amountWithTax: comision + ivaComision,
-      tax: ivaNormal,
-      currency: "USD",
-      storeId: "TU_STORE_ID_PUBLICO", // Este puede ser público
-      reference: `Reserva para ${destinoSeleccionado} (${tipoExperiencia}) - ${numeroPersonas} persona${numeroPersonas !== 1 ? 's' : ''} - Fecha: ${fechaViaje}`
-    });
+      pago.render('pp-button');
 
-    pago.render('pp-button');
-
-  } catch (error) {
-    console.error("Error:", error);
-    alert(`Error al procesar el pago: ${error.message}`);
-    ajustarAlturaIframe(190);
-  }
-}
-
-    function ajustarAlturaIframe(altura) {
-      window.parent.postMessage({ tipo: 'ajustarAltura', altura }, '*');
+      setTimeout(() => {
+        ajustarAlturaIframe(1000);
+      }, 500);
     }
   </script>
 </body>
