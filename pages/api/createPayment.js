@@ -1,57 +1,47 @@
-// Ruta: /api/createPayment.js
+// /api/createPayment.js (Ejemplo con Node.js y Express o en Vercel serverless function)
+import fetch from "node-fetch";
 
 export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ message: 'Método no permitido' });
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const token = process.env.PAYPHONE_TOKEN;     // Define en el entorno
-  const storeId = process.env.PAYPHONE_STOREID; // Define en el entorno
+  const { amount, phoneNumber, clientTransactionId } = req.body;
 
-  if (!token || !storeId) {
-    return res.status(500).json({ message: 'Token o StoreId no configurado en el entorno' });
+  if (!amount || !phoneNumber || !clientTransactionId) {
+    return res.status(400).json({ error: "Missing parameters" });
   }
+
+  const token = process.env.PAYPHONE_TOKEN;  // Tu token guardado en variables de entorno
+  const storeId = process.env.PAYPHONE_STORE_ID;
+
+  const paymentPayload = {
+    storeId,
+    clientTransactionId,
+    amount,
+    phoneNumber,
+    // Otros parámetros según API PayPhone
+  };
 
   try {
-    const {
-      amount,
-      amountWithoutTax,
-      amountWithTax,
-      tax,
-      reference,
-      clientTransactionId,
-    } = req.body;
-
-    // Crear solicitud a PayPhone API
-    const response = await fetch('https://pay.payphonetodoesposible.com/api/button/v2/token', {
-      method: 'POST',
+    const response = await fetch("https://api.payphonetodoesposible.com/api/payment", {
+      method: "POST",
       headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({
-        amount,
-        amountWithoutTax,
-        amountWithTax,
-        tax,
-        clientTransactionId,
-        reference,
-        currency: 'USD',
-        storeId,
-        responseUrl: 'https://tusitio.com/respuesta.html', // Cambia esto según tu sitio
-      }),
+      body: JSON.stringify(paymentPayload),
     });
 
     const data = await response.json();
 
     if (!response.ok) {
-      return res.status(response.status).json({ message: 'Error al crear transacción', detalle: data });
+      return res.status(response.status).json({ error: data });
     }
 
-    // Devuelve datos para el botón o redirección
     return res.status(200).json(data);
-
   } catch (error) {
-    return res.status(500).json({ message: 'Error interno del servidor', error: error.message });
+    return res.status(500).json({ error: "Server error", details: error.message });
   }
 }
+
