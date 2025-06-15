@@ -1,0 +1,29 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/*.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "3 respañdo.html",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/",
+      "dest": "/3%20respañdo.html"  // Codificado para espacios
+    },
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/3%20respañdo.html"
+    }
+  ]
+}
