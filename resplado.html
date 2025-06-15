@@ -448,40 +448,55 @@
       generarBotonPago(priceBaseCentavos, fechaInput.value);
     });
 
-    function generarBotonPago(priceBase, fechaViaje) {
-      const ivaNormal = Math.round(priceBase * 0.15);
-      const subtotal = priceBase + ivaNormal;
-      const comision = Math.round(subtotal * 0.05);
-      const ivaComision = Math.round(comision * 0.15);
-      const amountWithTax = comision + ivaComision;
-      const totalAmount = subtotal + amountWithTax;
+ async function generarBotonPago(priceBase, fechaViaje) {
+  const ivaNormal = Math.round(priceBase * 0.15);
+  const subtotal = priceBase + ivaNormal;
+  const comision = Math.round(subtotal * 0.05);
+  const ivaComision = Math.round(comision * 0.15);
+  const amountWithTax = comision + ivaComision;
+  const totalAmount = subtotal + amountWithTax;
 
-      const destinoSeleccionado = destinoSelect.value;
-      const tipoExperiencia = tipoExperienciaSelect.value || "Estándar";
+  const destinoSeleccionado = destinoSelect.value;
+  const tipoExperiencia = tipoExperienciaSelect.value || "Estándar";
 
-      document.getElementById("pp-button").innerHTML = "";
+  document.getElementById("pp-button").innerHTML = "";
 
-      
-       const pago = new PPaymentButtonBox({
-        token: process.env.PAYPHONE_PRIVATE_KEY,
-        clientTransactionId: `TRANS-${Date.now()}-${Math.floor(Math.random() * 100000)}`,
+  try {
+    // Llama a tu API en Vercel
+    const response = await fetch('/api/generar-pago', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
         amount: totalAmount,
-        amountWithoutTax: priceBase,
-        amountWithTax: amountWithTax,
-        tax: ivaNormal,
-        currency: "USD",
-        storeId: process.env.PAYPHONE_STORE_ID,
-        reference: `Reserva para ${destinoSeleccionado} (${tipoExperiencia}) - ${numeroPersonas} persona${numeroPersonas !== 1 ? 's' : ''} - Fecha de viaje: ${fechaViaje}`
-      });
+        destino: destinoSeleccionado,
+        personas: numeroPersonas,
+        fecha: fechaViaje
+      })
+    });
 
+    const data = await response.json();
 
-      pago.render('pp-button');
+    const pago = new PPaymentButtonBox({
+      token: "TU_API_KEY_PUBLICA", // Usa tu clave PÚBLICA aquí
+      clientTransactionId: data.clientTransactionId,
+      amount: data.amount,
+      currency: data.currency,
+      reference: `Reserva para ${destinoSeleccionado}`
+    });
 
-      setTimeout(() => {
-        ajustarAlturaIframe(1000);
-      }, 500);
-    }
+    pago.render('pp-button');
 
+  } catch (error) {
+    console.error('Error:', error);
+    alert('Error al generar el pago: ' + error.message);
+  }
+
+  setTimeout(() => {
+    ajustarAlturaIframe(1000);
+  }, 500);
+}
     function ajustarAlturaIframe(altura) {
       window.parent.postMessage({ tipo: 'ajustarAltura', altura }, '*');
     }
