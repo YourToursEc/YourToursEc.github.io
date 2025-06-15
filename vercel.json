@@ -2,18 +2,22 @@
   "version": 2,
   "builds": [
     {
-      "src": "api/*.js",
+      "src": "api/pago.js",
       "use": "@vercel/node"
+    },
+    {
+      "src": "public/respaldo.html",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
     {
-      "src": "/api/(.*)",
-      "dest": "/api/$1"
+      "src": "/api/pago",
+      "dest": "/api/pago.js"
     },
     {
       "src": "/(.*)",
-      "dest": "/respaldo.html"
+      "dest": "/public/respaldo.html"
     }
   ]
 }
