@@ -6,9 +6,9 @@
     "start": "vercel dev",
     "deploy": "vercel --prod"
   },
-  "dependencies": {
-    "micro": "^15.1.0",
-    "cors": "^2.8.5",
-    "payphone-node": "^1.1.3"
-  }
+ "dependencies": {
+  "micro": "14.1.0",
+  "cors": "2.8.5",
+  "payphone-node": "1.1.3"
+}
 }
