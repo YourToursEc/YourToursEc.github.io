@@ -1,3 +1,11 @@
+const express = require('express');
+const cors = require('cors');
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+
+app.post('/', async (req, res) => {
 const { createPayment } = require('payphone-node');
 const cors = require('micro-cors')();
 
@@ -30,4 +38,6 @@ module.exports = cors(async (req, res) => {
       body: JSON.stringify({ error: error.message })
     };
   }
+  res.json({ success: true });
 });
+
