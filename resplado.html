@@ -1,488 +1,481 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Reserva y Pago</title>
-  <!-- PayPhone -->
-  <script src="https://cdn.payphonetodoesposible.com/box/v1.1/payphone-payment-box.js" type="module"></script>
-  <link href="https://cdn.payphonetodoesposible.com/box/v1.1/payphone-payment-box.css" rel="stylesheet" />
-  <!-- Flatpickr -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-  <style>
-    body {
-      margin-top: 0rem; 
-    }
-    .container-fluid.booking {
-      margin-top: 2rem;
-      padding-bottom: 0rem;
-    }
-    .custom-select, .form-control {
-      height: 47px;
-    }
-    #btn-pagar {
-      margin-top: 1rem;
-      height: 47px;
-      width: 100%;
-      background-color: #28a745;
-      color: white;
-      border: none;
-      cursor: pointer;
-      font-size: 16px;
-      font-weight: 600;
-      transition: background-color 0.3s ease;
-    }
-    #btn-pagar:hover {
-      background-color: #2dca4f;
-    }
-    #pp-button {
-      margin-top: 1rem;
-    }
-    .flex-row-inputs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-    }
-    .flex-row-inputs > * {
-      flex: 1 1 100%;
-    }
-    @media (min-width: 768px) {
-      body {
-        margin-top: 7rem;
-      }
-      .flex-row-inputs > * {
-        flex: 1 1 0;
-      }
-    }
-    #region-select, #destino-select, #fecha-calendario, 
-    #precio-pagar, #tipo-experiencia, #numero-personas {
-      flex: 1 1 0;
-      padding: 12px 15px;
-      font-size: 1rem;
-      border: 2px solid #b9b9b9;
-      border-radius: 12px;
-      box-shadow: 0 4px 6px rgba(25, 135, 84, 0.2);
-      transition: border-color 0.3s ease, box-shadow 0.3s ease;
-      background-color: #f9fff9;
-      color: #155724;
-      font-weight: 600;
-      outline: none;
-      margin: 0;
-    }
-    #region-select:focus, #destino-select:focus, 
-    #fecha-calendario:focus, #precio-pagar:focus, 
-    #tipo-experiencia:focus, #numero-personas:focus {
-      border-color: #0f5132;
-      box-shadow: 0 0 8px #0f5132aa;
-      background-color: #e6f4ea;
-    }
-    #precio-pagar {
-      background-color: #d4edda;
-      cursor: not-allowed;
-    }
-    #fecha-calendario::placeholder,
-    #precio-pagar::placeholder {
-      color: #6c757d;
-      font-weight: 400;
-    }
-    .fechas-disponibles {
-      background-color: #d4edda !important;
-      color: #155724 !important;
-      border-radius: 50% !important;
-      transition: all 0.2s ease;
-    }
-    .fechas-disponibles:hover {
-      border: 2px solid #28a745 !important;
-      box-shadow: 0 0 4px #28a745aa;
-      cursor: pointer;
-    }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reserva y Pago</title>
+    <script src="https://cdn.payphonetodoesposible.com/box/v1.1/payphone-payment-box.js" type="module"></script>
+  <link href="https://cdn.payphonetodoesposible.com/box/v1.1/payphone-payment-box.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <style>
+    body {
+      margin-top: 0rem; 
+    }
+    .container-fluid.booking {
+      margin-top: 2rem;
+      padding-bottom: 0rem;
+    }
+    .custom-select, .form-control {
+      height: 47px;
+    }
+    #btn-pagar {
+      margin-top: 1rem;
+      height: 47px;
+      width: 100%;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      transition: background-color 0.3s ease;
+    }
+    #btn-pagar:hover {
+      background-color: #2dca4f;
+    }
+    #pp-button {
+      margin-top: 1rem;
+    }
+    .flex-row-inputs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    .flex-row-inputs > * {
+      flex: 1 1 100%;
+    }
+    @media (min-width: 768px) {
+      body {
+        margin-top: 7rem;
+      }
+      .flex-row-inputs > * {
+        flex: 1 1 0;
+      }
+    }
+    #region-select, #destino-select, #fecha-calendario, 
+    #precio-pagar, #tipo-experiencia, #numero-personas {
+      flex: 1 1 0;
+      padding: 12px 15px;
+      font-size: 1rem;
+      border: 2px solid #b9b9b9;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(25, 135, 84, 0.2);
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      background-color: #f9fff9;
+      color: #155724;
+      font-weight: 600;
+      outline: none;
+      margin: 0;
+    }
+    #region-select:focus, #destino-select:focus, 
+    #fecha-calendario:focus, #precio-pagar:focus, 
+    #tipo-experiencia:focus, #numero-personas:focus {
+      border-color: #0f5132;
+      box-shadow: 0 0 8px #0f5132aa;
+      background-color: #e6f4ea;
+    }
+    #precio-pagar {
+      background-color: #d4edda;
+      cursor: not-allowed;
+    }
+    #fecha-calendario::placeholder,
+    #precio-pagar::placeholder {
+      color: #6c757d;
+      font-weight: 400;
+    }
+    .fechas-disponibles {
+      background-color: #d4edda !important;
+      color: #155724 !important;
+      border-radius: 50% !important;
+      transition: all 0.2s ease;
+    }
+    .fechas-disponibles:hover {
+      border: 2px solid #28a745 !important;
+      box-shadow: 0 0 4px #28a745aa;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-  <div>
-    <div class="container-fluid booking">
-      <div class="container">
-        <div class="row align-items-center" style="min-height: 60px;">
-          <div class="col-md-12">
-            <div class="flex-row-inputs">
-              <select id="region-select">
-                <option selected disabled>Elige una región</option>
-                <option value="Sierra">Sierra</option>
-                <option value="Costa">Costa</option>
-                <option value="Amazonía">Amazonía</option>
-                <option value="Internacional">Internacional</option>
-              </select>
+  <div>
+    <div class="container-fluid booking">
+      <div class="container">
+        <div class="row align-items-center" style="min-height: 60px;">
+          <div class="col-md-12">
+            <div class="flex-row-inputs">
+              <select id="region-select">
+                <option selected disabled>Elige una región</option>
+                <option value="Sierra">Sierra</option>
+                <option value="Costa">Costa</option>
+                <option value="Amazonía">Amazonía</option>
+                <option value="Internacional">Internacional</option>
+              </select>
 
-              <select id="destino-select" disabled>
-                <option selected disabled>Elige destino</option>
-              </select>
+              <select id="destino-select" disabled>
+                <option selected disabled>Elige destino</option>
+              </select>
 
-              <select id="tipo-experiencia" disabled>
-                <option selected disabled>Tipo de experiencia</option>
-              </select>
+              <select id="tipo-experiencia" disabled>
+                <option selected disabled>Tipo de experiencia</option>
+              </select>
 
-              <input type="text" id="fecha-calendario" placeholder="Fecha salida" readonly disabled />
-              <div style="position: relative; flex: 1 1 0; max-width: 100%;">
-                <input
-                  type="number"
-                  id="numero-personas"
-                  min="1"
-                  max="99"
-                  value="1"
-                  placeholder="Número de personas"
-                  style="padding-left: 60px; padding-right: 20px; width: 100%; font-size: 1rem; border: 2px solid #b9b9b9; border-radius: 12px; box-shadow: 0 4px 6px rgba(25, 135, 84, 0.2); transition: border-color 0.3s ease, box-shadow 0.3s ease; background-color: #f9fff9; color: #155724; font-weight: 600; outline: none; height: 48px;">
-                <span
-                  style="position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #6c757d; pointer-events: none; font-weight: 600; font-size: 1.2rem;">
-                  👥
-                </span>
-              </div>
-              <input type="text" id="precio-pagar" placeholder="Total a pagar" readonly />
-            </div>
-            <div class="row">
-              <div class="col-md-12">
-                <button id="btn-pagar" class="btn btn-success btn-block" style="height: 47px;">
-                  Pagar con Tarjeta
-                </button>
-                <div id="pp-button"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>    
-    </div>
-  </div>
+              <input type="text" id="fecha-calendario" placeholder="Fecha salida" readonly disabled />
+              <div style="position: relative; flex: 1 1 0; max-width: 100%;">
+                <input
+                  type="number"
+                  id="numero-personas"
+                  min="1"
+                  max="99"
+                  value="1"
+                  placeholder="Número de personas"
+                  style="padding-left: 60px; padding-right: 20px; width: 100%; font-size: 1rem; border: 2px solid #b9b9b9; border-radius: 12px; box-shadow: 0 4px 6px rgba(25, 135, 84, 0.2); transition: border-color 0.3s ease, box-shadow 0 3s ease; background-color: #f9fff9; color: #155724; font-weight: 600; outline: none; height: 48px;">
+                <span
+                  style="position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #6c757d; pointer-events: none; font-weight: 600; font-size: 1.2rem;">
+                  👥
+                </span>
+              </div>
+              <input type="text" id="precio-pagar" placeholder="Total a pagar" readonly />
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <button id="btn-pagar" class="btn btn-success btn-block" style="height: 47px;">
+                  Pagar con Tarjeta
+                </button>
+                <div id="pp-button"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>    
+    </div>
+  </div>
 
-  <script>
-    // Funciones para generar fechas disponibles
-    function generarFechasBañosTodoIncluido() {
-      const fechasManuales = [
-        '2025-06-15', '2025-06-19', '2025-06-22', '2025-06-26',
-        '2025-06-29', '2025-07-03', '2025-07-06', '2025-07-10',
-        '2025-07-13', '2025-07-17', '2025-07-20', '2025-07-24',
-        '2025-07-27', '2025-07-31', '2025-08-03', '2025-08-07',
-        '2025-08-10', '2025-08-14', '2025-08-17', '2025-08-21',
-        '2025-08-24', '2025-08-28', '2025-08-31'
-      ];
-      
-      const fechasValidas = [];
-      const ahora = new Date();
-      
-      for (const fechaStr of fechasManuales) {
-        const fecha = new Date(fechaStr);
-        const fechaCorte = new Date(fecha);
-        fechaCorte.setDate(fechaCorte.getDate() - 1);
-        fechaCorte.setHours(17, 0, 0, 0);
-        
-        if (ahora <= fechaCorte) {
-          fechasValidas.push(fechaStr);
-        }
-      }
-      
-      return fechasValidas;
-    }
+  <script>
+    // TODO: Reemplaza esta URL con la URL de tu Google Apps Script desplegado
+    const GOOGLE_APPS_SCRIPT_URL = 'URL_DE_TU_APPS_Shttps://script.google.com/macros/s/AKfycbz99QMwV8WYTv50o5gKUf_CDS_REUJkq8cuzGfHVnblb1ibZlQirYTJ7TuFWQ0HOa25/execCRIPT_AQUI'; // ¡Pega la URL de tu App Web aquí!
 
-    function generarFechasBañosCompartido() {
-      const fechasManuales = [
-        '2025-06-18', '2025-06-21', '2025-06-25', '2025-06-28',
-        '2025-07-02', '2025-07-05', '2025-07-09', '2025-07-12',
-        '2025-07-16', '2025-07-19', '2025-07-23', '2025-07-26',
-        '2025-07-30', '2025-08-02', '2025-08-06', '2025-08-09',
-        '2025-08-13', '2025-08-16', '2025-08-20', '2025-08-23',
-        '2025-08-27', '2025-08-30'
-      ];
-      
-      const fechasValidas = [];
-      const ahora = new Date();
-      
-      for (const fechaStr of fechasManuales) {
-        const fecha = new Date(fechaStr);
-        const fechaCorte = new Date(fecha);
-        fechaCorte.setDate(fechaCorte.getDate() - 1);
-        fechaCorte.setHours(17, 0, 0, 0);
-        
-        if (ahora <= fechaCorte) {
-          fechasValidas.push(fechaStr);
-        }
-      }
-      
-      return fechasValidas;
-    }
+    // Funciones para generar fechas disponibles
+    function generarFechasBañosTodoIncluido() {
+      const fechasManuales = [
+        '2025-06-15', '2025-06-19', '2025-06-22', '2025-06-26',
+        '2025-06-29', '2025-07-03', '2025-07-06', '2025-07-10',
+        '2025-07-13', '2025-07-17', '2025-07-20', '2025-07-24',
+        '2025-07-27', '2025-07-31', '2025-08-03', '2025-08-07',
+        '2025-08-10', '2025-08-14', '2025-08-17', '2025-08-21',
+        '2025-08-24', '2025-08-28', '2025-08-31'
+      ];
+      
+      const fechasValidas = [];
+      const ahora = new Date();
+      
+      for (const fechaStr of fechasManuales) {
+        const fecha = new Date(fechaStr);
+        const fechaCorte = new Date(fecha);
+        fechaCorte.setDate(fechaCorte.getDate() - 1);
+        fechaCorte.setHours(17, 0, 0, 0);
+        
+        if (ahora <= fechaCorte) {
+          fechasValidas.push(fechaStr);
+        }
+      }
+      
+      return fechasValidas;
+    }
 
-    // Datos de la aplicación
-    const fechasDisponibles = {
-      "Baños de Agua Santa": function(tipoExperiencia) {
-        if (tipoExperiencia === "Todo Incluido") {
-          return generarFechasBañosTodoIncluido();
-        } else if (tipoExperiencia === "Compartido") {
-          return generarFechasBañosCompartido();
-        }
-        return [];
-      },
-      // Otras funciones de fechas...
-    };
+    function generarFechasBañosCompartido() {
+      const fechasManuales = [
+        '2025-06-18', '2025-06-21', '2025-06-25', '2025-06-28',
+        '2025-07-02', '2025-07-05', '2025-07-09', '2025-07-12',
+        '2025-07-16', '2025-07-19', '2025-07-23', '2025-07-26',
+        '2025-07-30', '2025-08-02', '2025-08-06', '2025-08-09',
+        '2025-08-13', '2025-08-16', '2025-08-20', '2025-08-23',
+        '2025-08-27', '2025-08-30'
+      ];
+      
+      const fechasValidas = [];
+      const ahora = new Date();
+      
+      for (const fechaStr of fechasManuales) {
+        const fecha = new Date(fechaStr);
+        const fechaCorte = new Date(fecha);
+        fechaCorte.setDate(fechaCorte.getDate() - 1);
+        fechaCorte.setHours(17, 0, 0, 0);
+        
+        if (ahora <= fechaCorte) {
+          fechasValidas.push(fechaStr);
+        }
+      }
+      
+      return fechasValidas;
+    }
 
-    const regiones = {
-      "Sierra": ["Cotopaxi", "Cuenca", "Chimborazo", "Quilotoa", "Papallacta", "Mitad del Mundo"],
-      "Amazonía": ["Misahualli", "Baños de Agua Santa", "Cotundo"],
-      "Internacional": ["Proximamente"],
-      "Costa": ["Puerto Lopez", "Atacames"]
-    };
+    // Datos de la aplicación
+    const fechasDisponibles = {
+      "Baños de Agua Santa": function(tipoExperiencia) {
+        if (tipoExperiencia === "Todo Incluido") {
+          return generarFechasBañosTodoIncluido();
+        } else if (tipoExperiencia === "Compartido") {
+          return generarFechasBañosCompartido();
+        }
+        return [];
+      },
+      // Otras funciones de fechas...
+    };
 
-    const tiposExperiencia = {
-      "Baños de Agua Santa": ["Todo Incluido", "Compartido"],
-      // Otros tipos de experiencia...
-      "_default": ["Todo Incluido"]
-    };
+    const regiones = {
+      "Sierra": ["Cotopaxi", "Cuenca", "Chimborazo", "Quilotoa", "Papallacta", "Mitad del Mundo"],
+      "Amazonía": ["Misahualli", "Baños de Agua Santa", "Cotundo"],
+      "Internacional": ["Proximamente"],
+      "Costa": ["Puerto Lopez", "Atacames"]
+    };
 
-    const preciosBase = {
-      "Baños de Agua Santa": {
-        "Todo Incluido": {
-          finDeSemana: 30,
-          entreSemana: 60
-        },
-        "Compartido": {
-          finDeSemana: 100,
-          entreSemana: 200
-        }
-      },
-      // Otros precios...
-    };
+    const tiposExperiencia = {
+      "Baños de Agua Santa": ["Todo Incluido", "Compartido"],
+      // Otros tipos de experiencia...
+      "_default": ["Todo Incluido"]
+    };
 
-    // Elementos del DOM
-    const regionSelect = document.getElementById('region-select');
-    const destinoSelect = document.getElementById('destino-select');
-    const tipoExperienciaSelect = document.getElementById('tipo-experiencia');
-    const fechaInput = document.getElementById('fecha-calendario');
-    const numeroPersonasInput = document.getElementById('numero-personas');
-    const precioInput = document.getElementById('precio-pagar');
-    const btnPagar = document.getElementById('btn-pagar');
+    const preciosBase = {
+      "Baños de Agua Santa": {
+        "Todo Incluido": {
+          finDeSemana: 30,
+          entreSemana: 60
+        },
+        "Compartido": {
+          finDeSemana: 100,
+          entreSemana: 200
+        }
+      },
+      // Otros precios...
+    };
 
-    // Variables globales
-    let priceBaseCentavos = 0;
-    let numeroPersonas = 1;
-    let calendario;
+    // Elementos del DOM
+    const regionSelect = document.getElementById('region-select');
+    const destinoSelect = document.getElementById('destino-select');
+    const tipoExperienciaSelect = document.getElementById('tipo-experiencia');
+    const fechaInput = document.getElementById('fecha-calendario');
+    const numeroPersonasInput = document.getElementById('numero-personas');
+    const precioInput = document.getElementById('precio-pagar');
+    const btnPagar = document.getElementById('btn-pagar');
 
-    // Event Listeners
-    regionSelect.addEventListener('change', () => {
-      const destinos = regiones[regionSelect.value] || [];
-      destinoSelect.innerHTML = '<option selected disabled>Elige destino</option>';
-      destinos.forEach(dest => {
-        const opt = document.createElement('option');
-        opt.value = dest;
-        opt.textContent = dest;
-        destinoSelect.appendChild(opt);
-      });
-      destinoSelect.disabled = destinos.length === 0;
-      tipoExperienciaSelect.innerHTML = '<option selected disabled>Tipo de experiencia</option>';
-      tipoExperienciaSelect.disabled = true;
-      fechaInput.value = '';
-      fechaInput.disabled = true;
-      precioInput.value = '';
-      if (calendario) calendario.destroy();
-      document.getElementById("pp-button").innerHTML = "";
-    });
+    // Variables globales
+    let priceBaseCentavos = 0;
+    let numeroPersonas = 1;
+    let calendario;
 
-    destinoSelect.addEventListener('change', () => {
-      const destino = destinoSelect.value;
-      const tipos = tiposExperiencia[destino] || tiposExperiencia["_default"];
-      tipoExperienciaSelect.innerHTML = '<option selected disabled>Tipo de experiencia</option>';
-      tipos.forEach(tipo => {
-        const opt = document.createElement('option');
-        opt.value = tipo;
-        opt.textContent = tipo;
-        tipoExperienciaSelect.appendChild(opt);
-      });
-      tipoExperienciaSelect.disabled = tipos.length === 0;
-      fechaInput.value = '';
-      fechaInput.disabled = true;
-      precioInput.value = '';
-      if (calendario) calendario.destroy();
-      document.getElementById("pp-button").innerHTML = "";
-    });
+    // Event Listeners
+    regionSelect.addEventListener('change', () => {
+      const destinos = regiones[regionSelect.value] || [];
+      destinoSelect.innerHTML = '<option selected disabled>Elige destino</option>';
+      destinos.forEach(dest => {
+        const opt = document.createElement('option');
+        opt.value = dest;
+        opt.textContent = dest;
+        destinoSelect.appendChild(opt);
+      });
+      destinoSelect.disabled = destinos.length === 0;
+      tipoExperienciaSelect.innerHTML = '<option selected disabled>Tipo de experiencia</option>';
+      tipoExperienciaSelect.disabled = true;
+      fechaInput.value = '';
+      fechaInput.disabled = true;
+      precioInput.value = '';
+      if (calendario) calendario.destroy();
+      document.getElementById("pp-button").innerHTML = "";
+    });
 
-    tipoExperienciaSelect.addEventListener('change', () => {
-      const destino = destinoSelect.value;
-      const tipoExperiencia = tipoExperienciaSelect.value;
-      
-      let fechas;
-      if (typeof fechasDisponibles[destino] === 'function') {
-        fechas = fechasDisponibles[destino](tipoExperiencia);
-      } else {
-        fechas = fechasDisponibles[destino];
-      }
-      
-      if (calendario) calendario.destroy();
+    destinoSelect.addEventListener('change', () => {
+      const destino = destinoSelect.value;
+      const tipos = tiposExperiencia[destino] || tiposExperiencia["_default"];
+      tipoExperienciaSelect.innerHTML = '<option selected disabled>Tipo de experiencia</option>';
+      tipos.forEach(tipo => {
+        const opt = document.createElement('option');
+        opt.value = tipo;
+        opt.textContent = tipo;
+        tipoExperienciaSelect.appendChild(opt);
+      });
+      tipoExperienciaSelect.disabled = tipos.length === 0;
+      fechaInput.value = '';
+      fechaInput.disabled = true;
+      precioInput.value = '';
+      if (calendario) calendario.destroy();
+      document.getElementById("pp-button").innerHTML = "";
+    });
 
-      if (fechas) {
-        calendario = flatpickr(fechaInput, {
-          dateFormat: "Y-m-d",
-          minDate: "today",
-          enable: fechas,
-          onOpen: () => {
-            ajustarAlturaIframe(400);
-          },
-          onClose: () => {
-            ajustarAlturaIframe(190);
-          },
-          onDayCreate: function (dObj, dStr, fp, dayElem) {
-            const fecha = dayElem.dateObj.toISOString().split('T')[0];
-            if (fechas.includes(fecha)) {
-              dayElem.classList.add('fechas-disponibles');
-            }
-          }
-        });
-      } else {
-        calendario = flatpickr(fechaInput, {
-          dateFormat: "Y-m-d",
-          minDate: "today",
-          onOpen: () => {
-            ajustarAlturaIframe(400);
-          },
-          onClose: () => {
-            ajustarAlturaIframe(190);
-          }
-        });
-      }
+    tipoExperienciaSelect.addEventListener('change', () => {
+      const destino = destinoSelect.value;
+      const tipoExperiencia = tipoExperienciaSelect.value;
+      
+      let fechas;
+      if (typeof fechasDisponibles[destino] === 'function') {
+        fechas = fechasDisponibles[destino](tipoExperiencia);
+      } else {
+        fechas = fechasDisponibles[destino];
+      }
+      
+      if (calendario) calendario.destroy();
 
-      fechaInput.disabled = false;
-      precioInput.value = '';
-      document.getElementById("pp-button").innerHTML = "";
-    });
+      if (fechas) {
+        calendario = flatpickr(fechaInput, {
+          dateFormat: "Y-m-d",
+          minDate: "today",
+          enable: fechas,
+          onOpen: () => {
+            ajustarAlturaIframe(400);
+          },
+          onClose: () => {
+            ajustarAlturaIframe(190);
+          },
+          onDayCreate: function (dObj, dStr, fp, dayElem) {
+            const fecha = dayElem.dateObj.toISOString().split('T')[0];
+            if (fechas.includes(fecha)) {
+              dayElem.classList.add('fechas-disponibles');
+            }
+          }
+        });
+      } else {
+        calendario = flatpickr(fechaInput, {
+          dateFormat: "Y-m-d",
+          minDate: "today",
+          onOpen: () => {
+            ajustarAlturaIframe(400);
+          },
+          onClose: () => {
+            ajustarAlturaIframe(190);
+          }
+        });
+      }
 
-    fechaInput.addEventListener('change', () => {
-      calcularYMostrarPrecio();
-      document.getElementById("pp-button").innerHTML = "";
-    });
+      fechaInput.disabled = false;
+      precioInput.value = '';
+      document.getElementById("pp-button").innerHTML = "";
+    });
 
-    numeroPersonasInput.addEventListener('change', () => {
-      if (fechaInput.value) {
-        calcularYMostrarPrecio();
-        document.getElementById("pp-button").innerHTML = "";
-      }
-    });
+    fechaInput.addEventListener('change', () => {
+      calcularYMostrarPrecio();
+      document.getElementById("pp-button").innerHTML = "";
+    });
 
-    // Función para calcular el precio corregida
-    function calcularYMostrarPrecio() {
-      const destino = destinoSelect.value;
-      const tipoExperiencia = tipoExperienciaSelect.value;
-      const fecha = fechaInput.value;
-      numeroPersonas = parseInt(numeroPersonasInput.value) || 1;
-      
-      if (!destino || !fecha) {
-        precioInput.value = '';
-        return;
-      }
+    numeroPersonasInput.addEventListener('change', () => {
+      if (fechaInput.value) {
+        calcularYMostrarPrecio();
+        document.getElementById("pp-button").innerHTML = "";
+      }
+    });
 
-      const fechaObj = new Date(fecha);
-      const diaSemana = fechaObj.getDay();
-      const esFinDeSemana = (diaSemana === 6 || diaSemana === 0); // 0 es domingo, 6 es sábado
+    // Función para calcular el precio corregida
+    function calcularYMostrarPrecio() {
+      const destino = destinoSelect.value;
+      const tipoExperiencia = tipoExperienciaSelect.value;
+      const fecha = fechaInput.value;
+      numeroPersonas = parseInt(numeroPersonasInput.value) || 1;
+      
+      if (!destino || !fecha) {
+        precioInput.value = '';
+        return;
+      }
 
-      let precioBase;
-      const precioDestino = preciosBase[destino];
+      const fechaObj = new Date(fecha);
+      const diaSemana = fechaObj.getDay();
+      const esFinDeSemana = (diaSemana === 6 || diaSemana === 0); // 0 es domingo, 6 es sábado
 
-      // Lógica específica para Baños de Agua Santa
-      if (destino === "Baños de Agua Santa" && precioDestino && precioDestino[tipoExperiencia]) {
-        precioBase = esFinDeSemana ? 
-          precioDestino[tipoExperiencia].finDeSemana : 
-          precioDestino[tipoExperiencia].entreSemana;
-      } 
-      // Lógica para otros destinos...
-      else if (typeof precioDestino === 'object' && precioDestino[tipoExperiencia] !== undefined) {
-        precioBase = precioDestino[tipoExperiencia];
-      } else if (typeof precioDestino === 'number') {
-        precioBase = precioDestino;
-      } else {
-        precioBase = 0;
-      }
+      let precioBase;
+      const precioDestino = preciosBase[destino];
 
-      if (!precioBase) {
-        precioInput.value = 'Consultar';
-        return;
-      }
+      // Lógica específica para Baños de Agua Santa
+      if (destino === "Baños de Agua Santa" && precioDestino && precioDestino[tipoExperiencia]) {
+        precioBase = esFinDeSemana ? 
+          precioDestino[tipoExperiencia].finDeSemana : 
+          precioDestino[tipoExperiencia].entreSemana;
+      } 
+      // Lógica para otros destinos...
+      else if (typeof precioDestino === 'object' && precioDestino[tipoExperiencia] !== undefined) {
+        precioBase = precioDestino[tipoExperiencia];
+      } else if (typeof precioDestino === 'number') {
+        precioBase = precioDestino;
+      } else {
+        precioBase = 0;
+      }
 
-      priceBaseCentavos = Math.round(precioBase * 100) * numeroPersonas;
+      if (!precioBase) {
+        precioInput.value = 'Consultar';
+        return;
+      }
 
-      const iva = priceBaseCentavos * 0.15;
-      const subtotal = priceBaseCentavos + iva;
-      const comision = subtotal * 0.05;
-      const ivaComision = comision * 0.15;
-      const total = subtotal + comision + ivaComision;
+      priceBaseCentavos = Math.round(precioBase * 100) * numeroPersonas;
 
-      precioInput.value = `$${(total / 100).toFixed(2)} (${numeroPersonas} persona${numeroPersonas !== 1 ? 's' : ''})`;
-    }
+      const iva = priceBaseCentavos * 0.15;
+      const subtotal = priceBaseCentavos + iva;
+      const comision = subtotal * 0.05;
+      const ivaComision = comision * 0.15;
+      const total = subtotal + comision + ivaComision;
 
-    // Resto del código (event listeners para el botón de pago, etc.)
-    btnPagar.addEventListener('click', () => {
-      if (!regionSelect.value) {
-        alert("Por favor, selecciona una región.");
-        regionSelect.focus();
-        return;
-      }
-      
-      if (!destinoSelect.value || destinoSelect.value === "Elige destino") {
-        alert("Por favor, selecciona un destino.");
-        destinoSelect.focus();
-        return;
-      }
-      
-      const destino = destinoSelect.value;
-      if (tiposExperiencia[destino] && (!tipoExperienciaSelect.value || tipoExperienciaSelect.value === "Tipo de experiencia")) {
-        alert("Por favor, selecciona un tipo de experiencia.");
-        tipoExperienciaSelect.focus();
-        return;
-      }
-      
-      if (!fechaInput.value) {
-        alert("Por favor, selecciona una fecha de viaje.");
-        fechaInput.focus();
-        return;
-      }
-      
-      if (!priceBaseCentavos || precioInput.value === 'Consultar') {
-        alert("Por favor, completa todos los campos correctamente para calcular el precio.");
-        return;
-      }
-      
-      ajustarAlturaIframe(600);
-      generarBotonPago(priceBaseCentavos, fechaInput.value);
-    });
+      precioInput.value = `$${(total / 100).toFixed(2)} (${numeroPersonas} persona${numeroPersonas !== 1 ? 's' : ''})`;
+    }
 
-    function generarBotonPago(priceBase, fechaViaje) {
-      const ivaNormal = Math.round(priceBase * 0.15);
-      const subtotal = priceBase + ivaNormal;
-      const comision = Math.round(subtotal * 0.05);
-      const ivaComision = Math.round(comision * 0.15);
-      const amountWithTax = comision + ivaComision;
-      const totalAmount = subtotal + amountWithTax;
+    // Función para generar el botón de pago (MODIFICADA)
+    async function generarBotonPago(priceBase, fechaViaje) {
+      const ivaNormal = Math.round(priceBase * 0.15);
+      const subtotal = priceBase + ivaNormal;
+      const comision = Math.round(subtotal * 0.05);
+      const ivaComision = Math.round(comision * 0.15);
+      const amountWithTax = comision + ivaComision;
+      const totalAmount = subtotal + amountWithTax;
 
-      const destinoSeleccionado = destinoSelect.value;
-      const tipoExperiencia = tipoExperienciaSelect.value || "Estándar";
+      const destinoSeleccionado = destinoSelect.value;
+      const tipoExperiencia = tipoExperienciaSelect.value || "Estándar";
 
-      document.getElementById("pp-button").innerHTML = "";
+      document.getElementById("pp-button").innerHTML = "Cargando botón de pago..."; // Mensaje de carga
 
-      const pago = new PPaymentButtonBox({
-        token: 'FW28_zYSpUgOollggobMEjbuz505UGgIM13RE47PXjKh-0Zd4RD3XuNwSCpEB8h4TvmJ0',
-        clientTransactionId: `TRANS-${Date.now()}-${Math.floor(Math.random() * 100000)}`,
-        amount: totalAmount,
-        amountWithoutTax: priceBase,
-        amountWithTax: amountWithTax,
-        tax: ivaNormal,
-        currency: "USD",
-        storeId: "336d7073e91fb343c10d",
-        reference: `Reserva para ${destinoSeleccionado} (${tipoExperiencia}) - ${numeroPersonas} persona${numeroPersonas !== 1 ? 's' : ''} - Fecha de viaje: ${fechaViaje}`
-      });
+      try {
+        const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'cors', // Asegúrate de que el modo CORS esté habilitado
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            amount: totalAmount,
+            amountWithoutTax: priceBase,
+            tax: ivaNormal,
+            amountWithTax: amountWithTax,
+            destino: destinoSeleccionado,
+            tipoExperiencia: tipoExperiencia,
+            numeroPersonas: numeroPersonas,
+            fechaViaje: fechaViaje
+          })
+        });
 
-      pago.render('pp-button');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
-      setTimeout(() => {
-        ajustarAlturaIframe(1000);
-      }, 500);
-    }
+        const paymentConfig = await response.json();
 
-    function ajustarAlturaIframe(altura) {
-      window.parent.postMessage({ tipo: 'ajustarAltura', altura }, '*');
-    }
-  </script>
+        if (paymentConfig.error) {
+          console.error('Error del Apps Script:', paymentConfig.error);
+          document.getElementById("pp-button").innerHTML = "Error al obtener la configuración de pago. Inténtalo de nuevo más tarde.";
+          return;
+        }
+
+        document.getElementById("pp-button").innerHTML = ""; // Limpiar mensaje de carga
+
+        const pago = new PPaymentButtonBox(paymentConfig);
+        pago.render('pp-button');
+
+        setTimeout(() => {
+          ajustarAlturaIframe(1000);
+        }, 500);
+
+      } catch (error) {
+        console.error('Error al comunicarse con Google Apps Script:', error);
+        document.getElementById("pp-button").innerHTML = "No se pudo conectar con el servicio de pago. Revisa tu conexión o intenta más tarde.";
+      }
+    }
+
+    function ajustarAlturaIframe(altura) {
+      window.parent.postMessage({ tipo: 'ajustarAltura', altura }, '*');
+    }
+  </script>
 </body>
 </html>
