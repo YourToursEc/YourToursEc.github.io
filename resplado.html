@@ -461,19 +461,17 @@
 
       document.getElementById("pp-button").innerHTML = "";
 
-      
-       const pago = new PPaymentButtonBox({
-        token: process.env.PAYPHONE_PRIVATE_KEY,
+      const pago = new PPaymentButtonBox({
+        token: 'FW28_zYSpUgOollggobMEjbuz505UGgIM13RE47PXjKh-0Zd4RD3XuNwSCpEB8h4TvmJ0',
         clientTransactionId: `TRANS-${Date.now()}-${Math.floor(Math.random() * 100000)}`,
         amount: totalAmount,
         amountWithoutTax: priceBase,
         amountWithTax: amountWithTax,
         tax: ivaNormal,
         currency: "USD",
-        storeId: process.env.PAYPHONE_STORE_ID,
+        storeId: "336d7073e91fb343c10d",
         reference: `Reserva para ${destinoSeleccionado} (${tipoExperiencia}) - ${numeroPersonas} persona${numeroPersonas !== 1 ? 's' : ''} - Fecha de viaje: ${fechaViaje}`
       });
-
 
       pago.render('pp-button');
 
@@ -488,5 +486,3 @@
   </script>
 </body>
 </html>
-
-
