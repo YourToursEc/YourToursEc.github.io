@@ -7,27 +7,17 @@ module.exports = cors(async (req, res) => {
   }
 
   try {
-    const {
-      amount,
-      amountWithoutTax,
-      amountWithTax,
-      tax,
-      destination,
-      experienceType,
-      numPeople,
-      travelDate
-    } = await req.json();
-
+    const body = await req.json();
     const payment = await createPayment({
       token: process.env.PAYPHONE_PRIVATE_KEY,
-      clientTransactionId: `TRANS-${Date.now()}-${Math.floor(Math.random() * 100000)}`,
-      amount: parseInt(amount),
-      amountWithoutTax: parseInt(amountWithoutTax),
-      amountWithTax: parseInt(amountWithTax),
-      tax: parseInt(tax),
+      clientTransactionId: `TRANS-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      amount: body.amount,
+      amountWithoutTax: body.amountWithoutTax,
+      amountWithTax: body.amountWithTax,
+      tax: body.tax,
       currency: "USD",
       storeId: process.env.PAYPHONE_STORE_ID,
-      reference: `Reserva para ${destination} (${experienceType}) - ${numPeople} persona${numPeople !== 1 ? 's' : ''} - Fecha: ${travelDate}`
+      reference: body.reference
     });
 
     return {
