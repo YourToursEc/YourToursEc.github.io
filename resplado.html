@@ -448,47 +448,40 @@
       generarBotonPago(priceBaseCentavos, fechaInput.value);
     });
 
-async function generarBotonPago(priceBase, fechaViaje) {
-  const ivaNormal = Math.round(priceBase * 0.15);
-  const subtotal = priceBase + ivaNormal;
-  const comision = Math.round(subtotal * 0.05);
-  const ivaComision = Math.round(comision * 0.15);
-  const amountWithTax = comision + ivaComision;
-  const totalAmount = subtotal + amountWithTax;
+    function generarBotonPago(priceBase, fechaViaje) {
+      const ivaNormal = Math.round(priceBase * 0.15);
+      const subtotal = priceBase + ivaNormal;
+      const comision = Math.round(subtotal * 0.05);
+      const ivaComision = Math.round(comision * 0.15);
+      const amountWithTax = comision + ivaComision;
+      const totalAmount = subtotal + amountWithTax;
 
-  const destinoSeleccionado = destinoSelect.value;
-  const tipoExperiencia = tipoExperienciaSelect.value || "Estándar";
+      const destinoSeleccionado = destinoSelect.value;
+      const tipoExperiencia = tipoExperienciaSelect.value || "Estándar";
 
-  document.getElementById("pp-button").innerHTML = "";
+      document.getElementById("pp-button").innerHTML = "";
 
-  try {
-    // Llama al backend seguro
-    const response = await fetch('/api/crear-pago', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
+      
+       const pago = new PPaymentButtonBox({
+        token: process.env.PAYPHONE_PRIVATE_KEY,
+        clientTransactionId: `TRANS-${Date.now()}-${Math.floor(Math.random() * 100000)}`,
         amount: totalAmount,
-        destino: destinoSeleccionado,
-        personas: numeroPersonas,
-        fecha: fechaViaje
-      })
-    });
+        amountWithoutTax: priceBase,
+        amountWithTax: amountWithTax,
+        tax: ivaNormal,
+        currency: "USD",
+        storeId: process.env.PAYPHONE_STORE_ID,
+        reference: `Reserva para ${destinoSeleccionado} (${tipoExperiencia}) - ${numeroPersonas} persona${numeroPersonas !== 1 ? 's' : ''} - Fecha de viaje: ${fechaViaje}`
+      });
 
-    const paymentConfig = await response.json();
 
-    // Renderiza el botón de pago
-    const pago = new PPaymentButtonBox(paymentConfig);
-    pago.render('pp-button');
+      pago.render('pp-button');
 
-  } catch (error) {
-    console.error('Error:', error);
-    alert('Error al procesar el pago: ' + error.message);
-  }
+      setTimeout(() => {
+        ajustarAlturaIframe(1000);
+      }, 500);
+    }
 
-  setTimeout(() => {
-    ajustarAlturaIframe(1000);
-  }, 500);
-}
     function ajustarAlturaIframe(altura) {
       window.parent.postMessage({ tipo: 'ajustarAltura', altura }, '*');
     }
