@@ -18,12 +18,10 @@
     {
       "src": "/api/(.*)",
       "dest": "/api/$1"
-    }
-  ],
-  "rewrites": [
+    },
     {
-      "source": "/(.*)",
-      "destination": "/respaldo.html"
+      "src": "/(.*)",
+      "dest": "/respaldo.html"
     }
   ]
 }
