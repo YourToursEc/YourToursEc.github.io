@@ -218,7 +218,8 @@
           return generarFechasBañosCompartido();
         }
         return [];
-      }
+      },
+      // Otras funciones de fechas...
     };
 
     const regiones = {
@@ -230,6 +231,7 @@
 
     const tiposExperiencia = {
       "Baños de Agua Santa": ["Todo Incluido", "Compartido"],
+      // Otros tipos de experiencia...
       "_default": ["Todo Incluido"]
     };
 
@@ -243,7 +245,8 @@
           finDeSemana: 100,
           entreSemana: 200
         }
-      }
+      },
+      // Otros precios...
     };
 
     // Elementos del DOM
@@ -359,7 +362,7 @@
       }
     });
 
-    // Función para calcular el precio
+    // Función para calcular el precio corregida
     function calcularYMostrarPrecio() {
       const destino = destinoSelect.value;
       const tipoExperiencia = tipoExperienciaSelect.value;
@@ -368,21 +371,23 @@
       
       if (!destino || !fecha) {
         precioInput.value = '';
-        return 0;
+        return;
       }
 
       const fechaObj = new Date(fecha);
       const diaSemana = fechaObj.getDay();
-      const esFinDeSemana = (diaSemana === 6 || diaSemana === 0);
+      const esFinDeSemana = (diaSemana === 6 || diaSemana === 0); // 0 es domingo, 6 es sábado
 
       let precioBase;
       const precioDestino = preciosBase[destino];
 
+      // Lógica específica para Baños de Agua Santa
       if (destino === "Baños de Agua Santa" && precioDestino && precioDestino[tipoExperiencia]) {
         precioBase = esFinDeSemana ? 
           precioDestino[tipoExperiencia].finDeSemana : 
           precioDestino[tipoExperiencia].entreSemana;
       } 
+      // Lógica para otros destinos...
       else if (typeof precioDestino === 'object' && precioDestino[tipoExperiencia] !== undefined) {
         precioBase = precioDestino[tipoExperiencia];
       } else if (typeof precioDestino === 'number') {
@@ -393,23 +398,21 @@
 
       if (!precioBase) {
         precioInput.value = 'Consultar';
-        return 0;
+        return;
       }
 
       priceBaseCentavos = Math.round(precioBase * 100) * numeroPersonas;
 
-      const iva = Math.round(priceBaseCentavos * 0.15);
+      const iva = priceBaseCentavos * 0.15;
       const subtotal = priceBaseCentavos + iva;
-      const comision = Math.round(subtotal * 0.05);
-      const ivaComision = Math.round(comision * 0.15);
+      const comision = subtotal * 0.05;
+      const ivaComision = comision * 0.15;
       const total = subtotal + comision + ivaComision;
 
       precioInput.value = `$${(total / 100).toFixed(2)} (${numeroPersonas} persona${numeroPersonas !== 1 ? 's' : ''})`;
-      
-      return total; // Devolvemos el total en centavos
     }
 
-    // Event listener para el botón de pago
+    // Resto del código (event listeners para el botón de pago, etc.)
     btnPagar.addEventListener('click', () => {
       if (!regionSelect.value) {
         alert("Por favor, selecciona una región.");
@@ -436,60 +439,43 @@
         return;
       }
       
-      const totalCentavos = calcularYMostrarPrecio();
-      
-      if (!totalCentavos || precioInput.value === 'Consultar') {
+      if (!priceBaseCentavos || precioInput.value === 'Consultar') {
         alert("Por favor, completa todos los campos correctamente para calcular el precio.");
         return;
       }
       
       ajustarAlturaIframe(600);
-      generarBotonPago(totalCentavos, fechaInput.value);
+      generarBotonPago(priceBaseCentavos, fechaInput.value);
     });
 
-    // Función para generar el botón de pago
-    async function generarBotonPago(totalAmount, fechaViaje) {
+    function generarBotonPago(priceBase, fechaViaje) {
+      const ivaNormal = Math.round(priceBase * 0.15);
+      const subtotal = priceBase + ivaNormal;
+      const comision = Math.round(subtotal * 0.05);
+      const ivaComision = Math.round(comision * 0.15);
+      const amountWithTax = comision + ivaComision;
+      const totalAmount = subtotal + amountWithTax;
+
       const destinoSeleccionado = destinoSelect.value;
       const tipoExperiencia = tipoExperienciaSelect.value || "Estándar";
 
       document.getElementById("pp-button").innerHTML = "";
 
-      try {
-        const response = await fetch('/api/pago', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            amount: totalAmount,
-            destino: destinoSeleccionado,
-            personas: numeroPersonas,
-            fecha: fechaViaje
-          })
-        });
+      
+       const pago = new PPaymentButtonBox({
+        token: process.env.PAYPHONE_PRIVATE_KEY,
+        clientTransactionId: `TRANS-${Date.now()}-${Math.floor(Math.random() * 100000)}`,
+        amount: totalAmount,
+        amountWithoutTax: priceBase,
+        amountWithTax: amountWithTax,
+        tax: ivaNormal,
+        currency: "USD",
+        storeId: process.env.PAYPHONE_STORE_ID,
+        reference: `Reserva para ${destinoSeleccionado} (${tipoExperiencia}) - ${numeroPersonas} persona${numeroPersonas !== 1 ? 's' : ''} - Fecha de viaje: ${fechaViaje}`
+      });
 
-        if (!response.ok) {
-          throw new Error(`Error HTTP: ${response.status}`);
-        }
 
-        const paymentConfig = await response.json();
-        
-        const pago = new PPaymentButtonBox({
-          token: paymentConfig.token,
-          clientTransactionId: paymentConfig.clientTransactionId,
-          amount: paymentConfig.amount,
-          amountWithoutTax: paymentConfig.amountWithoutTax,
-          amountWithTax: paymentConfig.amountWithTax,
-          tax: paymentConfig.tax,
-          currency: paymentConfig.currency,
-          storeId: paymentConfig.storeId,
-          reference: paymentConfig.reference
-        });
-
-        pago.render('pp-button');
-
-      } catch (error) {
-        console.error('Error en el pago:', error);
-        alert('Error al procesar el pago: ' + error.message);
-      }
+      pago.render('pp-button');
 
       setTimeout(() => {
         ajustarAlturaIframe(1000);
@@ -502,4 +488,6 @@
   </script>
 </body>
 </html>
+
+
 
