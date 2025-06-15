@@ -1,7 +1,0 @@
-{
-  "name": "yourtoursec",
-  "dependencies": {
-    "payphone-node": "^1.1.3",
-    "@vercel/node": "^2.15.3"
-  }
-}
