@@ -449,15 +449,7 @@
       generarBotonPago(priceBaseCentavos, fechaInput.value);
     });
 
-async function generarBotonPago(priceBase, fechaViaje) {
-  // Calcular todos los valores necesarios
-  const ivaNormal = Math.round(priceBase * 0.15);
-  const subtotal = priceBase + ivaNormal;
-  const comision = Math.round(subtotal * 0.05);
-  const ivaComision = Math.round(comision * 0.15);
-  const amountWithTax = comision + ivaComision;
-  const totalAmount = subtotal + amountWithTax; // Esta es la definición correcta
-
+async function generarBotonPago(totalAmount, fechaViaje) {
   const destinoSeleccionado = destinoSelect.value;
   const tipoExperiencia = tipoExperienciaSelect.value || "Estándar";
 
@@ -468,7 +460,7 @@ async function generarBotonPago(priceBase, fechaViaje) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        amount: totalAmount, // Usamos la variable correctamente definida
+        amount: totalAmount, // Ya viene en centavos
         destino: destinoSeleccionado,
         personas: numeroPersonas,
         fecha: fechaViaje
@@ -482,12 +474,8 @@ async function generarBotonPago(priceBase, fechaViaje) {
     const paymentConfig = await response.json();
     
     const pago = new PPaymentButtonBox({
-      token: paymentConfig.token,
-      clientTransactionId: paymentConfig.clientTransactionId,
-      amount: paymentConfig.amount,
-      currency: paymentConfig.currency,
-      storeId: paymentConfig.storeId,
-      reference: paymentConfig.reference
+      ...paymentConfig,
+      amount: totalAmount // Usamos el total en centavos
     });
 
     pago.render('pp-button');
