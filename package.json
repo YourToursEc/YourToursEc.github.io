@@ -1,0 +1,35 @@
+{
+  "name": "yourtoursec",
+  "version": "1.0.0",
+  "description": "Sistema de reservas para YourToursEc",
+  "main": "api/pago.js",
+  "scripts": {
+    "start": "vercel dev",
+    "deploy": "vercel --prod",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@vercel/node": "^2.15.3",
+    "cors": "^2.8.5",
+    "payphone-node": "^1.1.3"
+  },
+  "engines": {
+    "node": "18.x"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YourToursEc/YourToursEc.github.io.git"
+  },
+  "keywords": [
+    "reservas",
+    "turismo",
+    "ecuador",
+    "payphone"
+  ],
+  "author": "YourToursEc",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/YourToursEc/YourToursEc.github.io/issues"
+  },
+  "homepage": "https://github.com/YourToursEc/YourToursEc.github.io#readme"
+}
