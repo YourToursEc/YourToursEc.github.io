@@ -1,3 +1,35 @@
-bash
-npm init -y
-npm install micro cors payphone-node
+{
+  "name": "yourtoursec-backend",
+  "version": "1.0.0",
+  "description": "Backend para sistema de reservas de YourToursEc",
+  "main": "api/create-payment.js",
+  "scripts": {
+    "start": "vercel dev",
+    "deploy": "vercel --prod",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YourToursEc/YourToursEc.github.io.git"
+  },
+  "keywords": [
+    "reservas",
+    "payphone",
+    "vercel",
+    "ecoturismo"
+  ],
+  "author": "YourToursEc",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/YourToursEc/YourToursEc.github.io/issues"
+  },
+  "homepage": "https://YourToursEc.github.io",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "micro": "^15.0.0",
+    "payphone-node": "^1.0.0"
+  },
+  "engines": {
+    "node": ">=18.x"
+  }
+}
