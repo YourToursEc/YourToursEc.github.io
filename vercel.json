@@ -20,7 +20,7 @@
       "dest": "/api/$1"
     },
     {
-      "src": "/(.*)",
+      "src": "/(.*)", 
       "dest": "/respaldo.html"
     }
   ]
