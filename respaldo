@@ -448,7 +448,7 @@
       generarBotonPago(priceBaseCentavos, fechaInput.value);
     });
 
- async function generarBotonPago(priceBase, fechaViaje) {
+async function generarBotonPago() {
   const ivaNormal = Math.round(priceBase * 0.15);
   const subtotal = priceBase + ivaNormal;
   const comision = Math.round(subtotal * 0.05);
@@ -461,7 +461,7 @@
 
   document.getElementById("pp-button").innerHTML = "";
 
-  try {
+ try {
     const response = await fetch('/api/create-payment', {
       method: 'POST',
       headers: {
@@ -472,35 +472,30 @@
         amountWithoutTax: priceBase,
         amountWithTax: amountWithTax,
         tax: ivaNormal,
-        destination: destinoSeleccionado,
-        experienceType: tipoExperiencia,
-        numPeople: numeroPersonas,
-        travelDate: fechaViaje
+        reference: `Reserva para ${destinoSelect.value} - ${numeroPersonas} personas`
       })
     });
 
-    const data = await response.json();
+    const paymentData = await response.json();
     
     if (response.ok) {
       const pago = new PPaymentButtonBox({
-        token: data.token,
-        clientTransactionId: data.clientTransactionId,
+        token: paymentData.token,
+        clientTransactionId: paymentData.clientTransactionId,
         amount: totalAmount,
         amountWithoutTax: priceBase,
         amountWithTax: amountWithTax,
         tax: ivaNormal,
         currency: "USD",
-        storeId: data.storeId,
-        reference: `Reserva para ${destinoSeleccionado} (${tipoExperiencia}) - ${numeroPersonas} persona${numeroPersonas !== 1 ? 's' : ''} - Fecha: ${fechaViaje}`
+        storeId: paymentData.storeId,
+        reference: paymentData.reference
       });
 
       pago.render('pp-button');
-    } else {
-      throw new Error(data.error || 'Error al crear el pago');
     }
   } catch (error) {
     console.error('Error:', error);
-    alert('Error al procesar el pago: ' + error.message);
+    alert('Error al procesar el pago');
   }
 
   setTimeout(() => {
