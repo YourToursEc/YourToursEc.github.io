@@ -6,14 +6,14 @@
       "use": "@vercel/node"
     },
     {
-      "src": "3 respañdo.html",
+      "src": "respaldo.html",
       "use": "@vercel/static"
     }
   ],
   "routes": [
     {
       "src": "/",
-      "dest": "/3%20respañdo.html"  // Codificado para espacios
+      "dest": "/respaldo.html"
     },
     {
       "src": "/api/(.*)",
@@ -23,7 +23,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "/3%20respañdo.html"
+      "destination": "/respaldo.html"
     }
   ]
 }
