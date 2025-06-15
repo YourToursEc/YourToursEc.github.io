@@ -1,43 +1,46 @@
 const express = require('express');
 const cors = require('cors');
+const { createPayment } = require('payphone-node');
+
 const app = express();
 
+// Middlewares
 app.use(cors());
 app.use(express.json());
 
+// Ruta de pago
 app.post('/', async (req, res) => {
-const { createPayment } = require('payphone-node');
-const cors = require('micro-cors')();
-
-module.exports = cors(async (req, res) => {
-  if (req.method !== 'POST') {
-    return { statusCode: 405, body: 'Method Not Allowed' };
-  }
-
   try {
-    const body = await req.json();
+    // Validar método HTTP
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method Not Allowed' });
+    }
+
+    const { amount, amountWithoutTax, amountWithTax, tax, reference } = req.body;
+
+    // Crear pago
     const payment = await createPayment({
       token: process.env.PAYPHONE_PRIVATE_KEY,
       clientTransactionId: `TRANS-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
-      amount: body.amount,
-      amountWithoutTax: body.amountWithoutTax,
-      amountWithTax: body.amountWithTax,
-      tax: body.tax,
+      amount: amount,
+      amountWithoutTax: amountWithoutTax,
+      amountWithTax: amountWithTax,
+      tax: tax,
       currency: "USD",
       storeId: process.env.PAYPHONE_STORE_ID,
-      reference: body.reference
+      reference: reference
     });
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify(payment)
-    };
+    // Respuesta exitosa
+    res.status(200).json(payment);
+
   } catch (error) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: error.message })
-    };
+    // Manejo de errores
+    console.error('Error en create-payment:', error);
+    res.status(500).json({ 
+      error: error.message || 'Error al procesar el pago' 
+    });
   }
-  res.json({ success: true });
 });
 
+module.exports = app;
