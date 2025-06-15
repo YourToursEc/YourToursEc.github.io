@@ -4,13 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Reserva y Pago</title>
-  <script src="https://cdn.payphonetodoesposible.com/box/v1.1/payphone-payment-box.js" type="module"></script>
   <link href="https://cdn.payphonetodoesposible.com/box/v1.1/payphone-payment-box.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <style>
+    /* Tus estilos CSS existentes (copiados desde tu código) */
     body {
-      margin-top: 0rem; 
+      margin-top: 0rem;
     }
     .container-fluid.booking {
       margin-top: 2rem;
@@ -18,24 +18,36 @@
     }
     .custom-select, .form-control {
       height: 47px;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
     #btn-pagar {
       margin-top: 1rem;
       height: 47px;
       width: 100%;
-      background-color: #28a745;
+      background: linear-gradient(135deg, #28a745 0%, #5cb85c 100%);
       color: white;
       border: none;
+      border-radius: 12px; /* Añadido border-radius para consistencia */
       cursor: pointer;
       font-size: 16px;
       font-weight: 600;
-      transition: background-color 0.3s ease;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
     }
     #btn-pagar:hover {
-      background-color: #2dca4f;
+      background: linear-gradient(135deg, #2dca4f 0%, #5cd85c 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(45, 202, 79, 0.4);
+    }
+    #btn-pagar:active {
+      transform: translateY(0);
     }
     #pp-button {
       margin-top: 1rem;
+      text-align: center; /* Centra el mensaje de carga/error */
+      font-weight: bold;
+      color: #dc3545; /* Color para mensajes de error */
     }
     .flex-row-inputs {
       display: flex;
@@ -53,7 +65,7 @@
         flex: 1 1 0;
       }
     }
-    #region-select, #destino-select, #fecha-calendario, 
+    #region-select, #destino-select, #fecha-calendario,
     #precio-pagar, #tipo-experiencia, #numero-personas {
       flex: 1 1 0;
       padding: 12px 15px;
@@ -67,17 +79,32 @@
       font-weight: 600;
       outline: none;
       margin: 0;
+      /* Iconos para los campos */
+      background-repeat: no-repeat;
+      background-position: right 15px center;
+      background-size: 20px;
     }
-    #region-select:focus, #destino-select:focus, 
-    #fecha-calendario:focus, #precio-pagar:focus, 
-    #tipo-experiencia:focus, #numero-personas:focus {
-      border-color: #0f5132;
-      box-shadow: 0 0 8px #0f5132aa;
-      background-color: #e6f4ea;
+    /* Añadidos iconos con SVG de Data URI para los inputs */
+    #fecha-calendario {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2328a745'%3E%3Cpath d='M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM9 10H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z'/%3E%3C/svg%3E");
+    }
+    #numero-personas {
+      /* Ajuste de padding-left para el icono "👥" */
+      padding-left: 50px !important; /* Ajusta este valor si el icono se solapa */
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2328a745'%3E%3Cpath d='M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V18c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-1.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05.02.01.03.03.04.04 1.14.83 1.93 1.94 1.93 3.41V18c0 .35-.07.69-.18 1H22c.55 0 1-.45 1-1v-1.5c0-2.33-4.67-3.5-7-3.5z'/%3E%3C/svg%3E");
+      background-position: left 15px center; /* Posiciona el icono a la izquierda */
     }
     #precio-pagar {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2328a745'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z'/%3E%3C/svg%3E");
       background-color: #d4edda;
       cursor: not-allowed;
+    }
+    #region-select:focus, #destino-select:focus,
+    #fecha-calendario:focus, #precio-pagar:focus,
+    #tipo-experiencia:focus, #numero-personas:focus {
+      border-color: #0f5132;
+      box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.2);
+      background-color: #e6f4ea;
     }
     #fecha-calendario::placeholder,
     #precio-pagar::placeholder {
@@ -92,7 +119,9 @@
     }
     .fechas-disponibles:hover {
       border: 2px solid #28a745 !important;
-      box-shadow: 0 0 4px #28a745aa;
+      box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.3) !important;
+      background-color: #a5d6a7 !important;
+      transform: scale(1.05);
       cursor: pointer;
     }
   </style>
@@ -147,370 +176,399 @@
             </div>
           </div>
         </div>
-      </div>    
+      </div>
     </div>
   </div>
 
   <script>
-    // Envuelve todo tu JavaScript dentro de DOMContentLoaded
-    document.addEventListener('DOMContentLoaded', () => {
-      console.log('Script de resplado.html cargado y DOM listo.'); // Log al inicio
+    // ** IMPORTANTE: REEMPLAZA ESTA URL CON LA URL DE TU SCRIPT WEB DE GOOGLE APPS SCRIPT **
+    // Para obtenerla: En tu Google Apps Script, ve a "Implementar" -> "Nueva implementación".
+    // Selecciona "Tipo de implementación": "Aplicación web".
+    // Configura "Ejecutar como": "Yo" y "Quién tiene acceso": "Cualquier persona".
+    // Luego, copia la "URL de la aplicación web".
+    const GOOGLE_SCRIPT_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbybizVKVTjUQF58FTAcLA9TMtyKoV1KFZeRDvTSBXRuSRXAlmLOygsimcrc6spzkki0/exec'; // <-- ¡No olvides cambiar esto!
 
-      
- const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbybizVKVTjUQF58FTAcLA9TMtyKoV1KFZeRDvTSBXRuSRXAlmLOygsimcrc6spzkki0/exec'; // ¡Ejemplo! Pon tu URL aquí.
-      // Funciones para generar fechas disponibles
-      function generarFechasBañosTodoIncluido() {
-        const fechasManuales = [
-          '2025-06-15', '2025-06-19', '2025-06-22', '2025-06-26',
-          '2025-06-29', '2025-07-03', '2025-07-06', '2025-07-10',
-          '2025-07-13', '2025-07-17', '2025-07-20', '2025-07-24',
-          '2025-07-27', '2025-07-31', '2025-08-03', '2025-08-07',
-          '2025-08-10', '2025-08-14', '2025-08-17', '2025-08-21',
-          '2025-08-24', '2025-08-28', '2025-08-31'
-        ];
-        
-        const fechasValidas = [];
-        const ahora = new Date();
-        
-        for (const fechaStr of fechasManuales) {
-          const fecha = new Date(fechaStr);
-          const fechaCorte = new Date(fecha);
-          fechaCorte.setDate(fechaCorte.getDate() - 1);
-          fechaCorte.setHours(17, 0, 0, 0);
-          
-          if (ahora <= fechaCorte) {
-            fechasValidas.push(fechaStr);
-          }
+    // Funciones para generar fechas disponibles
+    function generarFechasBañosTodoIncluido() {
+      const fechasManuales = [
+        '2025-06-15', '2025-06-19', '2025-06-22', '2025-06-26',
+        '2025-06-29', '2025-07-03', '2025-07-06', '2025-07-10',
+        '2025-07-13', '2025-07-17', '2025-07-20', '2025-07-24',
+        '2025-07-27', '2025-07-31', '2025-08-03', '2025-08-07',
+        '2025-08-10', '2025-08-14', '2025-08-17', '2025-08-21',
+        '2025-08-24', '2025-08-28', '2025-08-31'
+      ];
+
+      const fechasValidas = [];
+      const ahora = new Date();
+
+      for (const fechaStr of fechasManuales) {
+        const fecha = new Date(fechaStr);
+        const fechaCorte = new Date(fecha);
+        fechaCorte.setDate(fechaCorte.getDate() - 1);
+        fechaCorte.setHours(17, 0, 0, 0);
+
+        if (ahora <= fechaCorte) {
+          fechasValidas.push(fechaStr);
         }
-        
-        return fechasValidas;
       }
 
-      function generarFechasBañosCompartido() {
-        const fechasManuales = [
-          '2025-06-18', '2025-06-21', '2025-06-25', '2025-06-28',
-          '2025-07-02', '2025-07-05', '2025-07-09', '2025-07-12',
-          '2025-07-16', '2025-07-19', '2025-07-23', '2025-07-26',
-          '2025-07-30', '2025-08-02', '2025-08-06', '2025-08-09',
-          '2025-08-13', '2025-08-16', '2025-08-20', '2025-08-23',
-          '2025-08-27', '2025-08-30'
-        ];
-        
-        const fechasValidas = [];
-        const ahora = new Date();
-        
-        for (const fechaStr of fechasManuales) {
-          const fecha = new Date(fechaStr);
-          const fechaCorte = new Date(fecha);
-          fechaCorte.setDate(fechaCorte.getDate() - 1);
-          fechaCorte.setHours(17, 0, 0, 0);
-          
-          if (ahora <= fechaCorte) {
-            fechasValidas.push(fechaStr);
-          }
+      return fechasValidas;
+    }
+
+    function generarFechasBañosCompartido() {
+      const fechasManuales = [
+        '2025-06-18', '2025-06-21', '2025-06-25', '2025-06-28',
+        '2025-07-02', '2025-07-05', '2025-07-09', '2025-07-12',
+        '2025-07-16', '2025-07-19', '2025-07-23', '2025-07-26',
+        '2025-07-30', '2025-08-02', '2025-08-06', '2025-08-09',
+        '2025-08-13', '2025-08-16', '2025-08-20', '2025-08-23',
+        '2025-08-27', '2025-08-30'
+      ];
+
+      const fechasValidas = [];
+      const ahora = new Date();
+
+      for (const fechaStr of fechasManuales) {
+        const fecha = new Date(fechaStr);
+        const fechaCorte = new Date(fecha);
+        fechaCorte.setDate(fechaCorte.getDate() - 1);
+        fechaCorte.setHours(17, 0, 0, 0);
+
+        if (ahora <= fechaCorte) {
+          fechasValidas.push(fechaStr);
         }
-        
-        return fechasValidas;
       }
 
-      // Datos de la aplicación
-      const fechasDisponibles = {
-        "Baños de Agua Santa": function(tipoExperiencia) {
-          if (tipoExperiencia === "Todo Incluido") {
-            return generarFechasBañosTodoIncluido();
-          } else if (tipoExperiencia === "Compartido") {
-            return generarFechasBañosCompartido();
-          }
-          return [];
+      return fechasValidas;
+    }
+
+    // Datos de la aplicación
+    const fechasDisponibles = {
+      "Baños de Agua Santa": function(tipoExperiencia) {
+        if (tipoExperiencia === "Todo Incluido") {
+          return generarFechasBañosTodoIncluido();
+        } else if (tipoExperiencia === "Compartido") {
+          return generarFechasBañosCompartido();
+        }
+        return [];
+      },
+      // Otras funciones de fechas...
+    };
+
+    const regiones = {
+      "Sierra": ["Cotopaxi", "Cuenca", "Chimborazo", "Quilotoa", "Papallacta", "Mitad del Mundo"],
+      "Amazonía": ["Misahualli", "Baños de Agua Santa", "Cotundo"],
+      "Internacional": ["Proximamente"],
+      "Costa": ["Puerto Lopez", "Atacames"]
+    };
+
+    const tiposExperiencia = {
+      "Baños de Agua Santa": ["Todo Incluido", "Compartido"],
+      // Otros tipos de experiencia...
+      "_default": ["Todo Incluido"]
+    };
+
+    const preciosBase = {
+      "Baños de Agua Santa": {
+        "Todo Incluido": {
+          finDeSemana: 30,
+          entreSemana: 60
         },
-        // Otras funciones de fechas...
-      };
+        "Compartido": {
+          finDeSemana: 100,
+          entreSemana: 200
+        }
+      },
+      // Otros precios...
+    };
 
-      const regiones = {
-        "Sierra": ["Cotopaxi", "Cuenca", "Chimborazo", "Quilotoa", "Papallacta", "Mitad del Mundo"],
-        "Amazonía": ["Misahualli", "Baños de Agua Santa", "Cotundo"],
-        "Internacional": ["Proximamente"],
-        "Costa": ["Puerto Lopez", "Atacames"]
-      };
+    // Elementos del DOM
+    const regionSelect = document.getElementById('region-select');
+    const destinoSelect = document.getElementById('destino-select');
+    const tipoExperienciaSelect = document.getElementById('tipo-experiencia');
+    const fechaInput = document.getElementById('fecha-calendario');
+    const numeroPersonasInput = document.getElementById('numero-personas');
+    const precioInput = document.getElementById('precio-pagar');
+    const btnPagar = document.getElementById('btn-pagar');
+    const ppButtonDiv = document.getElementById("pp-button");
 
-      const tiposExperiencia = {
-        "Baños de Agua Santa": ["Todo Incluido", "Compartido"],
-        // Otros tipos de experiencia...
-        "_default": ["Todo Incluido"]
-      };
+    // Variables globales
+    let priceBaseCentavos = 0;
+    let numeroPersonas = 1;
+    let calendario;
 
-      const preciosBase = {
-        "Baños de Agua Santa": {
-          "Todo Incluido": {
-            finDeSemana: 30,
-            entreSemana: 60
+    // Event Listeners
+    regionSelect.addEventListener('change', () => {
+      const destinos = regiones[regionSelect.value] || [];
+      destinoSelect.innerHTML = '<option selected disabled>Elige destino</option>';
+      destinos.forEach(dest => {
+        const opt = document.createElement('option');
+        opt.value = dest;
+        opt.textContent = dest;
+        destinoSelect.appendChild(opt);
+      });
+      destinoSelect.disabled = destinos.length === 0;
+      tipoExperienciaSelect.innerHTML = '<option selected disabled>Tipo de experiencia</option>';
+      tipoExperienciaSelect.disabled = true;
+      fechaInput.value = '';
+      fechaInput.disabled = true;
+      precioInput.value = '';
+      if (calendario) calendario.destroy();
+      ppButtonDiv.innerHTML = "";
+    });
+
+    destinoSelect.addEventListener('change', () => {
+      const destino = destinoSelect.value;
+      const tipos = tiposExperiencia[destino] || tiposExperiencia["_default"];
+      tipoExperienciaSelect.innerHTML = '<option selected disabled>Tipo de experiencia</option>';
+      tipos.forEach(tipo => {
+        const opt = document.createElement('option');
+        opt.value = tipo;
+        opt.textContent = tipo;
+        tipoExperienciaSelect.appendChild(opt);
+      });
+      tipoExperienciaSelect.disabled = tipos.length === 0;
+      fechaInput.value = '';
+      fechaInput.disabled = true;
+      precioInput.value = '';
+      if (calendario) calendario.destroy();
+      ppButtonDiv.innerHTML = "";
+    });
+
+    tipoExperienciaSelect.addEventListener('change', () => {
+      const destino = destinoSelect.value;
+      const tipoExperiencia = tipoExperienciaSelect.value;
+
+      let fechas;
+      if (typeof fechasDisponibles[destino] === 'function') {
+        fechas = fechasDisponibles[destino](tipoExperiencia);
+      } else {
+        fechas = fechasDisponibles[destino];
+      }
+
+      if (calendario) calendario.destroy();
+
+      if (fechas) {
+        calendario = flatpickr(fechaInput, {
+          dateFormat: "Y-m-d",
+          minDate: "today",
+          enable: fechas,
+          onOpen: () => {
+            ajustarAlturaIframe(400);
           },
-          "Compartido": {
-            finDeSemana: 100,
-            entreSemana: 200
+          onClose: () => {
+            ajustarAlturaIframe(190);
+          },
+          onDayCreate: function (dObj, dStr, fp, dayElem) {
+            const fecha = dayElem.dateObj.toISOString().split('T')[0];
+            if (fechas.includes(fecha)) {
+              dayElem.classList.add('fechas-disponibles');
+            }
           }
-        },
-        // Otros precios...
+        });
+      } else {
+        calendario = flatpickr(fechaInput, {
+          dateFormat: "Y-m-d",
+          minDate: "today",
+          onOpen: () => {
+            ajustarAlturaIframe(400);
+          },
+          onClose: () => {
+            ajustarAlturaIframe(190);
+          }
+        });
+      }
+
+      fechaInput.disabled = false;
+      precioInput.value = '';
+      ppButtonDiv.innerHTML = "";
+    });
+
+    fechaInput.addEventListener('change', () => {
+      calcularYMostrarPrecio();
+      ppButtonDiv.innerHTML = "";
+    });
+
+    numeroPersonasInput.addEventListener('change', () => {
+      if (fechaInput.value) {
+        calcularYMostrarPrecio();
+        ppButtonDiv.innerHTML = "";
+      }
+    });
+
+    // Función para calcular el precio corregida
+    function calcularYMostrarPrecio() {
+      const destino = destinoSelect.value;
+      const tipoExperiencia = tipoExperienciaSelect.value;
+      const fecha = fechaInput.value;
+      numeroPersonas = parseInt(numeroPersonasInput.value) || 1;
+
+      if (!destino || !fecha) {
+        precioInput.value = '';
+        return;
+      }
+
+      const fechaObj = new Date(fecha);
+      const diaSemana = fechaObj.getDay();
+      const esFinDeSemana = (diaSemana === 6 || diaSemana === 0); // 0 es domingo, 6 es sábado
+
+      let precioBase;
+      const precioDestino = preciosBase[destino];
+
+      // Lógica específica para Baños de Agua Santa
+      if (destino === "Baños de Agua Santa" && precioDestino && precioDestino[tipoExperiencia]) {
+        precioBase = esFinDeSemana ?
+          precioDestino[tipoExperiencia].finDeSemana :
+          precioDestino[tipoExperiencia].entreSemana;
+      }
+      // Lógica para otros destinos...
+      else if (typeof precioDestino === 'object' && precioDestino[tipoExperiencia] !== undefined) {
+        precioBase = precioDestino[tipoExperiencia];
+      } else if (typeof precioDestino === 'number') {
+        precioBase = precioDestino;
+      } else {
+        precioBase = 0;
+      }
+
+      if (!precioBase) {
+        precioInput.value = 'Consultar';
+        return;
+      }
+
+      priceBaseCentavos = Math.round(precioBase * 100) * numeroPersonas;
+
+      const iva = priceBaseCentavos * 0.15;
+      const subtotal = priceBaseCentavos + iva;
+      const comision = subtotal * 0.05;
+      const ivaComision = comision * 0.15;
+      const total = subtotal + comision + ivaComision;
+
+      precioInput.value = `$${(total / 100).toFixed(2)} (${numeroPersonas} persona${numeroPersonas !== 1 ? 's' : ''})`;
+    }
+
+    // Nueva función para llamar al Google Apps Script
+    async function iniciarPagoConScript(priceBase, fechaViaje) {
+      ppButtonDiv.innerHTML = 'Procesando pago... por favor espera.';
+      btnPagar.disabled = true; // Deshabilita el botón mientras se procesa
+
+      const destinoSeleccionado = destinoSelect.value;
+      const tipoExperiencia = tipoExperienciaSelect.value || "Estándar";
+
+      // Calcula los montos necesarios que le pasarás al script de Google
+      const ivaNormal = Math.round(priceBase * 0.15);
+      const subtotal = priceBase + ivaNormal;
+      const comision = Math.round(subtotal * 0.05);
+      const ivaComision = Math.round(comision * 0.15);
+      const amountWithTax = comision + ivaComision;
+      const totalAmount = subtotal + amountWithTax; // Este es el total que PayPhone espera
+
+      const paymentData = {
+        amount: totalAmount, // Total en centavos
+        amountWithoutTax: priceBase, // Monto base sin impuestos en centavos
+        amountWithTax: amountWithTax, // Comisión + IVA de comisión en centavos
+        tax: ivaNormal, // IVA del monto base en centavos
+        currency: "USD",
+        reference: `Reserva para ${destinoSeleccionado} (${tipoExperiencia}) - ${numeroPersonas} persona${numeroPersonas !== 1 ? 's' : ''} - Fecha de viaje: ${fechaViaje}`
       };
 
-      // Elementos del DOM
-      const regionSelect = document.getElementById('region-select');
-      const destinoSelect = document.getElementById('destino-select');
-      const tipoExperienciaSelect = document.getElementById('tipo-experiencia');
-      const fechaInput = document.getElementById('fecha-calendario');
-      const numeroPersonasInput = document.getElementById('numero-personas');
-      const precioInput = document.getElementById('precio-pagar');
-      const btnPagar = document.getElementById('btn-pagar');
-
-      // --- Log para verificar si el botón se encuentra ---
-      console.log('¿Se encontró btnPagar?', btnPagar);
-
-      // Variables globales
-      let priceBaseCentavos = 0;
-      let numeroPersonas = 1;
-      let calendario;
-
-      // Event Listeners
-      regionSelect.addEventListener('change', () => {
-        const destinos = regiones[regionSelect.value] || [];
-        destinoSelect.innerHTML = '<option selected disabled>Elige destino</option>';
-        destinos.forEach(dest => {
-          const opt = document.createElement('option');
-          opt.value = dest;
-          opt.textContent = dest;
-          destinoSelect.appendChild(opt);
-        });
-        destinoSelect.disabled = destinos.length === 0;
-        tipoExperienciaSelect.innerHTML = '<option selected disabled>Tipo de experiencia</option>';
-        tipoExperienciaSelect.disabled = true;
-        fechaInput.value = '';
-        fechaInput.disabled = true;
-        precioInput.value = '';
-        if (calendario) calendario.destroy();
-        document.getElementById("pp-button").innerHTML = "";
-      });
-
-      destinoSelect.addEventListener('change', () => {
-        const destino = destinoSelect.value;
-        const tipos = tiposExperiencia[destino] || tiposExperiencia["_default"];
-        tipoExperienciaSelect.innerHTML = '<option selected disabled>Tipo de experiencia</option>';
-        tipos.forEach(tipo => {
-          const opt = document.createElement('option');
-          opt.value = tipo;
-          opt.textContent = tipo;
-          tipoExperienciaSelect.appendChild(opt);
-        });
-        tipoExperienciaSelect.disabled = tipos.length === 0;
-        fechaInput.value = '';
-        fechaInput.disabled = true;
-        precioInput.value = '';
-        if (calendario) calendario.destroy();
-        document.getElementById("pp-button").innerHTML = "";
-      });
-
-      tipoExperienciaSelect.addEventListener('change', () => {
-        const destino = destinoSelect.value;
-        const tipoExperiencia = tipoExperienciaSelect.value;
-        
-        let fechas;
-        if (typeof fechasDisponibles[destino] === 'function') {
-          fechas = fechasDisponibles[destino](tipoExperiencia);
-        } else {
-          fechas = fechasDisponibles[destino];
-        }
-        
-        if (calendario) calendario.destroy();
-
-        if (fechas) {
-          calendario = flatpickr(fechaInput, {
-            dateFormat: "Y-m-d",
-            minDate: "today",
-            enable: fechas,
-            onOpen: () => {
-              ajustarAlturaIframe(400);
-            },
-            onClose: () => {
-              ajustarAlturaIframe(190);
-            },
-            onDayCreate: function (dObj, dStr, fp, dayElem) {
-              const fecha = dayElem.dateObj.toISOString().split('T')[0];
-              if (fechas.includes(fecha)) {
-                dayElem.classList.add('fechas-disponibles');
-              }
-            }
-          });
-        } else {
-          calendario = flatpickr(fechaInput, {
-            dateFormat: "Y-m-d",
-            minDate: "today",
-            onOpen: () => {
-              ajustarAlturaIframe(400);
-            },
-            onClose: () => {
-              ajustarAlturaIframe(190);
-            }
-          });
-        }
-
-        fechaInput.disabled = false;
-        precioInput.value = '';
-        document.getElementById("pp-button").innerHTML = "";
-      });
-
-      fechaInput.addEventListener('change', () => {
-        calcularYMostrarPrecio();
-        document.getElementById("pp-button").innerHTML = "";
-      });
-
-      numeroPersonasInput.addEventListener('change', () => {
-        if (fechaInput.value) {
-          calcularYMostrarPrecio();
-          document.getElementById("pp-button").innerHTML = "";
-        }
-      });
-
-      // Función para calcular el precio corregida
-      function calcularYMostrarPrecio() {
-        const destino = destinoSelect.value;
-        const tipoExperiencia = tipoExperienciaSelect.value;
-        const fecha = fechaInput.value;
-        numeroPersonas = parseInt(numeroPersonasInput.value) || 1;
-        
-        if (!destino || !fecha) {
-          precioInput.value = '';
-          return;
-        }
-
-        const fechaObj = new Date(fecha);
-        const diaSemana = fechaObj.getDay();
-        const esFinDeSemana = (diaSemana === 6 || diaSemana === 0); // 0 es domingo, 6 es sábado
-
-        let precioBase;
-        const precioDestino = preciosBase[destino];
-
-        // Lógica específica para Baños de Agua Santa
-        if (destino === "Baños de Agua Santa" && precioDestino && precioDestino[tipoExperiencia]) {
-          precioBase = esFinDeSemana ? 
-            precioDestino[tipoExperiencia].finDeSemana : 
-            precioDestino[tipoExperiencia].entreSemana;
-        } 
-        // Lógica para otros destinos...
-        else if (typeof precioDestino === 'object' && precioDestino[tipoExperiencia] !== undefined) {
-          precioBase = precioDestino[tipoExperiencia];
-        } else if (typeof precioDestino === 'number') {
-          precioBase = precioDestino;
-        } else {
-          precioBase = 0;
-        }
-
-        if (!precioBase) {
-          precioInput.value = 'Consultar';
-          return;
-        }
-
-        priceBaseCentavos = Math.round(precioBase * 100) * numeroPersonas;
-
-        const iva = priceBaseCentavos * 0.15;
-        const subtotal = priceBaseCentavos + iva;
-        const comision = subtotal * 0.05;
-        const ivaComision = comision * 0.15;
-        const total = subtotal + comision + ivaComision;
-
-        precioInput.value = `$${(total / 100).toFixed(2)} (${numeroPersonas} persona${numeroPersonas !== 1 ? 's' : ''})`;
-      }
-
-      // --- Log para verificar que el event listener se adjuntará ---
-      console.log('Intentando adjuntar event listener a btnPagar...');
-
-      // Resto del código (event listeners para el botón de pago, etc.)
-      btnPagar.addEventListener('click', () => {
-        // --- Log dentro del click, si este aparece, el listener funciona ---
-        console.log('¡El botón Pagar REALMENTE fue clicado y su listener se disparó!');
-
-        // --- Log para verificar el valor de regionSelect.value justo antes de la validación ---
-        console.log('Valor de regionSelect.value:', regionSelect.value);
-
-        if (!regionSelect.value) {
-          alert("Por favor, selecciona una región.");
-          regionSelect.focus();
-          return;
-        }
-        
-        if (!destinoSelect.value || destinoSelect.value === "Elige destino") {
-          alert("Por favor, selecciona un destino.");
-          destinoSelect.focus();
-          return;
-        }
-        
-        const destino = destinoSelect.value;
-        if (tiposExperiencia[destino] && (!tipoExperienciaSelect.value || tipoExperienciaSelect.value === "Tipo de experiencia")) {
-          alert("Por favor, selecciona un tipo de experiencia.");
-          tipoExperienciaSelect.focus();
-          return;
-        }
-        
-        if (!fechaInput.value) {
-          alert("Por favor, selecciona una fecha de viaje.");
-          fechaInput.focus();
-          return;
-        }
-        
-        if (!priceBaseCentavos || precioInput.value === 'Consultar') {
-          alert("Por favor, completa todos los campos correctamente para calcular el precio.");
-          return;
-        }
-        
-        ajustarAlturaIframe(600);
-        generarBotonPago(priceBaseCentavos, fechaInput.value);
-      });
-
-      // --- Función generarBotonPago: Asegúrate de que GOOGLE_APPS_SCRIPT_URL esté definida si la usas ---
-      // Si tenías una constante GOOGLE_APPS_SCRIPT_URL, asegúrate de que esté aquí.
-      // Por ejemplo:
-      // const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/TU_URL_AQUI/exec';
-
-      function generarBotonPago(priceBase, fechaViaje) {
-        // Asegúrate de que PPaymentButtonBox esté disponible globalmente o importada.
-        // Como se carga con type="module" en el head, debería estarlo.
-
-        const ivaNormal = Math.round(priceBase * 0.15);
-        const subtotal = priceBase + ivaNormal;
-        const comision = Math.round(subtotal * 0.05);
-        const ivaComision = Math.round(comision * 0.15);
-        const amountWithTax = comision + ivaComision;
-        const totalAmount = subtotal + amountWithTax;
-
-        const destinoSeleccionado = destinoSelect.value;
-        const tipoExperiencia = tipoExperienciaSelect.value || "Estándar";
-
-        document.getElementById("pp-button").innerHTML = "";
-
-        const pago = new PPaymentButtonBox({
-          token: 'FW28_zYSpUgOollggobMEjbuz505UGgIM13RE47PXjKh-0Zd4RD3XuNwSCpEB8h4TvmJ0',
-          clientTransactionId: `TRANS-${Date.now()}-${Math.floor(Math.random() * 100000)}`,
-          amount: totalAmount,
-          amountWithoutTax: priceBase,
-          amountWithTax: amountWithTax,
-          tax: ivaNormal,
-          currency: "USD",
-          storeId: "336d7073e91fb343c10d",
-          reference: `Reserva para ${destinoSeleccionado} (${tipoExperiencia}) - ${numeroPersonas} persona${numeroPersonas !== 1 ? 's' : ''} - Fecha de viaje: ${fechaViaje}`
+      try {
+        const response = await fetch(GOOGLE_SCRIPT_WEB_APP_URL, {
+          method: 'POST',
+          mode: 'no-cors', // Necesario para evitar errores CORS directos, aunque el script de Apps Script manejará las redirecciones
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded', // O 'application/json' si tu script de Apps Script lo espera así
+          },
+          // Envía los datos como parámetros de formulario URL-encoded
+          body: new URLSearchParams({
+            action: 'createPayment', // El nombre de la función que tu Apps Script debe ejecutar
+            data: JSON.stringify(paymentData) // Envía los datos de pago como un string JSON
+          })
         });
 
-        pago.render('pp-button');
+        // NOTA: Cuando el script de Google Apps Script redirige, la respuesta del `fetch`
+        // tendrá `response.type` como 'opaque' si `mode: 'no-cors'`.
+        // No podrás leer el cuerpo de la respuesta directamente en el cliente.
+        // La redirección debe ser manejada por el Google Apps Script.
 
-        setTimeout(() => {
-          ajustarAlturaIframe(1000);
-        }, 500);
+        // Si tu Google Apps Script devuelve la URL de redirección en el cuerpo de la respuesta
+        // (y no redirige directamente), entonces necesitas cambiar `mode: 'no-cors'` a `mode: 'cors'`
+        // y leer `response.json()`. Sin embargo, lo más común y seguro es que el Apps Script
+        // maneje la redirección por sí mismo.
+
+        // Dada la naturaleza de Google Apps Script y su integración como Web App,
+        // la redirección a PayPhone debe ser manejada directamente por el script del lado del servidor (Apps Script).
+        // Si la llamada fetch a tu script es exitosa y el script de Google redirige
+        // al usuario a la página de PayPhone, el navegador lo manejará automáticamente.
+        // Si no ocurre una redirección automática, es posible que el script necesite devolver
+        // una URL que luego puedas abrir con `window.open()` o `window.location.href`.
+
+        // Por ahora, asumimos que el Google Apps Script maneja la redirección.
+        // Si necesitas que el Apps Script te devuelva la URL para que el frontend redirija,
+        // el Apps Script debería usar `ContentService.createTextOutput(url).setMimeType(ContentService.MimeType.JSON);`
+        // y este cliente debería usar `const result = await response.json(); window.location.href = result.url;`
+
+        // Si la respuesta es exitosa (aunque opaca en no-cors), asumimos que la redirección está en curso.
+        ppButtonDiv.innerHTML = 'Redirigiendo a la pasarela de pago...';
+
+        // Si el Apps Script no redirige automáticamente, y en su lugar devuelve una URL,
+        // necesitas esta lógica:
+        // const result = await response.json();
+        // if (result && result.redirectUrl) {
+        //   window.location.href = result.redirectUrl;
+        // } else {
+        //   ppButtonDiv.innerHTML = 'Error: No se recibió la URL de redirección.';
+        // }
+
+      } catch (error) {
+        console.error('Error al iniciar el pago:', error);
+        ppButtonDiv.innerHTML = 'Error al procesar el pago. Intenta de nuevo.';
+      } finally {
+        btnPagar.disabled = false; // Vuelve a habilitar el botón
+      }
+    }
+
+
+    // Event listener para el botón de pago
+    btnPagar.addEventListener('click', () => {
+      // Validaciones existentes
+      if (!regionSelect.value) {
+        alert("Por favor, selecciona una región.");
+        regionSelect.focus();
+        return;
       }
 
-      function ajustarAlturaIframe(altura) {
-        // Esto solo es necesario si tu página está incrustada en un iframe.
-        // Si tu página es la principal, esta función no hace nada por sí misma.
-        // Pero no causa daño dejarla.
-        window.parent.postMessage({ tipo: 'ajustarAltura', altura }, '*');
+      if (!destinoSelect.value || destinoSelect.value === "Elige destino") {
+        alert("Por favor, selecciona un destino.");
+        destinoSelect.focus();
+        return;
       }
-    }); // Cierre de DOMContentLoaded
+
+      const destino = destinoSelect.value;
+      if (tiposExperiencia[destino] && (!tipoExperienciaSelect.value || tipoExperienciaSelect.value === "Tipo de experiencia")) {
+        alert("Por favor, selecciona un tipo de experiencia.");
+        tipoExperienciaSelect.focus();
+        return;
+      }
+
+      if (!fechaInput.value) {
+        alert("Por favor, selecciona una fecha de viaje.");
+        fechaInput.focus();
+        return;
+      }
+
+      if (!priceBaseCentavos || precioInput.value === 'Consultar') {
+        alert("Por favor, completa todos los campos correctamente para calcular el precio.");
+        return;
+      }
+
+      // Llama a la nueva función que se comunica con tu Google Apps Script
+      iniciarPagoConScript(priceBaseCentavos, fechaInput.value);
+    });
+
+    function ajustarAlturaIframe(altura) {
+      window.parent.postMessage({ tipo: 'ajustarAltura', altura }, '*');
+    }
   </script>
 </body>
 </html>
