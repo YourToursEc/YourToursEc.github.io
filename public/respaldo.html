@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -21,7 +20,63 @@
     }
     .custom-select, .form-control {
       height: 47px;
-  
+    }
+    #btn-pagar {
+      margin-top: 1rem;
+      height: 47px;
+      width: 100%;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      transition: background-color 0.3s ease;
+    }
+    #btn-pagar:hover {
+      background-color: #2dca4f;
+    }
+    #pp-button {
+      margin-top: 1rem;
+    }
+    .flex-row-inputs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    .flex-row-inputs > * {
+      flex: 1 1 100%;
+    }
+    @media (min-width: 768px) {
+      body {
+        margin-top: 7rem;
+      }
+      .flex-row-inputs > * {
+        flex: 1 1 0;
+      }
+    }
+    #region-select, #destino-select, #fecha-calendario, 
+    #precio-pagar, #tipo-experiencia, #numero-personas {
+      flex: 1 1 0;
+      padding: 12px 15px;
+      font-size: 1rem;
+      border: 2px solid #b9b9b9;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(25, 135, 84, 0.2);
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      background-color: #f9fff9;
+      color: #155724;
+      font-weight: 600;
+      outline: none;
+      margin: 0;
+    }
+    #region-select:focus, #destino-select:focus, 
+    #fecha-calendario:focus, #precio-pagar:focus, 
+    #tipo-experiencia:focus, #numero-personas:focus {
+      border-color: #0f5132;
+      box-shadow: 0 0 8px #0f5132aa;
+      background-color: #e6f4ea;
+    }
     #precio-pagar {
       background-color: #d4edda;
       cursor: not-allowed;
@@ -163,8 +218,7 @@
           return generarFechasBañosCompartido();
         }
         return [];
-      },
-      // Otras funciones de fechas...
+      }
     };
 
     const regiones = {
@@ -176,7 +230,6 @@
 
     const tiposExperiencia = {
       "Baños de Agua Santa": ["Todo Incluido", "Compartido"],
-      // Otros tipos de experiencia...
       "_default": ["Todo Incluido"]
     };
 
@@ -190,8 +243,7 @@
           finDeSemana: 100,
           entreSemana: 200
         }
-      },
-      // Otros precios...
+      }
     };
 
     // Elementos del DOM
@@ -307,7 +359,7 @@
       }
     });
 
-    // Función para calcular el precio corregida
+    // Función para calcular el precio
     function calcularYMostrarPrecio() {
       const destino = destinoSelect.value;
       const tipoExperiencia = tipoExperienciaSelect.value;
@@ -316,23 +368,21 @@
       
       if (!destino || !fecha) {
         precioInput.value = '';
-        return;
+        return 0;
       }
 
       const fechaObj = new Date(fecha);
       const diaSemana = fechaObj.getDay();
-      const esFinDeSemana = (diaSemana === 6 || diaSemana === 0); // 0 es domingo, 6 es sábado
+      const esFinDeSemana = (diaSemana === 6 || diaSemana === 0);
 
       let precioBase;
       const precioDestino = preciosBase[destino];
 
-      // Lógica específica para Baños de Agua Santa
       if (destino === "Baños de Agua Santa" && precioDestino && precioDestino[tipoExperiencia]) {
         precioBase = esFinDeSemana ? 
           precioDestino[tipoExperiencia].finDeSemana : 
           precioDestino[tipoExperiencia].entreSemana;
       } 
-      // Lógica para otros destinos...
       else if (typeof precioDestino === 'object' && precioDestino[tipoExperiencia] !== undefined) {
         precioBase = precioDestino[tipoExperiencia];
       } else if (typeof precioDestino === 'number') {
@@ -343,21 +393,23 @@
 
       if (!precioBase) {
         precioInput.value = 'Consultar';
-        return;
+        return 0;
       }
 
       priceBaseCentavos = Math.round(precioBase * 100) * numeroPersonas;
 
-      const iva = priceBaseCentavos * 0.15;
+      const iva = Math.round(priceBaseCentavos * 0.15);
       const subtotal = priceBaseCentavos + iva;
-      const comision = subtotal * 0.05;
-      const ivaComision = comision * 0.15;
+      const comision = Math.round(subtotal * 0.05);
+      const ivaComision = Math.round(comision * 0.15);
       const total = subtotal + comision + ivaComision;
 
       precioInput.value = `$${(total / 100).toFixed(2)} (${numeroPersonas} persona${numeroPersonas !== 1 ? 's' : ''})`;
+      
+      return total; // Devolvemos el total en centavos
     }
 
-    // Resto del código (event listeners para el botón de pago, etc.)
+    // Event listener para el botón de pago
     btnPagar.addEventListener('click', () => {
       if (!regionSelect.value) {
         alert("Por favor, selecciona una región.");
@@ -384,60 +436,70 @@
         return;
       }
       
-      if (!priceBaseCentavos || precioInput.value === 'Consultar') {
+      const totalCentavos = calcularYMostrarPrecio();
+      
+      if (!totalCentavos || precioInput.value === 'Consultar') {
         alert("Por favor, completa todos los campos correctamente para calcular el precio.");
         return;
       }
       
       ajustarAlturaIframe(600);
-      generarBotonPago(priceBaseCentavos, fechaInput.value);
+      generarBotonPago(totalCentavos, fechaInput.value);
     });
 
-async function generarBotonPago(totalAmount, fechaViaje) {
-  const destinoSeleccionado = destinoSelect.value;
-  const tipoExperiencia = tipoExperienciaSelect.value || "Estándar";
+    // Función para generar el botón de pago
+    async function generarBotonPago(totalAmount, fechaViaje) {
+      const destinoSeleccionado = destinoSelect.value;
+      const tipoExperiencia = tipoExperienciaSelect.value || "Estándar";
 
-  document.getElementById("pp-button").innerHTML = "";
+      document.getElementById("pp-button").innerHTML = "";
 
-  try {
-    const response = await fetch('/api/pago', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        amount: totalAmount, // Ya viene en centavos
-        destino: destinoSeleccionado,
-        personas: numeroPersonas,
-        fecha: fechaViaje
-      })
-    });
+      try {
+        const response = await fetch('/api/pago', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            amount: totalAmount,
+            destino: destinoSeleccionado,
+            personas: numeroPersonas,
+            fecha: fechaViaje
+          })
+        });
 
-    if (!response.ok) {
-      throw new Error(`Error HTTP: ${response.status}`);
+        if (!response.ok) {
+          throw new Error(`Error HTTP: ${response.status}`);
+        }
+
+        const paymentConfig = await response.json();
+        
+        const pago = new PPaymentButtonBox({
+          token: paymentConfig.token,
+          clientTransactionId: paymentConfig.clientTransactionId,
+          amount: paymentConfig.amount,
+          amountWithoutTax: paymentConfig.amountWithoutTax,
+          amountWithTax: paymentConfig.amountWithTax,
+          tax: paymentConfig.tax,
+          currency: paymentConfig.currency,
+          storeId: paymentConfig.storeId,
+          reference: paymentConfig.reference
+        });
+
+        pago.render('pp-button');
+
+      } catch (error) {
+        console.error('Error en el pago:', error);
+        alert('Error al procesar el pago: ' + error.message);
+      }
+
+      setTimeout(() => {
+        ajustarAlturaIframe(1000);
+      }, 500);
     }
 
-    const paymentConfig = await response.json();
-    
-    const pago = new PPaymentButtonBox({
-      ...paymentConfig,
-      amount: totalAmount // Usamos el total en centavos
-    });
-
-    pago.render('pp-button');
-
-  } catch (error) {
-    console.error('Error en el pago:', error);
-    alert('Error al procesar el pago: ' + error.message);
-  }
-
-  setTimeout(() => {
-    ajustarAlturaIframe(1000);
-  }, 500);
-}
     function ajustarAlturaIframe(altura) {
       window.parent.postMessage({ tipo: 'ajustarAltura', altura }, '*');
     }
   </script>
 </body>
 </html>
-
 
