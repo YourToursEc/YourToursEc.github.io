@@ -448,40 +448,65 @@
       generarBotonPago(priceBaseCentavos, fechaInput.value);
     });
 
-    function generarBotonPago(priceBase, fechaViaje) {
-      const ivaNormal = Math.round(priceBase * 0.15);
-      const subtotal = priceBase + ivaNormal;
-      const comision = Math.round(subtotal * 0.05);
-      const ivaComision = Math.round(comision * 0.15);
-      const amountWithTax = comision + ivaComision;
-      const totalAmount = subtotal + amountWithTax;
+ async function generarBotonPago(priceBase, fechaViaje) {
+  const ivaNormal = Math.round(priceBase * 0.15);
+  const subtotal = priceBase + ivaNormal;
+  const comision = Math.round(subtotal * 0.05);
+  const ivaComision = Math.round(comision * 0.15);
+  const amountWithTax = comision + ivaComision;
+  const totalAmount = subtotal + amountWithTax;
 
-      const destinoSeleccionado = destinoSelect.value;
-      const tipoExperiencia = tipoExperienciaSelect.value || "Estándar";
+  const destinoSeleccionado = destinoSelect.value;
+  const tipoExperiencia = tipoExperienciaSelect.value || "Estándar";
 
-      document.getElementById("pp-button").innerHTML = "";
+  document.getElementById("pp-button").innerHTML = "";
 
-      
-       const pago = new PPaymentButtonBox({
-        token: process.env.PAYPHONE_PRIVATE_KEY,
-        clientTransactionId: `TRANS-${Date.now()}-${Math.floor(Math.random() * 100000)}`,
+  try {
+    const response = await fetch('/api/create-payment', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        amount: totalAmount,
+        amountWithoutTax: priceBase,
+        amountWithTax: amountWithTax,
+        tax: ivaNormal,
+        destination: destinoSeleccionado,
+        experienceType: tipoExperiencia,
+        numPeople: numeroPersonas,
+        travelDate: fechaViaje
+      })
+    });
+
+    const data = await response.json();
+    
+    if (response.ok) {
+      const pago = new PPaymentButtonBox({
+        token: data.token,
+        clientTransactionId: data.clientTransactionId,
         amount: totalAmount,
         amountWithoutTax: priceBase,
         amountWithTax: amountWithTax,
         tax: ivaNormal,
         currency: "USD",
-        storeId: process.env.PAYPHONE_STORE_ID,
-        reference: `Reserva para ${destinoSeleccionado} (${tipoExperiencia}) - ${numeroPersonas} persona${numeroPersonas !== 1 ? 's' : ''} - Fecha de viaje: ${fechaViaje}`
+        storeId: data.storeId,
+        reference: `Reserva para ${destinoSeleccionado} (${tipoExperiencia}) - ${numeroPersonas} persona${numeroPersonas !== 1 ? 's' : ''} - Fecha: ${fechaViaje}`
       });
 
-
       pago.render('pp-button');
-
-      setTimeout(() => {
-        ajustarAlturaIframe(1000);
-      }, 500);
+    } else {
+      throw new Error(data.error || 'Error al crear el pago');
     }
+  } catch (error) {
+    console.error('Error:', error);
+    alert('Error al procesar el pago: ' + error.message);
+  }
 
+  setTimeout(() => {
+    ajustarAlturaIframe(1000);
+  }, 500);
+}
     function ajustarAlturaIframe(altura) {
       window.parent.postMessage({ tipo: 'ajustarAltura', altura }, '*');
     }
