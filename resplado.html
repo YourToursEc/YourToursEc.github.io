@@ -448,7 +448,7 @@
       generarBotonPago(priceBaseCentavos, fechaInput.value);
     });
 
- async function generarBotonPago(priceBase, fechaViaje) {
+async function generarBotonPago(priceBase, fechaViaje) {
   const ivaNormal = Math.round(priceBase * 0.15);
   const subtotal = priceBase + ivaNormal;
   const comision = Math.round(subtotal * 0.05);
@@ -462,12 +462,10 @@
   document.getElementById("pp-button").innerHTML = "";
 
   try {
-    // Llama a tu API en Vercel
-    const response = await fetch('/api/generar-pago', {
+    // Llama al backend seguro
+    const response = await fetch('/api/crear-pago', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         amount: totalAmount,
         destino: destinoSeleccionado,
@@ -476,21 +474,15 @@
       })
     });
 
-    const data = await response.json();
+    const paymentConfig = await response.json();
 
-    const pago = new PPaymentButtonBox({
-      token: "TU_API_KEY_PUBLICA", // Usa tu clave PÚBLICA aquí
-      clientTransactionId: data.clientTransactionId,
-      amount: data.amount,
-      currency: data.currency,
-      reference: `Reserva para ${destinoSeleccionado}`
-    });
-
+    // Renderiza el botón de pago
+    const pago = new PPaymentButtonBox(paymentConfig);
     pago.render('pp-button');
 
   } catch (error) {
     console.error('Error:', error);
-    alert('Error al generar el pago: ' + error.message);
+    alert('Error al procesar el pago: ' + error.message);
   }
 
   setTimeout(() => {
