@@ -454,29 +454,51 @@
     /**
      * Obtiene las credenciales de PayPhone desde Google Apps Script
      */
-    async function obtenerCredencialesPayPhone() {
-      try {
-        const origin = window.location.origin; // Ej: https://yourtoursec.github.io
-        const response = await fetch(`${PAYPHONE_API_URL}?origin=${encodeURIComponent(origin)}`);
-        
-        if (!response.ok) {
-          throw new Error(`Error HTTP: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        
-        // Validación básica
-        if (!data.token || !data.storeId) {
-          throw new Error('Credenciales incompletas en la respuesta');
-        }
-        
-        return data;
-      } catch (error) {
-        console.error('Error al obtener credenciales:', error);
-        throw error;
-      }
+  async function obtenerCredencialesPayPhone() {
+  try {
+    const origin = window.location.origin;
+    const response = await fetch(`${PAYPHONE_API_URL}?origin=${encodeURIComponent(origin)}&_fmt=json`, {
+      redirect: "follow"
+    });
+
+    // Verifica si hay redirección (común en Google Apps Script)
+    if (response.redirected) {
+      const realResponse = await fetch(response.url);
+      return await realResponse.json();
     }
 
+    if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
+    return await response.json();
+    
+  } catch (error) {
+    console.error('Detalle del error:', {
+      error: error.message,
+      url: PAYPHONE_API_URL,
+      origin: window.location.origin
+    });
+    throw error;
+  }
+}
+async function testAPI() {
+  try {
+    const test = await fetch(PAYPHONE_API_URL);
+    console.log("Respuesta cruda:", test);
+    
+    const data = await test.json();
+    console.log("Datos recibidos:", data);
+    
+    return true;
+  } catch (error) {
+    console.error("Error en testAPI:", error);
+    return false;
+  }
+}
+
+// Ejecuta el test al cargar la página
+window.addEventListener('DOMContentLoaded', async () => {
+  const apiFunciona = await testAPI();
+  console.log("¿API funciona?", apiFunciona);
+});
     /**
      * Genera el botón de pago con credenciales seguras
      */
