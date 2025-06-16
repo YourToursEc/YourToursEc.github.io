@@ -4,124 +4,69 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Reserva y Pago</title>
-  <link href="https://cdn.payphonetodoesposible.com/box/v1.1/payphone-payment-box.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <style>
-    body {
-      margin-top: 0rem;
-    }
-    .container-fluid.booking {
-      margin-top: 2rem;
-      padding-bottom: 0rem;
-    }
-    .custom-select, .form-control {
-      height: 47px;
-      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    }
+    body { margin-top: 0rem; }
+    .container-fluid.booking { margin-top: 2rem; padding-bottom: 0rem; }
+    .custom-select, .form-control { height: 47px; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
     #btn-pagar {
-      margin-top: 1rem;
-      height: 47px;
-      width: 100%;
+      margin-top: 1rem; height: 47px; width: 100%;
       background: linear-gradient(135deg, #28a745 0%, #5cb85c 100%);
-      color: white;
-      border: none;
-      border-radius: 12px; /* Añadido border-radius para consistencia */
-      cursor: pointer;
-      font-size: 16px;
-      font-weight: 600;
-      letter-spacing: 0.5px;
-      transition: all 0.3s ease;
+      color: white; border: none; border-radius: 12px;
+      cursor: pointer; font-size: 16px; font-weight: 600;
+      letter-spacing: 0.5px; transition: all 0.3s ease;
       box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
     }
     #btn-pagar:hover {
       background: linear-gradient(135deg, #2dca4f 0%, #5cd85c 100%);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(45, 202, 79, 0.4);
+      transform: translateY(-2px); box-shadow: 0 6px 16px rgba(45, 202, 79, 0.4);
     }
-    #btn-pagar:active {
-      transform: translateY(0);
+    #btn-pagar:active { transform: translateY(0); }
+    #pp-button { /* Para mostrar mensajes de estado */
+      margin-top: 1rem; text-align: center;
+      font-weight: bold; color: #dc3545;
     }
-    #pp-button {
-      margin-top: 1rem;
-      text-align: center; /* Centra el mensaje de carga/error */
-      font-weight: bold;
-      color: #dc3545; /* Color para mensajes de error */
-    }
-    .flex-row-inputs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-    }
-    .flex-row-inputs > * {
-      flex: 1 1 100%;
-    }
+    .flex-row-inputs { display: flex; flex-wrap: wrap; gap: 15px; }
+    .flex-row-inputs > * { flex: 1 1 100%; }
     @media (min-width: 768px) {
-      body {
-        margin-top: 7rem;
-      }
-      .flex-row-inputs > * {
-        flex: 1 1 0;
-      }
+      body { margin-top: 7rem; }
+      .flex-row-inputs > * { flex: 1 1 0; }
     }
     #region-select, #destino-select, #fecha-calendario,
     #precio-pagar, #tipo-experiencia, #numero-personas {
-      flex: 1 1 0;
-      padding: 12px 15px;
-      font-size: 1rem;
-      border: 2px solid #b9b9b9;
-      border-radius: 12px;
+      flex: 1 1 0; padding: 12px 15px; font-size: 1rem;
+      border: 2px solid #b9b9b9; border-radius: 12px;
       box-shadow: 0 4px 6px rgba(25, 135, 84, 0.2);
       transition: border-color 0.3s ease, box-shadow 0.3s ease;
-      background-color: #f9fff9;
-      color: #155724;
-      font-weight: 600;
-      outline: none;
-      margin: 0;
-      /* Iconos para los campos */
-      background-repeat: no-repeat;
-      background-position: right 15px center;
-      background-size: 20px;
+      background-color: #f9fff9; color: #155724;
+      font-weight: 600; outline: none; margin: 0;
+      background-repeat: no-repeat; background-position: right 15px center; background-size: 20px;
     }
-    /* Añadidos iconos con SVG de Data URI para los inputs */
-    #fecha-calendario {
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2328a745'%3E%3Cpath d='M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM9 10H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z'/%3E%3C/svg%3E");
-    }
+    /* Iconos SVG para los inputs */
+    #fecha-calendario { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2328a745'%3E%3Cpath d='M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM9 10H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z'/%3E%3C/svg%3E"); }
     #numero-personas {
-      /* Ajuste de padding-left para el icono "👥" */
-      padding-left: 50px !important; /* Ajusta este valor si el icono se solapa */
+      padding-left: 50px !important;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2328a745'%3E%3Cpath d='M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V18c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-1.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05.02.01.03.03.04.04 1.14.83 1.93 1.94 1.93 3.41V18c0 .35-.07.69-.18 1H22c.55 0 1-.45 1-1v-1.5c0-2.33-4.67-3.5-7-3.5z'/%3E%3C/svg%3E");
-      background-position: left 15px center; /* Posiciona el icono a la izquierda */
+      background-position: left 15px center;
     }
     #precio-pagar {
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2328a745'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z'/%3E%3C/svg%3E");
-      background-color: #d4edda;
-      cursor: not-allowed;
+      background-color: #d4edda; cursor: not-allowed;
     }
     #region-select:focus, #destino-select:focus,
     #fecha-calendario:focus, #precio-pagar:focus,
     #tipo-experiencia:focus, #numero-personas:focus {
-      border-color: #0f5132;
-      box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.2);
-      background-color: #e6f4ea;
+      border-color: #0f5132; box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.2); background-color: #e6f4ea;
     }
-    #fecha-calendario::placeholder,
-    #precio-pagar::placeholder {
-      color: #6c757d;
-      font-weight: 400;
-    }
+    #fecha-calendario::placeholder, #precio-pagar::placeholder { color: #6c757d; font-weight: 400; }
     .fechas-disponibles {
-      background-color: #d4edda !important;
-      color: #155724 !important;
-      border-radius: 50% !important;
-      transition: all 0.2s ease;
+      background-color: #d4edda !important; color: #155724 !important;
+      border-radius: 50% !important; transition: all 0.2s ease;
     }
     .fechas-disponibles:hover {
-      border: 2px solid #28a745 !important;
-      box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.3) !important;
-      background-color: #a5d6a7 !important;
-      transform: scale(1.05);
-      cursor: pointer;
+      border: 2px solid #28a745 !important; box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.3) !important;
+      background-color: #a5d6a7 !important; transform: scale(1.05); cursor: pointer;
     }
   </style>
 </head>
@@ -170,8 +115,7 @@
                 <button id="btn-pagar" class="btn btn-success btn-block" style="height: 47px;">
                   Pagar con Tarjeta
                 </button>
-                <div id="pp-button"></div>
-              </div>
+                <div id="pp-button"></div> </div>
             </div>
           </div>
         </div>
@@ -180,14 +124,19 @@
   </div>
 
   <script>
-    // ** IMPORTANTE: REEMPLAZA ESTA URL CON LA URL DE TU SCRIPT WEB DE GOOGLE APPS SCRIPT **
-    // Para obtenerla: En tu Google Apps Script, ve a "Implementar" -> "Nueva implementación".
-    // Selecciona "Tipo de implementación": "Aplicación web".
-    // Configura "Ejecutar como": "Yo" y "Quién tiene acceso": "Cualquier persona".
-    // Luego, copia la "URL de la aplicación web".
-    const GOOGLE_SCRIPT_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxUTrv6a-qDnriYerDdboS24WcCvdhkqPOtgXwdsxaEQ5kKHs4twUEd4bKQWA2O7k7U/exec'; // <-- ¡NO OLVIDES CAMBIAR ESTO!
+    // ** MUY IMPORTANTE: REEMPLAZA ESTA URL CON LA URL DE TU SCRIPT WEB DE GOOGLE APPS SCRIPT **
+    // Para obtener esta URL:
+    // 1. En tu proyecto de Google Apps Script, haz clic en "Implementar" (Deploy) en la esquina superior derecha.
+    // 2. Selecciona "Nueva implementación" (New deployment).
+    // 3. En "Tipo de implementación", elige "Aplicación web" (Web app).
+    // 4. Configura "Ejecutar como" (Execute as) en "Yo" (My self).
+    // 5. Configura "Quién tiene acceso" (Who has access) en "Cualquier persona" (Anyone).
+    // 6. Haz clic en "Implementar" (Deploy).
+    // 7. Se te mostrará una ventana con la "URL de la aplicación web". Cópiala y pégala aquí.
+    //    Si ya tienes una implementación, puedes editarla y copiar la URL.
+    const GOOGLE_SCRIPT_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyGAF0cnwE_MCGoVN789wc1p6Y2W0n56Dy1U8ZggndED1awCByP3rDBRXFtA0ie_taE/exec'; // <-- ¡NO OLVIDES PEGAR TU URL AQUÍ!
 
-    // Funciones para generar fechas disponibles
+    // Funciones para generar fechas disponibles (manteniendo tu lógica actual)
     function generarFechasBañosTodoIncluido() {
       const fechasManuales = [
         '2025-06-15', '2025-06-19', '2025-06-22', '2025-06-26',
@@ -197,21 +146,17 @@
         '2025-08-10', '2025-08-14', '2025-08-17', '2025-08-21',
         '2025-08-24', '2025-08-28', '2025-08-31'
       ];
-
       const fechasValidas = [];
-      const ahora = new Date();
-
+      const ahora = new Date(); // Usar fecha actual real
       for (const fechaStr of fechasManuales) {
         const fecha = new Date(fechaStr);
         const fechaCorte = new Date(fecha);
         fechaCorte.setDate(fechaCorte.getDate() - 1);
-        fechaCorte.setHours(17, 0, 0, 0);
-
+        fechaCorte.setHours(17, 0, 0, 0); // 5 PM del día anterior
         if (ahora <= fechaCorte) {
           fechasValidas.push(fechaStr);
         }
       }
-
       return fechasValidas;
     }
 
@@ -224,25 +169,21 @@
         '2025-08-13', '2025-08-16', '2025-08-20', '2025-08-23',
         '2025-08-27', '2025-08-30'
       ];
-
       const fechasValidas = [];
-      const ahora = new Date();
-
+      const ahora = new Date(); // Usar fecha actual real
       for (const fechaStr of fechasManuales) {
         const fecha = new Date(fechaStr);
         const fechaCorte = new Date(fecha);
         fechaCorte.setDate(fechaCorte.getDate() - 1);
-        fechaCorte.setHours(17, 0, 0, 0);
-
+        fechaCorte.setHours(17, 0, 0, 0); // 5 PM del día anterior
         if (ahora <= fechaCorte) {
           fechasValidas.push(fechaStr);
         }
       }
-
       return fechasValidas;
     }
 
-    // Datos de la aplicación
+    // Datos de la aplicación para regiones, destinos, tipos y precios
     const fechasDisponibles = {
       "Baños de Agua Santa": function(tipoExperiencia) {
         if (tipoExperiencia === "Todo Incluido") {
@@ -252,8 +193,6 @@
         }
         return [];
       },
-      // Puedes añadir otras funciones de fechas si tienes más destinos con lógicas específicas
-      // Ejemplo: "Otro Destino": function() { return ["2025-07-01", "2025-07-08"]; }
     };
 
     const regiones = {
@@ -265,8 +204,7 @@
 
     const tiposExperiencia = {
       "Baños de Agua Santa": ["Todo Incluido", "Compartido"],
-      // Añade tipos de experiencia para otros destinos si son diferentes a "_default"
-      "_default": ["Todo Incluido"] // Tipo de experiencia por defecto si no hay uno específico para el destino
+      "_default": ["Todo Incluido"] // Tipo de experiencia por defecto
     };
 
     const preciosBase = {
@@ -280,13 +218,6 @@
           entreSemana: 200
         }
       },
-      // Añade precios para otros destinos aquí
-      // "Cotopaxi": {
-      //   "Todo Incluido": {
-      //     finDeSemana: 70,
-      //     entreSemana: 50
-      //   }
-      // }
     };
 
     // Elementos del DOM
@@ -297,15 +228,13 @@
     const numeroPersonasInput = document.getElementById('numero-personas');
     const precioInput = document.getElementById('precio-pagar');
     const btnPagar = document.getElementById('btn-pagar');
-    const ppButtonDiv = document.getElementById("pp-button"); // Para mostrar mensajes al usuario
+    const ppButtonDiv = document.getElementById("pp-button");
 
-    // Variables globales
-    let priceBaseCentavos = 0; // El precio base sin IVA, convertido a centavos
+    let priceBaseCentavos = 0;
     let numeroPersonas = 1;
-    let calendario; // Instancia de Flatpickr
+    let calendario;
 
-    // --- Event Listeners para la lógica de los selectores ---
-
+    // --- Lógica de eventos para los selectores ---
     regionSelect.addEventListener('change', () => {
       const destinos = regiones[regionSelect.value] || [];
       destinoSelect.innerHTML = '<option selected disabled>Elige destino</option>';
@@ -321,8 +250,8 @@
       fechaInput.value = '';
       fechaInput.disabled = true;
       precioInput.value = '';
-      if (calendario) calendario.destroy(); // Destruye la instancia anterior del calendario
-      ppButtonDiv.innerHTML = ""; // Limpia cualquier mensaje anterior de pago
+      if (calendario) calendario.destroy();
+      ppButtonDiv.innerHTML = "";
     });
 
     destinoSelect.addEventListener('change', () => {
@@ -349,26 +278,21 @@
 
       let fechas;
       if (typeof fechasDisponibles[destino] === 'function') {
-        fechas = fechasDisponibles[destino](tipoExperiencia); // Si es una función, la llama
+        fechas = fechasDisponibles[destino](tipoExperiencia);
       } else {
-        fechas = fechasDisponibles[destino]; // Si es un array de fechas directo
+        fechas = fechasDisponibles[destino];
       }
 
-      if (calendario) calendario.destroy(); // Destruye cualquier instancia de Flatpickr previa
+      if (calendario) calendario.destroy();
 
-      if (fechas && fechas.length > 0) { // Asegúrate de que hay fechas disponibles
+      if (fechas && fechas.length > 0) {
         calendario = flatpickr(fechaInput, {
           dateFormat: "Y-m-d",
           minDate: "today",
-          enable: fechas, // Habilita solo las fechas disponibles
-          onOpen: () => {
-            ajustarAlturaIframe(400); // Ajusta la altura del iframe al abrir el calendario
-          },
-          onClose: () => {
-            ajustarAlturaIframe(190); // Restaura la altura al cerrar
-          },
+          enable: fechas,
+          onOpen: () => { ajustarAlturaIframe(400); },
+          onClose: () => { ajustarAlturaIframe(190); },
           onDayCreate: function (dObj, dStr, fp, dayElem) {
-            // Añade una clase CSS para resaltar las fechas disponibles
             const fecha = dayElem.dateObj.toISOString().split('T')[0];
             if (fechas.includes(fecha)) {
               dayElem.classList.add('fechas-disponibles');
@@ -376,16 +300,11 @@
           }
         });
       } else {
-        // Si no hay fechas específicas o la función devuelve un array vacío, inicializa un calendario básico
         calendario = flatpickr(fechaInput, {
           dateFormat: "Y-m-d",
           minDate: "today",
-          onOpen: () => {
-            ajustarAlturaIframe(400);
-          },
-          onClose: () => {
-            ajustarAlturaIframe(190);
-          }
+          onOpen: () => { ajustarAlturaIframe(400); },
+          onClose: () => { ajustarAlturaIframe(190); }
         });
       }
 
@@ -400,150 +319,151 @@
     });
 
     numeroPersonasInput.addEventListener('change', () => {
-      // Asegúrate de que el número de personas sea al menos 1
       if (parseInt(numeroPersonasInput.value) < 1 || isNaN(parseInt(numeroPersonasInput.value))) {
         numeroPersonasInput.value = 1;
       }
-      if (fechaInput.value) { // Solo recalcula si ya hay una fecha seleccionada
+      if (fechaInput.value) {
         calcularYMostrarPrecio();
         ppButtonDiv.innerHTML = "";
       }
     });
 
-    // --- Función para calcular el precio ---
+    // --- Función para calcular el precio y montos para PayPhone ---
     function calcularYMostrarPrecio() {
       const destino = destinoSelect.value;
       const tipoExperiencia = tipoExperienciaSelect.value;
       const fecha = fechaInput.value;
       numeroPersonas = parseInt(numeroPersonasInput.value) || 1;
 
-      if (!destino || !fecha || !tipoExperiencia) { // Asegúrate de que todos los campos estén seleccionados
+      if (!destino || !fecha || !tipoExperiencia) {
         precioInput.value = '';
+        priceBaseCentavos = 0; // Reinicia a 0 si faltan campos
         return;
       }
 
       const fechaObj = new Date(fecha);
       const diaSemana = fechaObj.getDay();
-      const esFinDeSemana = (diaSemana === 6 || diaSemana === 0); // 0 es domingo, 6 es sábado
+      const esFinDeSemana = (diaSemana === 6 || diaSemana === 0); // 0: Domingo, 6: Sábado
 
       let precioBase;
       const precioDestino = preciosBase[destino];
 
       if (precioDestino && typeof precioDestino === 'object' && precioDestino[tipoExperiencia]) {
-        if (typeof precioDestino[tipoExperiencia] === 'object') { // Si tiene precios diferentes para fin de semana/entre semana
+        if (typeof precioDestino[tipoExperiencia] === 'object') {
           precioBase = esFinDeSemana ?
             precioDestino[tipoExperiencia].finDeSemana :
             precioDestino[tipoExperiencia].entreSemana;
-        } else { // Si tiene un precio único por tipo de experiencia
+        } else {
           precioBase = precioDestino[tipoExperiencia];
         }
-      } else if (typeof precioDestino === 'number') { // Si el destino tiene un precio base único (sin tipo de experiencia)
+      } else if (typeof precioDestino === 'number') {
         precioBase = precioDestino;
       } else {
-        precioBase = 0; // Por defecto si no se encuentra el precio
+        precioBase = 0;
       }
 
       if (!precioBase || precioBase <= 0) {
-        precioInput.value = 'Consultar'; // Muestra "Consultar" si el precio base es 0 o no se encuentra
-        priceBaseCentavos = 0; // Reinicia a 0 centavos
+        precioInput.value = 'Consultar';
+        priceBaseCentavos = 0;
         return;
       }
 
-      // Calcula el precio total en centavos
-      priceBaseCentavos = Math.round(precioBase * 100) * numeroPersonas;
+      // Calcula los montos en centavos para PayPhone
+      const priceBaseEuros = precioBase * numeroPersonas; // Precio base por el número de personas (en moneda entera)
+      priceBaseCentavos = Math.round(priceBaseEuros * 100); // Convertir a centavos (ej: $10.00 -> 1000)
 
-      const iva = Math.round(priceBaseCentavos * 0.15); // IVA del 15%
-      const subtotal = priceBaseCentavos + iva;
-      const comision = Math.round(subtotal * 0.05); // Comisión del 5%
-      const ivaComision = Math.round(comision * 0.15); // IVA de la comisión
-      const total = subtotal + comision + ivaComision;
+      const iva = Math.round(priceBaseCentavos * 0.15); // IVA del 15% del monto sin tax
+      const subtotalBaseIva = priceBaseCentavos + iva; // Monto base + IVA, antes de comisión
+      const comision = Math.round(subtotalBaseIva * 0.05); // Comisión del 5% sobre (montoBase + IVA)
+      const ivaComision = Math.round(comision * 0.15); // IVA del 15% sobre la comisión
+      const totalDisplay = subtotalBaseIva + comision + ivaComision; // Total final para mostrar al usuario
 
-      precioInput.value = `$${(total / 100).toFixed(2)} (${numeroPersonas} persona${numeroPersonas !== 1 ? 's' : ''})`;
+      precioInput.value = `$${(totalDisplay / 100).toFixed(2)} (${numeroPersonas} persona${numeroPersonas !== 1 ? 's' : ''})`;
     }
 
-    // --- Función para iniciar el pago con el Google Apps Script ---
-    async function iniciarPagoConScript(priceBase, fechaViaje) {
-      // Mostrar mensaje de procesamiento y deshabilitar el botón
+    // --- Función para iniciar el pago comunicándose con Google Apps Script ---
+    async function iniciarPagoConScript(priceBaseCentavosCalculado, fechaViaje) {
+      // Muestra un mensaje al usuario y deshabilita el botón para evitar clics dobles
       ppButtonDiv.innerHTML = 'Procesando pago... por favor espera.';
       btnPagar.disabled = true;
 
       const destinoSeleccionado = destinoSelect.value;
       const tipoExperiencia = tipoExperienciaSelect.value || "Estándar";
 
-      // Calcula los montos necesarios para PayPhone (en centavos)
-      const ivaNormal = Math.round(priceBase * 0.15);
-      const subtotalBaseIva = priceBase + ivaNormal; // Base para la comisión
+      // Recalcula los montos en centavos para PayPhone (esto es crucial para el payload)
+      const ivaNormal = Math.round(priceBaseCentavosCalculado * 0.15);
+      const subtotalBaseIva = priceBaseCentavosCalculado + ivaNormal;
       const comision = Math.round(subtotalBaseIva * 0.05);
       const ivaComision = Math.round(comision * 0.15);
-      const amountWithTax = comision + ivaComision; // Suma de la comisión + su IVA
-      const totalAmount = subtotalBaseIva + amountWithTax; // Monto final a enviar a PayPhone
+      const amountWithTax = comision + ivaComision; // La suma de la comisión y su IVA
+      const totalAmount = subtotalBaseIva + amountWithTax; // El monto TOTAL que se enviará a PayPhone
 
       const paymentData = {
-        amount: totalAmount, // Total en centavos
-        amountWithoutTax: priceBase, // Monto base sin impuestos en centavos
-        amountWithTax: amountWithTax, // Comisión + IVA de comisión en centavos
-        tax: ivaNormal, // IVA del monto base en centavos
+        amount: totalAmount, // TOTAL a cobrar por PayPhone (en centavos)
+        amountWithoutTax: priceBaseCentavosCalculado, // El precio base sin IVA por el número de personas (en centavos)
+        amountWithTax: amountWithTax, // La suma de la comisión y su IVA (en centavos)
+        tax: ivaNormal, // Solo el IVA del monto base (en centavos)
         currency: "USD",
         reference: `Reserva para ${destinoSeleccionado} (${tipoExperiencia}) - ${numeroPersonas} persona${numeroPersonas !== 1 ? 's' : ''} - Fecha: ${fechaViaje}`
       };
 
       try {
-        // Realiza la llamada fetch a tu Google Apps Script
+        // Realiza la petición fetch a tu Google Apps Script
+        // 'mode: no-cors' es esencial para evitar problemas de CORS con Apps Script como Web App
+        // No esperamos leer la respuesta aquí, ya que el Apps Script se encargará de la redirección.
         const response = await fetch(GOOGLE_SCRIPT_WEB_APP_URL, {
           method: 'POST',
-          mode: 'no-cors', // Importante para que el navegador confíe en la redirección del script
+          mode: 'no-cors',
           headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
+            'Content-Type': 'application/x-www-form-urlencoded', // Formato de envío de datos
           },
-          // Envía los datos como parámetros de formulario URL-encoded
-          body: new URLSearchParams({
-            action: 'createPayment', // Le dice al Apps Script qué acción realizar
-            data: JSON.stringify(paymentData) // Envía todos los datos de pago como un string JSON
+          body: new URLSearchParams({ // Envía los datos como parámetros de formulario
+            action: 'createPayment',
+            data: JSON.stringify(paymentData) // Envía el objeto de datos de pago como una cadena JSON
           })
         });
 
-        // Si la llamada fetch fue exitosa, el Google Apps Script debe manejar la redirección.
-        // No podemos leer la respuesta directamente aquí con 'no-cors',
-        // pero podemos asumir que si la llamada no falló, el script ya intentó redirigir.
-        ppButtonDiv.innerHTML = 'Redirigiendo a la pasarela de pago...';
+        // Si la promesa de fetch se resuelve, significa que la solicitud fue enviada.
+        // El Apps Script es el que debe encargarse de la redirección al cliente.
+        ppButtonDiv.innerHTML = 'Solicitud enviada. Esperando redirección a PayPhone...';
 
       } catch (error) {
-        console.error('Error al iniciar el pago:', error);
-        ppButtonDiv.innerHTML = 'Error al procesar el pago. Por favor, intenta de nuevo.';
+        // Si hay un error de red o similar al hacer el fetch
+        console.error('Error al iniciar el pago (fetch):', error);
+        ppButtonDiv.innerHTML = 'Error de conexión. Por favor, intenta de nuevo.';
       } finally {
-        btnPagar.disabled = false; // Habilita el botón de nuevo
+        // El botón se habilitará de nuevo si no hubo una redirección inmediata,
+        // o no importará si la página ya se redirigió.
+        btnPagar.disabled = false;
       }
     }
 
-    // --- Event Listener para el botón de Pagar ---
+    // --- Event Listener para el botón "Pagar con Tarjeta" ---
     btnPagar.addEventListener('click', () => {
-      // Validaciones del formulario antes de iniciar el pago
+      // Validaciones básicas antes de procesar el pago
       if (!regionSelect.value || regionSelect.value === "Elige una región") {
         alert("Por favor, selecciona una región.");
         regionSelect.focus();
         return;
       }
-
       if (!destinoSelect.value || destinoSelect.value === "Elige destino") {
         alert("Por favor, selecciona un destino.");
         destinoSelect.focus();
         return;
       }
-
       const destino = destinoSelect.value;
       if (tiposExperiencia[destino] && (!tipoExperienciaSelect.value || tipoExperienciaSelect.value === "Tipo de experiencia")) {
         alert("Por favor, selecciona un tipo de experiencia.");
         tipoExperienciaSelect.focus();
         return;
       }
-
       if (!fechaInput.value) {
         alert("Por favor, selecciona una fecha de viaje.");
         fechaInput.focus();
         return;
       }
 
-      // Asegúrate de que el precio haya sido calculado y no sea "Consultar"
+      // Asegúrate de que el precio haya sido calculado y sea válido
       if (!priceBaseCentavos || precioInput.value === 'Consultar') {
         alert("Por favor, completa todos los campos correctamente para calcular el precio antes de pagar.");
         return;
@@ -553,9 +473,9 @@
       iniciarPagoConScript(priceBaseCentavos, fechaInput.value);
     });
 
-    // Función para ajustar la altura del iframe padre (si aplica)
+    // Función auxiliar para ajustar la altura del iframe si la página está incrustada
     function ajustarAlturaIframe(altura) {
-      if (window.parent) { // Verifica si hay una ventana padre
+      if (window.parent) {
         window.parent.postMessage({ tipo: 'ajustarAltura', altura }, '*');
       }
     }
