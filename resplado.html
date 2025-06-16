@@ -454,9 +454,9 @@
  */
 async function obtenerCredencialesPayPhone() {
   try {
-    const URL_API = 'https://script.google.com/macros/s/ABC123/exec';
+    const URL_API = 'https://script.google.com/macros/s/AKfycbwfZfRJqbXtsylJ4Ot_ojyHju03KiNiM8YRHgyfPCTsNpx9azK_1wHyAenFHCaHMwGC/exec';
     const origin = window.location.origin; // Ej: "https://yourtoursec.github.io"
-    
+    <<
     const response = await fetch(`${URL_API}?origin=${encodeURIComponent(origin)}`);
     
     if (!response.ok) {
