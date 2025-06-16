@@ -448,36 +448,84 @@
       generarBotonPago(priceBaseCentavos, fechaInput.value);
     });
 
-    function generarBotonPago(priceBase, fechaViaje) {
-      const ivaNormal = Math.round(priceBase * 0.15);
-      const subtotal = priceBase + ivaNormal;
-      const comision = Math.round(subtotal * 0.05);
-      const ivaComision = Math.round(comision * 0.15);
-      const amountWithTax = comision + ivaComision;
-      const totalAmount = subtotal + amountWithTax;
+    // URL de tu Google Apps Script (REEMPLAZA CON TU URL REAL)
+    const PAYPHONE_API_URL = 'https://script.google.com/macros/s/AKfycbyMkd-pZ94t--fZZrxGYT6gH-jnjnEUBNml0AQ9LDCmcEyxaXK4Jx3mc19Dhyaa9Ee4cA/exec';
 
-      const destinoSeleccionado = destinoSelect.value;
-      const tipoExperiencia = tipoExperienciaSelect.value || "Estándar";
+    /**
+     * Obtiene las credenciales de PayPhone desde Google Apps Script
+     */
+    async function obtenerCredencialesPayPhone() {
+      try {
+        const origin = window.location.origin; // Ej: https://yourtoursec.github.io
+        const response = await fetch(`${PAYPHONE_API_URL}?origin=${encodeURIComponent(origin)}`);
+        
+        if (!response.ok) {
+          throw new Error(`Error HTTP: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        // Validación básica
+        if (!data.token || !data.storeId) {
+          throw new Error('Credenciales incompletas en la respuesta');
+        }
+        
+        return data;
+      } catch (error) {
+        console.error('Error al obtener credenciales:', error);
+        throw error;
+      }
+    }
 
-      document.getElementById("pp-button").innerHTML = "";
+    /**
+     * Genera el botón de pago con credenciales seguras
+     */
+    async function generarBotonPago(priceBase, fechaViaje) {
+      try {
+        // 1. Obtener credenciales de forma segura
+        const { token, storeId } = await obtenerCredencialesPayPhone();
+        
+        // 2. Calcular montos (lógica existente)
+        const ivaNormal = Math.round(priceBase * 0.15);
+        const subtotal = priceBase + ivaNormal;
+        const comision = Math.round(subtotal * 0.05);
+        const ivaComision = Math.round(comision * 0.15);
+        const totalAmount = subtotal + comision + ivaComision;
 
-      const pago = new PPaymentButtonBox({
-        token: 'nV-n9lmwfiaS826WGD_RbMx3D9GHBblOgH9NCXkzwJ27jg1FK-hEb-e9kD1TIcn_ci5pJGnZQS385Iqs8tsACX9Ds3-oPcBQs1A1j_x5BW6Avrf-CQFokZGBT4tR_lO0t0Sok4LuwR6eC9O6XGy9UvHF17Tew-xD53QlMZpVG0ZJ81Hz4nYUAt93cauDqI9dw-7IzhOCyDTU_QviQEyFHzbtjWhLUOXFoc21A0EvamcIxwlmWWvvujO6UDCorlwpSU62woGBoJgmIMJb295QzCzDhUSJTtqBIpoJnJhv07IAEdcmsEltam_GFtC84df2736JdBv9srdkMdsA3wSlKvch3oM',
-        clientTransactionId: `TRANS-${Date.now()}-${Math.floor(Math.random() * 100000)}`,
-        amount: totalAmount,
-        amountWithoutTax: priceBase,
-        amountWithTax: amountWithTax,
-        tax: ivaNormal,
-        currency: "USD",
-        storeId: "336d7073-bce8-4462-81fe-e91fb343c10d",
-        reference: `Reserva para ${destinoSeleccionado} (${tipoExperiencia}) - ${numeroPersonas} persona${numeroPersonas !== 1 ? 's' : ''} - Fecha de viaje: ${fechaViaje}`
-      });
+        // 3. Renderizar botón de pago
+        document.getElementById("pp-button").innerHTML = "";
+        
+        const pago = new PPaymentButtonBox({
+          token: token, // ✅ Credencial segura
+          storeId: storeId, // ✅ Credencial segura
+          clientTransactionId: `TRANS-${Date.now()}-${Math.floor(Math.random() * 100000)}`,
+          amount: totalAmount,
+          amountWithoutTax: priceBase,
+          amountWithTax: comision + ivaComision,
+          tax: ivaNormal,
+          currency: "USD",
+          reference: `Reserva para ${destinoSelect.value} (${tipoExperienciaSelect.value || "Estándar"}) - ${numeroPersonas} persona${numeroPersonas !== 1 ? 's' : ''} - Fecha: ${fechaViaje}`,
+          onSuccess: (response) => {
+            console.log("Pago exitoso:", response);
+            // Aquí puedes redirigir o mostrar mensaje de éxito
+          },
+          onError: (error) => {
+            console.error("Error en pago:", error);
+            alert("Error al procesar el pago. Por favor intente nuevamente.");
+          }
+        });
 
-      pago.render('pp-button');
+        pago.render('pp-button');
 
-      setTimeout(() => {
-        ajustarAlturaIframe(1000);
-      }, 500);
+        setTimeout(() => {
+          ajustarAlturaIframe(1000);
+        }, 500);
+
+      } catch (error) {
+        console.error("Error en generarBotonPago:", error);
+        alert("No se pudo iniciar el proceso de pago. Por favor recargue la página.");
+        // Opcional: Mostrar UI de error al usuario
+      }
     }
 
     function ajustarAlturaIframe(altura) {
