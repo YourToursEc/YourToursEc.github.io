@@ -8,7 +8,6 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <style>
-    /* Tus estilos CSS existentes (copiados desde tu código) */
     body {
       margin-top: 0rem;
     }
@@ -186,7 +185,7 @@
     // Selecciona "Tipo de implementación": "Aplicación web".
     // Configura "Ejecutar como": "Yo" y "Quién tiene acceso": "Cualquier persona".
     // Luego, copia la "URL de la aplicación web".
-    const GOOGLE_SCRIPT_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxzZVUkTn5XMbMqTf_k8xS2TzRP4yNS9whBF6JANZkq96ZP-0rbKczS3_28bigixt_l/exec'; // <-- ¡No olvides cambiar esto!
+    const GOOGLE_SCRIPT_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxUTrv6a-qDnriYerDdboS24WcCvdhkqPOtgXwdsxaEQ5kKHs4twUEd4bKQWA2O7k7U/exec'; // <-- ¡NO OLVIDES CAMBIAR ESTO!
 
     // Funciones para generar fechas disponibles
     function generarFechasBañosTodoIncluido() {
@@ -253,7 +252,8 @@
         }
         return [];
       },
-      // Otras funciones de fechas...
+      // Puedes añadir otras funciones de fechas si tienes más destinos con lógicas específicas
+      // Ejemplo: "Otro Destino": function() { return ["2025-07-01", "2025-07-08"]; }
     };
 
     const regiones = {
@@ -265,8 +265,8 @@
 
     const tiposExperiencia = {
       "Baños de Agua Santa": ["Todo Incluido", "Compartido"],
-      // Otros tipos de experiencia...
-      "_default": ["Todo Incluido"]
+      // Añade tipos de experiencia para otros destinos si son diferentes a "_default"
+      "_default": ["Todo Incluido"] // Tipo de experiencia por defecto si no hay uno específico para el destino
     };
 
     const preciosBase = {
@@ -280,7 +280,13 @@
           entreSemana: 200
         }
       },
-      // Otros precios...
+      // Añade precios para otros destinos aquí
+      // "Cotopaxi": {
+      //   "Todo Incluido": {
+      //     finDeSemana: 70,
+      //     entreSemana: 50
+      //   }
+      // }
     };
 
     // Elementos del DOM
@@ -291,14 +297,15 @@
     const numeroPersonasInput = document.getElementById('numero-personas');
     const precioInput = document.getElementById('precio-pagar');
     const btnPagar = document.getElementById('btn-pagar');
-    const ppButtonDiv = document.getElementById("pp-button");
+    const ppButtonDiv = document.getElementById("pp-button"); // Para mostrar mensajes al usuario
 
     // Variables globales
-    let priceBaseCentavos = 0;
+    let priceBaseCentavos = 0; // El precio base sin IVA, convertido a centavos
     let numeroPersonas = 1;
-    let calendario;
+    let calendario; // Instancia de Flatpickr
 
-    // Event Listeners
+    // --- Event Listeners para la lógica de los selectores ---
+
     regionSelect.addEventListener('change', () => {
       const destinos = regiones[regionSelect.value] || [];
       destinoSelect.innerHTML = '<option selected disabled>Elige destino</option>';
@@ -314,8 +321,8 @@
       fechaInput.value = '';
       fechaInput.disabled = true;
       precioInput.value = '';
-      if (calendario) calendario.destroy();
-      ppButtonDiv.innerHTML = "";
+      if (calendario) calendario.destroy(); // Destruye la instancia anterior del calendario
+      ppButtonDiv.innerHTML = ""; // Limpia cualquier mensaje anterior de pago
     });
 
     destinoSelect.addEventListener('change', () => {
@@ -342,25 +349,26 @@
 
       let fechas;
       if (typeof fechasDisponibles[destino] === 'function') {
-        fechas = fechasDisponibles[destino](tipoExperiencia);
+        fechas = fechasDisponibles[destino](tipoExperiencia); // Si es una función, la llama
       } else {
-        fechas = fechasDisponibles[destino];
+        fechas = fechasDisponibles[destino]; // Si es un array de fechas directo
       }
 
-      if (calendario) calendario.destroy();
+      if (calendario) calendario.destroy(); // Destruye cualquier instancia de Flatpickr previa
 
-      if (fechas) {
+      if (fechas && fechas.length > 0) { // Asegúrate de que hay fechas disponibles
         calendario = flatpickr(fechaInput, {
           dateFormat: "Y-m-d",
           minDate: "today",
-          enable: fechas,
+          enable: fechas, // Habilita solo las fechas disponibles
           onOpen: () => {
-            ajustarAlturaIframe(400);
+            ajustarAlturaIframe(400); // Ajusta la altura del iframe al abrir el calendario
           },
           onClose: () => {
-            ajustarAlturaIframe(190);
+            ajustarAlturaIframe(190); // Restaura la altura al cerrar
           },
           onDayCreate: function (dObj, dStr, fp, dayElem) {
+            // Añade una clase CSS para resaltar las fechas disponibles
             const fecha = dayElem.dateObj.toISOString().split('T')[0];
             if (fechas.includes(fecha)) {
               dayElem.classList.add('fechas-disponibles');
@@ -368,6 +376,7 @@
           }
         });
       } else {
+        // Si no hay fechas específicas o la función devuelve un array vacío, inicializa un calendario básico
         calendario = flatpickr(fechaInput, {
           dateFormat: "Y-m-d",
           minDate: "today",
@@ -391,20 +400,24 @@
     });
 
     numeroPersonasInput.addEventListener('change', () => {
-      if (fechaInput.value) {
+      // Asegúrate de que el número de personas sea al menos 1
+      if (parseInt(numeroPersonasInput.value) < 1 || isNaN(parseInt(numeroPersonasInput.value))) {
+        numeroPersonasInput.value = 1;
+      }
+      if (fechaInput.value) { // Solo recalcula si ya hay una fecha seleccionada
         calcularYMostrarPrecio();
         ppButtonDiv.innerHTML = "";
       }
     });
 
-    // Función para calcular el precio corregida
+    // --- Función para calcular el precio ---
     function calcularYMostrarPrecio() {
       const destino = destinoSelect.value;
       const tipoExperiencia = tipoExperienciaSelect.value;
       const fecha = fechaInput.value;
       numeroPersonas = parseInt(numeroPersonasInput.value) || 1;
 
-      if (!destino || !fecha) {
+      if (!destino || !fecha || !tipoExperiencia) { // Asegúrate de que todos los campos estén seleccionados
         precioInput.value = '';
         return;
       }
@@ -416,52 +429,54 @@
       let precioBase;
       const precioDestino = preciosBase[destino];
 
-      // Lógica específica para Baños de Agua Santa
-      if (destino === "Baños de Agua Santa" && precioDestino && precioDestino[tipoExperiencia]) {
-        precioBase = esFinDeSemana ?
-          precioDestino[tipoExperiencia].finDeSemana :
-          precioDestino[tipoExperiencia].entreSemana;
-      }
-      // Lógica para otros destinos...
-      else if (typeof precioDestino === 'object' && precioDestino[tipoExperiencia] !== undefined) {
-        precioBase = precioDestino[tipoExperiencia];
-      } else if (typeof precioDestino === 'number') {
+      if (precioDestino && typeof precioDestino === 'object' && precioDestino[tipoExperiencia]) {
+        if (typeof precioDestino[tipoExperiencia] === 'object') { // Si tiene precios diferentes para fin de semana/entre semana
+          precioBase = esFinDeSemana ?
+            precioDestino[tipoExperiencia].finDeSemana :
+            precioDestino[tipoExperiencia].entreSemana;
+        } else { // Si tiene un precio único por tipo de experiencia
+          precioBase = precioDestino[tipoExperiencia];
+        }
+      } else if (typeof precioDestino === 'number') { // Si el destino tiene un precio base único (sin tipo de experiencia)
         precioBase = precioDestino;
       } else {
-        precioBase = 0;
+        precioBase = 0; // Por defecto si no se encuentra el precio
       }
 
-      if (!precioBase) {
-        precioInput.value = 'Consultar';
+      if (!precioBase || precioBase <= 0) {
+        precioInput.value = 'Consultar'; // Muestra "Consultar" si el precio base es 0 o no se encuentra
+        priceBaseCentavos = 0; // Reinicia a 0 centavos
         return;
       }
 
+      // Calcula el precio total en centavos
       priceBaseCentavos = Math.round(precioBase * 100) * numeroPersonas;
 
-      const iva = priceBaseCentavos * 0.15;
+      const iva = Math.round(priceBaseCentavos * 0.15); // IVA del 15%
       const subtotal = priceBaseCentavos + iva;
-      const comision = subtotal * 0.05;
-      const ivaComision = comision * 0.15;
+      const comision = Math.round(subtotal * 0.05); // Comisión del 5%
+      const ivaComision = Math.round(comision * 0.15); // IVA de la comisión
       const total = subtotal + comision + ivaComision;
 
       precioInput.value = `$${(total / 100).toFixed(2)} (${numeroPersonas} persona${numeroPersonas !== 1 ? 's' : ''})`;
     }
 
-    // Nueva función para llamar al Google Apps Script
+    // --- Función para iniciar el pago con el Google Apps Script ---
     async function iniciarPagoConScript(priceBase, fechaViaje) {
+      // Mostrar mensaje de procesamiento y deshabilitar el botón
       ppButtonDiv.innerHTML = 'Procesando pago... por favor espera.';
-      btnPagar.disabled = true; // Deshabilita el botón mientras se procesa
+      btnPagar.disabled = true;
 
       const destinoSeleccionado = destinoSelect.value;
       const tipoExperiencia = tipoExperienciaSelect.value || "Estándar";
 
-      // Calcula los montos necesarios que le pasarás al script de Google
+      // Calcula los montos necesarios para PayPhone (en centavos)
       const ivaNormal = Math.round(priceBase * 0.15);
-      const subtotal = priceBase + ivaNormal;
-      const comision = Math.round(subtotal * 0.05);
+      const subtotalBaseIva = priceBase + ivaNormal; // Base para la comisión
+      const comision = Math.round(subtotalBaseIva * 0.05);
       const ivaComision = Math.round(comision * 0.15);
-      const amountWithTax = comision + ivaComision;
-      const totalAmount = subtotal + amountWithTax; // Este es el total que PayPhone espera
+      const amountWithTax = comision + ivaComision; // Suma de la comisión + su IVA
+      const totalAmount = subtotalBaseIva + amountWithTax; // Monto final a enviar a PayPhone
 
       const paymentData = {
         amount: totalAmount, // Total en centavos
@@ -469,70 +484,41 @@
         amountWithTax: amountWithTax, // Comisión + IVA de comisión en centavos
         tax: ivaNormal, // IVA del monto base en centavos
         currency: "USD",
-        reference: `Reserva para ${destinoSeleccionado} (${tipoExperiencia}) - ${numeroPersonas} persona${numeroPersonas !== 1 ? 's' : ''} - Fecha de viaje: ${fechaViaje}`
+        reference: `Reserva para ${destinoSeleccionado} (${tipoExperiencia}) - ${numeroPersonas} persona${numeroPersonas !== 1 ? 's' : ''} - Fecha: ${fechaViaje}`
       };
 
       try {
+        // Realiza la llamada fetch a tu Google Apps Script
         const response = await fetch(GOOGLE_SCRIPT_WEB_APP_URL, {
           method: 'POST',
-          mode: 'no-cors', // Necesario para evitar errores CORS directos, aunque el script de Apps Script manejará las redirecciones
+          mode: 'no-cors', // Importante para que el navegador confíe en la redirección del script
           headers: {
-            'Content-Type': 'application/x-www-form-urlencoded', // O 'application/json' si tu script de Apps Script lo espera así
+            'Content-Type': 'application/x-www-form-urlencoded',
           },
           // Envía los datos como parámetros de formulario URL-encoded
           body: new URLSearchParams({
-            action: 'createPayment', // El nombre de la función que tu Apps Script debe ejecutar
-            data: JSON.stringify(paymentData) // Envía los datos de pago como un string JSON
+            action: 'createPayment', // Le dice al Apps Script qué acción realizar
+            data: JSON.stringify(paymentData) // Envía todos los datos de pago como un string JSON
           })
         });
 
-        // NOTA: Cuando el script de Google Apps Script redirige, la respuesta del `fetch`
-        // tendrá `response.type` como 'opaque' si `mode: 'no-cors'`.
-        // No podrás leer el cuerpo de la respuesta directamente en el cliente.
-        // La redirección debe ser manejada por el Google Apps Script.
-
-        // Si tu Google Apps Script devuelve la URL de redirección en el cuerpo de la respuesta
-        // (y no redirige directamente), entonces necesitas cambiar `mode: 'no-cors'` a `mode: 'cors'`
-        // y leer `response.json()`. Sin embargo, lo más común y seguro es que el Apps Script
-        // maneje la redirección por sí mismo.
-
-        // Dada la naturaleza de Google Apps Script y su integración como Web App,
-        // la redirección a PayPhone debe ser manejada directamente por el script del lado del servidor (Apps Script).
-        // Si la llamada fetch a tu script es exitosa y el script de Google redirige
-        // al usuario a la página de PayPhone, el navegador lo manejará automáticamente.
-        // Si no ocurre una redirección automática, es posible que el script necesite devolver
-        // una URL que luego puedas abrir con `window.open()` o `window.location.href`.
-
-        // Por ahora, asumimos que el Google Apps Script maneja la redirección.
-        // Si necesitas que el Apps Script te devuelva la URL para que el frontend redirija,
-        // el Apps Script debería usar `ContentService.createTextOutput(url).setMimeType(ContentService.MimeType.JSON);`
-        // y este cliente debería usar `const result = await response.json(); window.location.href = result.url;`
-
-        // Si la respuesta es exitosa (aunque opaca en no-cors), asumimos que la redirección está en curso.
+        // Si la llamada fetch fue exitosa, el Google Apps Script debe manejar la redirección.
+        // No podemos leer la respuesta directamente aquí con 'no-cors',
+        // pero podemos asumir que si la llamada no falló, el script ya intentó redirigir.
         ppButtonDiv.innerHTML = 'Redirigiendo a la pasarela de pago...';
-
-        // Si el Apps Script no redirige automáticamente, y en su lugar devuelve una URL,
-        // necesitas esta lógica:
-        // const result = await response.json();
-        // if (result && result.redirectUrl) {
-        //   window.location.href = result.redirectUrl;
-        // } else {
-        //   ppButtonDiv.innerHTML = 'Error: No se recibió la URL de redirección.';
-        // }
 
       } catch (error) {
         console.error('Error al iniciar el pago:', error);
-        ppButtonDiv.innerHTML = 'Error al procesar el pago. Intenta de nuevo.';
+        ppButtonDiv.innerHTML = 'Error al procesar el pago. Por favor, intenta de nuevo.';
       } finally {
-        btnPagar.disabled = false; // Vuelve a habilitar el botón
+        btnPagar.disabled = false; // Habilita el botón de nuevo
       }
     }
 
-
-    // Event listener para el botón de pago
+    // --- Event Listener para el botón de Pagar ---
     btnPagar.addEventListener('click', () => {
-      // Validaciones existentes
-      if (!regionSelect.value) {
+      // Validaciones del formulario antes de iniciar el pago
+      if (!regionSelect.value || regionSelect.value === "Elige una región") {
         alert("Por favor, selecciona una región.");
         regionSelect.focus();
         return;
@@ -557,17 +543,21 @@
         return;
       }
 
+      // Asegúrate de que el precio haya sido calculado y no sea "Consultar"
       if (!priceBaseCentavos || precioInput.value === 'Consultar') {
-        alert("Por favor, completa todos los campos correctamente para calcular el precio.");
+        alert("Por favor, completa todos los campos correctamente para calcular el precio antes de pagar.");
         return;
       }
 
-      // Llama a la nueva función que se comunica con tu Google Apps Script
+      // Llama a la función asíncrona para iniciar el proceso de pago
       iniciarPagoConScript(priceBaseCentavos, fechaInput.value);
     });
 
+    // Función para ajustar la altura del iframe padre (si aplica)
     function ajustarAlturaIframe(altura) {
-      window.parent.postMessage({ tipo: 'ajustarAltura', altura }, '*');
+      if (window.parent) { // Verifica si hay una ventana padre
+        window.parent.postMessage({ tipo: 'ajustarAltura', altura }, '*');
+      }
     }
   </script>
 </body>
