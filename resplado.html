@@ -448,87 +448,41 @@
       generarBotonPago(priceBaseCentavos, fechaInput.value);
     });
 
-    /**
- * Obtiene token y storeId desde Google Apps Script de forma segura.
- * @returns {Promise<{token: string, storeId: string}>}
- */
-async function obtenerCredencialesPayPhone() {
-  try {
-    const URL_API = 'https://script.google.com/macros/s/AKfycbwfZfRJqbXtsylJ4Ot_ojyHju03KiNiM8YRHgyfPCTsNpx9azK_1wHyAenFHCaHMwGC/exec';
-    const origin = window.location.origin; // Ej: "https://yourtoursec.github.io"
-    <<
-    const response = await fetch(`${URL_API}?origin=${encodeURIComponent(origin)}`);
-    
-    if (!response.ok) {
-      throw new Error(`Error HTTP: ${response.status}`);
+    function generarBotonPago(priceBase, fechaViaje) {
+      const ivaNormal = Math.round(priceBase * 0.15);
+      const subtotal = priceBase + ivaNormal;
+      const comision = Math.round(subtotal * 0.05);
+      const ivaComision = Math.round(comision * 0.15);
+      const amountWithTax = comision + ivaComision;
+      const totalAmount = subtotal + amountWithTax;
+
+      const destinoSeleccionado = destinoSelect.value;
+      const tipoExperiencia = tipoExperienciaSelect.value || "Estándar";
+
+      document.getElementById("pp-button").innerHTML = "";
+
+      const pago = new PPaymentButtonBox({
+        token: 'nV-n9lmwfiaS826WGD_RbMx3D9GHBblOgH9NCXkzwJ27jg1FK-hEb-e9kD1TIcn_ci5pJGnZQS385Iqs8tsACX9Ds3-oPcBQs1A1j_x5BW6Avrf-CQFokZGBT4tR_lO0t0Sok4LuwR6eC9O6XGy9UvHF17Tew-xD53QlMZpVG0ZJ81Hz4nYUAt93cauDqI9dw-7IzhOCyDTU_QviQEyFHzbtjWhLUOXFoc21A0EvamcIxwlmWWvvujO6UDCorlwpSU62woGBoJgmIMJb295QzCzDhUSJTtqBIpoJnJhv07IAEdcmsEltam_GFtC84df2736JdBv9srdkMdsA3wSlKvch3oM',
+        clientTransactionId: `TRANS-${Date.now()}-${Math.floor(Math.random() * 100000)}`,
+        amount: totalAmount,
+        amountWithoutTax: priceBase,
+        amountWithTax: amountWithTax,
+        tax: ivaNormal,
+        currency: "USD",
+        storeId: "336d7073-bce8-4462-81fe-e91fb343c10d",
+        reference: `Reserva para ${destinoSeleccionado} (${tipoExperiencia}) - ${numeroPersonas} persona${numeroPersonas !== 1 ? 's' : ''} - Fecha de viaje: ${fechaViaje}`
+      });
+
+      pago.render('pp-button');
+
+      setTimeout(() => {
+        ajustarAlturaIframe(1000);
+      }, 500);
     }
-    
-    const data = await response.json();
-    
-    // Validación básica
-    if (!data.token || !data.storeId) {
-      throw new Error('Credenciales incompletas');
-    }
-    
-    return data;
-  } catch (error) {
-    console.error('Error al obtener credenciales:', error);
-    throw error; // Re-lanzar para manejo superior
-  }
-}
-
-   async function generarBotonPago(priceBase, fechaViaje) {
-  try {
-    // 1. Obtener credenciales seguras
-    const { token, storeId } = await obtenerCredencialesPayPhone();
-    
-    // 2. Calcular montos (lógica existente)
-    const ivaNormal = Math.round(priceBase * 0.15);
-    const subtotal = priceBase + ivaNormal;
-    const comision = Math.round(subtotal * 0.05);
-    const ivaComision = Math.round(comision * 0.15);
-    const totalAmount = subtotal + comision + ivaComision;
-
-    // 3. Renderizar botón
-    document.getElementById("pp-button").innerHTML = "";
-    
-    const pago = new PPaymentButtonBox({
-      token: token,       // ✅ Desde backend seguro
-      storeId: storeId,   // ✅ Desde backend seguro
-      clientTransactionId: `TRANS-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
-      amount: totalAmount,
-      amountWithoutTax: priceBase,
-      amountWithTax: comision + ivaComision,
-      tax: ivaNormal,
-      currency: "USD",
-      reference: `Reserva para ${destinoSelect.value} - ${fechaViaje}`,
-      onSuccess: (response) => {
-        console.log("Pago exitoso:", response);
-        // Lógica post-pago (ej: redirección o mensaje)
-      },
-      onError: (error) => {
-        console.error("Error en pago:", error);
-        alert("Error al procesar el pago. Intente nuevamente.");
-      }
-    });
-
-    pago.render('pp-button');
-    
-  } catch (error) {
-    console.error("Error crítico:", error);
-    alert("No se pudo iniciar el proceso de pago. Recargue la página.");
-    // Opcional: Reintentar o mostrar UI de error
-  }
-}
 
     function ajustarAlturaIframe(altura) {
       window.parent.postMessage({ tipo: 'ajustarAltura', altura }, '*');
     }
   </script>
-</body>
-</html>
-  // Obtén una referencia a Firestore
-  const db = firebase.firestore();
-</script>
 </body>
 </html>
