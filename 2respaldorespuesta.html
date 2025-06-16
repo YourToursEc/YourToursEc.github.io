@@ -5,375 +5,49 @@
     <meta charset="UTF-8" />
     <title>YOUR TOURS - Comprobante de Pago</title>
     <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
     <style>
-        /* ... (Tu CSS, sin cambios) ... */
-        body {
-            margin: 0;
-            padding: 2rem;
-            background: linear-gradient(to right, #f8f9fa, #f8f9fa);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-            font-family: 'Archivo', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-
-        .ticket-container {
-            display: flex;
-            width: 740px;
-            gap: 20px;
-        }
-
-        .ticket {
-            position: relative;
-            background: #fff;
-            border-radius: 16px;
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
-            display: flex;
-            overflow: hidden;
-            width: 100%;
-        }
-
-        .ticket::before, .ticket::after {
-            content: '';
-            position: absolute;
-            width: 20px;
-            height: 40px;
-            background: #d8dada;
-            border-radius: 50%;
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 2;
-        }
-
-        .ticket::before { left: -10px; }
-        .ticket::after { right: -10px; }
-        .stripe {
-            position: absolute;
-            left: 0;
-            width: 100%;
-            height: 20px;
-            background: repeating-linear-gradient(
-                135deg,
-                #f9d976,
-                #f9d976 10px,
-                #fff 10px,
-                #fff 20px
-            );
-            z-index: 1;
-        }
-
-        .stripe.top {
-            top: 0;
-            border-top-left-radius: 16px;
-            border-top-right-radius: 16px;
-        }
-        .stripe.bottom {
-            bottom: 0;
-            border-bottom-left-radius: 16px;
-            border-bottom-right-radius: 16px;
-        }
-
-        .left, .right {
-            padding: 2rem;
-        }
-
-        .left {
-            padding: 4 2rem 2rem 2rem;
-            flex: 3;
-            border-right: 2px dashed #eee;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            position: relative;
-            z-index: 3;
-        }
-
-        .right {
-            flex: 1.5;
-            background: #f39c12;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            position: relative;
-            align-items: center;
-            padding: 1rem;
-            gap: 1rem;
-            z-index: 3;
-        }
-
-        .right h1 {
-            margin: 0;
-            padding-top: 0;
-            font-size: 1.8rem;
-            color: #fcfcfc;
-            text-transform: uppercase;
-            text-align: center;
-            width: 100%;
-        }
-
-        .logo-right {
-            width: 190px;
-            margin-bottom: 2rem;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-            filter: drop-shadow(0 0 2px rgba(0,0,0,0.2));
-        }
-
-        h1 {
-            margin-top: 1rem;
-            font-size: 1.8rem;
-            color: #fcfcfc;
-            text-transform: uppercase;
-            text-align: center;
-        }
-
-        .section {
-            margin-bottom: 1rem;
-        }
-
-        .label {
-            font-size: 0.75rem;
-            color: #666;
-            text-transform: uppercase;
-            margin-bottom: 0.25rem;
-            font-weight: 600;
-        }
-        .incluyeimpuestos {
-            text-align: center;
-        }
-
-        .totalpagado {
-            font-size: 0.98rem;
-            color: #600;
-            text-transform: uppercase;
-            margin-bottom: 0.25rem;
-            font-weight: 600;
-            text-align: center;
-        }
-
-        .value {
-            font-size: 1rem;
-            font-weight: 600;
-            font-family: 'JetBrains Mono', monospace;
-            color: #333;
-        }
-
-        .row {
-            display: flex;
-            justify-content: space-between;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .info-block {
-            margin-bottom: 1rem;
-            flex: 1 1 45%;
-        }
-
-        .barcode {
-            margin: 1.5rem auto;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            max-width: 100%;
-            overflow: hidden;
-        }
-
-        #barcode {
-            max-width: 100%;
-            height: auto;
-        }
-
-        .barcode-text {
-            font-size: 14px;
-            text-align: center;
-            margin-top: 4px;
-            font-family: monospace;
-            word-break: break-word;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 100%;
-        }
-
-        .thank-you {
-            font-size: 0.9rem;
-            color: #555;
-            text-align: center;
-            margin-top: 1rem;
-        }
-
-        .amount {
-            font-size: 2rem;
-            font-weight: bold;
-            margin: 1rem 0;
-        }
-
-        .right small {
-            font-size: 0.75rem;
-        }
-
-        .website {
-            position: absolute;
-            bottom: 1rem;
-            left: 50%;
-            transform: translateX(-50%);
-            text-align: center;
-            font-size: 0.75rem;
-            opacity: 0.8;
-        }
-        .comprobantedepago {
-            position: absolute;
-            font-family: 'Poppins', sans-serif;
-            top: 2rem;
-            left: 50%;
-            transform: translateX(-50%);
-            text-align: center;
-            font-size: 0.77rem;
-        }
-
-        #estado.aprobado {
-            color: #4CAF50;
-            font-weight: bold;
-        }
-
-        #estado.fallido {
-            color: #F44336;
-            font-weight: bold;
-        }
-
-        .print-button {
-            background: transparent;
-            border: 2px solid #f39c12;
-            color: #f39c12;
-            font-weight: 600;
-            font-size: 1rem;
-            padding: 0.5rem 1.25rem;
-            border-radius: 12px;
-            cursor: pointer;
-            margin: 1rem auto 0;
-            display: block;
-            max-width: 200px;
-            text-align: center;
-            user-select: none;
-            transition: all 0.3s ease;
-            font-family: 'Archivo', sans-serif;
-        }
-
-        .print-button:hover {
-            background: #f39c12;
-            color: white;
-            box-shadow: 0 4px 12px rgba(243, 156, 18, 0.4);
-        }
-
-        .print-button:active {
-            transform: scale(0.98);
-        }
-
-        .right .aro {
-            position: absolute;
-            border: 40px solid rgba(255, 255, 255, 0.25);
-            border-radius: 50%;
-            pointer-events: none;
-            opacity: 0.4;
-            z-index: 1;
-        }
-
-        @media print {
-            .ticket-container {
-                display: flex;
-                flex-direction: wrap;
-                width: 100%;
-                max-width: 700px;
-            }
-            .ticket {
-                position: relative;
-                background: #fff;
-                border-radius: 16px;
-                box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
-                display: flex;
-                overflow: hidden;
-                width: 100%;
-                page-break-inside: avoid;
-                break-inside: avoid;
-            }
-
-            .right .aro {
-                position: absolute;
-                border: 29px solid rgba(255, 255, 255, 0.25);
-                border-radius: 50%;
-                pointer-events: none;
-                opacity: 0.4;
-                z-index: 1;
-            }
-
-            body {
-                background: white;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }
-
-            .print-button {
-                display: none;
-            }
-        }
-        @media screen and (max-width: 768px) {
-            .ticket-container {
-                flex-direction: column;
-                width: 100%;
-                padding: 1rem;
-            }
-
-            .ticket {
-                flex-direction: column;
-                width: 100%;
-                margin-bottom: 1.5rem;
-                border-radius: 12px;
-            }
-
-            .left, .right {
-                padding: 1rem;
-            }
-
-            .right {
-                border-left: none;
-                border-top: 2px dashed #eee;
-                align-items: flex-start;
-            }
-
-            .right h1, .comprobantedepago h1 {
-                font-size: 1.5rem;
-                text-align: center;
-            }
-
-            .amount {
-                font-size: 1.5rem;
-            }
-
-            .logo-right {
-                width: 180px;
-                margin-top: 7rem;
-                margin: 10 auto 1rem auto;
-            }
-
-            .barcode {
-                margin-top: 1rem;
-            }
-
-            .print-button {
-                max-width: 100%;
-            }
-
-            .stripe.top, .stripe.bottom {
-                height: 12px;
-            }
-        }
+        /* CSS proporcionado en tu última petición, sin modificaciones */
+        body { margin: 0; padding: 2rem; background: linear-gradient(to right, #f8f9fa, #f8f9fa); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); font-family: 'Archivo', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .ticket-container { display: flex; width: 740px; gap: 20px; }
+        .ticket { position: relative; background: #fff; border-radius: 16px; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2); display: flex; overflow: hidden; width: 100%; }
+        .ticket::before, .ticket::after { content: ''; position: absolute; width: 20px; height: 40px; background: #d8dada; border-radius: 50%; top: 50%; transform: translateY(-50%); z-index: 2; }
+        .ticket::before { left: -10px; } .ticket::after { right: -10px; }
+        .stripe { position: absolute; left: 0; width: 100%; height: 20px; background: repeating-linear-gradient(135deg, #f9d976, #f9d976 10px, #fff 10px, #fff 20px); z-index: 1; }
+        .stripe.top { top: 0; border-top-left-radius: 16px; border-top-right-radius: 16px; }
+        .stripe.bottom { bottom: 0; border-bottom-left-radius: 16px; border-bottom-right-radius: 16px; }
+        .left, .right { padding: 2rem; }
+        .left { padding: 4 2rem 2rem 2rem; flex: 3; border-right: 2px dashed #eee; display: flex; flex-direction: column; justify-content: space-between; position: relative; z-index: 3; }
+        .right { flex: 1.5; background: #f39c12; color: white; display: flex; flex-direction: column; justify-content: center; position: relative; align-items: center; padding: 1rem; gap: 1rem; z-index: 3; }
+        .right h1 { margin: 0; padding-top: 0; font-size: 1.8rem; color: #fcfcfc; text-transform: uppercase; text-align: center; width: 100%; }
+        .logo-right { width: 190px; margin-bottom: 2rem; display: block; margin-left: auto; margin-right: auto; filter: drop-shadow(0 0 2px rgba(0,0,0,0.2)); }
+        h1 { margin-top: 1rem; font-size: 1.8rem; color: #fcfcfc; text-transform: uppercase; text-align: center; }
+        .section { margin-bottom: 1rem; }
+        .label { font-size: 0.75rem; color: #666; text-transform: uppercase; margin-bottom: 0.25rem; font-weight: 600; }
+        .incluyeimpuestos { text-align: center; }
+        .totalpagado { font-size: 0.98rem; color: #600; text-transform: uppercase; margin-bottom: 0.25rem; font-weight: 600; text-align: center; }
+        .value { font-size: 1rem; font-weight: 600; font-family: 'JetBrains Mono', monospace; color: #333; }
+        .row { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+        .info-block { margin-bottom: 1rem; flex: 1 1 45%; }
+        .barcode { margin: 1.5rem auto; display: flex; flex-direction: column; align-items: center; max-width: 100%; overflow: hidden; }
+        #barcode { max-width: 100%; height: auto; }
+        .barcode-text { font-size: 14px; text-align: center; margin-top: 4px; font-family: monospace; word-break: break-word; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+        .thank-you { font-size: 0.9rem; color: #555; text-align: center; margin-top: 1rem; }
+        .amount { font-size: 2rem; font-weight: bold; margin: 1rem 0; }
+        .right small { font-size: 0.75rem; }
+        .website { position: absolute; bottom: 1rem; left: 50%; transform: translateX(-50%); text-align: center; font-size: 0.75rem; opacity: 0.8; }
+        .comprobantedepago { position: absolute; font-family: 'Poppins', sans-serif; top: 2rem; left: 50%; transform: translateX(-50%); text-align: center; font-size: 0.77rem; }
+        #estado.aprobado { color: #4CAF50; font-weight: bold; }
+        #estado.fallido { color: #F44336; font-weight: bold; }
+        .print-button { background: transparent; border: 2px solid #f39c12; color: #f39c12; font-weight: 600; font-size: 1rem; padding: 0.5rem 1.25rem; border-radius: 12px; cursor: pointer; margin: 1rem auto 0; display: block; max-width: 200px; text-align: center; user-select: none; transition: all 0.3s ease; font-family: 'Archivo', sans-serif; }
+        .print-button:hover { background: #f39c12; color: white; box-shadow: 0 4px 12px rgba(243, 156, 18, 0.4); }
+        .print-button:active { transform: scale(0.98); }
+        .right .aro { position: absolute; border: 40px solid rgba(255, 255, 255, 0.25); border-radius: 50%; pointer-events: none; opacity: 0.4; z-index: 1; }
+        @media print { .ticket-container { display: flex; flex-direction: wrap; width: 100%; max-width: 700px; } .ticket { position: relative; background: #fff; border-radius: 16px; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2); display: flex; overflow: hidden; width: 100%; page-break-inside: avoid; break-inside: avoid; } .right .aro { position: absolute; border: 29px solid rgba(255, 255, 255, 0.25); border-radius: 50%; pointer-events: none; opacity: 0.4; z-index: 1; } body { background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; } .print-button { display: none; } }
+        @media screen and (max-width: 768px) { .ticket-container { flex-direction: column; width: 100%; padding: 1rem; } .ticket { flex-direction: column; width: 100%; margin-bottom: 1.5rem; border-radius: 12px; } .left, .right { padding: 1rem; } .right { border-left: none; border-top: 2px dashed #eee; align-items: flex-start; } .right h1, .comprobantedepago h1 { font-size: 1.5rem; text-align: center; } .amount { font-size: 1.5rem; } .logo-right { width: 180px; margin-top: 7rem; margin: 10 auto 1rem auto; } .barcode { margin-top: 1rem; } .print-button { max-width: 100%; } .stripe.top, .stripe.bottom { height: 12px; } }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+
 </head>
 <body>
     <div class="ticket-container">
@@ -459,6 +133,7 @@
         <div class="ticket">
             <div class="stripe top"></div>
             <div class="stripe bottom"></div>
+
             <div class="right">
                 <span class="aro" style="width: 80px; height: 80px; top: -35px; left: 30px;"></span>
                 <span class="aro" style="width: 60px; height: 60px; top: 130px; right: -20px;"></span>
@@ -466,7 +141,8 @@
                 <span class="aro" style="width: 50px; height: 50px; bottom: -50px; right: 280px;"></span>
                 <span class="aro" style="width: 120px; height: 120px; top: 50%; left: 10%; transform: translate(-50%, -50%);"></span>
 
-                <div class="comprobantedepago"><h1>Comprobante de Pago</h1></div>
+                <div class="comprobantedepago"><h1>Comprobante de Pago</h1> </div> 
+                
                 <img src="img/logo sin fondo.png" class="logo-right" alt="Logo Your Tours" />
                 <div>
                     <div class="totalpagado">Total Pagado</div>
@@ -479,8 +155,8 @@
     </div>
 
     <script>
-        // *** REEMPLAZA ESTA URL CON LA URL DE TU APLICACIÓN WEB DE GOOGLE APPS SCRIPT ***
-        const GOOGLE_APPS_SCRIPT_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbycqzdt_L9xYZNWlTST7BL-04D-tuZiiBvBuLrE_q_bvL2TbiNhrL3AONTBJYaSkvMOLw/exec'; // ¡Pega aquí la URL que copiaste de tu Apps Script!
+        // *** REEMPLAZA ESTA LÍNEA CON LA URL DE TU APLICACIÓN WEB DE GOOGLE APPS SCRIPT ***
+        const GOOGLE_APPS_SCRIPT_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby2vwLspzcqZp-JjaM6hkWkxrzHMl1Qq1hgyGU0JIswaAMP-jGaXkK_tsOM0YlcY8wtRw/exec'; 
         // ********************************************************************************
 
         const params = new URLSearchParams(window.location.search);
@@ -498,13 +174,8 @@
         if (id && clientTransactionId) {
             fetch(GOOGLE_APPS_SCRIPT_WEB_APP_URL, {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    id: id,
-                    clientTxId: clientTransactionId
-                })
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ id: id, clientTxId: clientTransactionId })
             })
             .then(res => {
                 if (!res.ok) { 
@@ -517,7 +188,7 @@
             .then(data => {
                 if (data.error) {
                     setEstado(`❌ Error: ${data.error}`, false);
-                    console.error("Error del backend:", data.details || data.payphoneResponse);
+                    console.error("Error del backend (Apps Script):", data.details || data.payphoneResponse);
                     return;
                 }
 
@@ -533,11 +204,7 @@
                 document.getElementById("clientTxId").textContent = data.clientTransactionId || "—";
 
                 JsBarcode("#barcode", data.clientTransactionId?.toString() || "0000000000", {
-                    format: "CODE128",
-                    lineColor: "#000",
-                    width: 2,
-                    height: 40,
-                    displayValue: false
+                    format: "CODE128", lineColor: "#000", width: 2, height: 40, displayValue: false
                 });
                 document.getElementById("barcode-text").textContent = data.clientTransactionId || "0000000000";
 
