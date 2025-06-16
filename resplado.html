@@ -4,10 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Reserva y Pago</title>
-  <!-- PayPhone -->
   <script src="https://cdn.payphonetodoesposible.com/box/v1.1/payphone-payment-box.js" type="module"></script>
   <link href="https://cdn.payphonetodoesposible.com/box/v1.1/payphone-payment-box.css" rel="stylesheet" />
-  <!-- Flatpickr -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <style>
@@ -172,9 +170,13 @@
         const fecha = new Date(fechaStr);
         const fechaCorte = new Date(fecha);
         fechaCorte.setDate(fechaCorte.getDate() - 1);
-        fechaCorte.setHours(17, 0, 0, 0);
+        fechaCorte.setHours(17, 0, 0, 0); // 5 PM del día anterior
+
+        // Considerar la zona horaria de Ecuador (GMT-5)
+        const ecuadorAhora = new Date(ahora.toLocaleString('en-US', { timeZone: 'America/Guayaquil' }));
+        ecuadorAhora.setHours(ecuadorAhora.getHours() + ecuadorAhora.getTimezoneOffset() / 60 - 5); // Ajuste a GMT-5
         
-        if (ahora <= fechaCorte) {
+        if (ecuadorAhora <= fechaCorte) { // Comparamos con la hora actual en Ecuador
           fechasValidas.push(fechaStr);
         }
       }
@@ -199,9 +201,13 @@
         const fecha = new Date(fechaStr);
         const fechaCorte = new Date(fecha);
         fechaCorte.setDate(fechaCorte.getDate() - 1);
-        fechaCorte.setHours(17, 0, 0, 0);
+        fechaCorte.setHours(17, 0, 0, 0); // 5 PM del día anterior
+
+        // Considerar la zona horaria de Ecuador (GMT-5)
+        const ecuadorAhora = new Date(ahora.toLocaleString('en-US', { timeZone: 'America/Guayaquil' }));
+        ecuadorAhora.setHours(ecuadorAhora.getHours() + ecuadorAhora.getTimezoneOffset() / 60 - 5); // Ajuste a GMT-5
         
-        if (ahora <= fechaCorte) {
+        if (ecuadorAhora <= fechaCorte) { // Comparamos con la hora actual en Ecuador
           fechasValidas.push(fechaStr);
         }
       }
@@ -262,6 +268,67 @@
     let priceBaseCentavos = 0;
     let numeroPersonas = 1;
     let calendario;
+    let payphoneCredentials = null; // Variable para almacenar las credenciales de PayPhone
+
+    // --- FUNCIONES PARA OBTENER CREDENCIALES DE PAYPHONE DESDE GOOGLE APPS SCRIPT ---
+    /**
+     * Obtiene las credenciales de PayPhone llamando a tu aplicación web de Google Apps Script.
+     * Retorna una Promesa que se resuelve con el token y storeId, o se rechaza en caso de error.
+     */
+    function obtenerCredencialesPayPhone() {
+      return new Promise((resolve, reject) => {
+        // ***** IMPORTANTE: Reemplaza esta URL con la URL de despliegue de tu Google Apps Script. *****
+        // Es la URL que termina en /exec. Ejemplo: 'https://script.google.com/macros/s/AKfycbsomeid/exec'
+        // Asegúrate de que esta URL sea la de tu ÚLTIMA IMPLEMENTACIÓN.
+        const YOUR_APPS_SCRIPT_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby5ckJ8eIMP5jt-cmLzcqDVT14r22eTCKHK4giEJuyQJzeRmOR0JSiLEeNWXRbKsJKoAw/exec'; 
+
+        const script = document.createElement('script');
+        // Usamos el parámetro 'callback' para indicar a Apps Script que debe devolver JSONP.
+        // NO incluyas '&_fmt=json' aquí, ya que causó problemas de CORS con JSONP.
+        script.src = `${YOUR_APPS_SCRIPT_WEB_APP_URL}?callback=handlePayPhoneCredentials`;
+
+        // Define la función de callback global que el script de Google Apps Script llamará
+        window.handlePayPhoneCredentials = (data) => {
+          document.body.removeChild(script); // Limpia el script del DOM
+          delete window.handlePayPhoneCredentials; // Elimina la función global del window
+
+          if (data && data.token && data.storeId) {
+            resolve(data); // Resuelve la promesa con las credenciales
+          } else if (data && data.error) {
+            reject(new Error('Error del script de Apps Script: ' + data.error)); // Rechaza si el script reporta un error
+          } else {
+            reject(new Error('Credenciales incompletas o formato inesperado recibido desde Apps Script.'));
+          }
+        };
+
+        // Manejo de errores si el script no se carga o hay un problema de red/server
+        script.onerror = () => {
+            document.body.removeChild(script);
+            delete window.handlePayPhoneCredentials;
+            reject(new Error('Error al cargar el script de credenciales de PayPhone desde Google Apps Script. Esto puede deberse a una URL incorrecta, un despliegue no actualizado, o un error interno en el script. Consulta los registros de Apps Script.'));
+        };
+
+        document.body.appendChild(script); // Añade el script al DOM para que se ejecute
+      });
+    }
+
+    // --- INICIALIZACIÓN: Obtener credenciales al cargar la página ---
+    document.addEventListener('DOMContentLoaded', async () => {
+        console.log("Cargando credenciales de PayPhone...");
+        try {
+            payphoneCredentials = await obtenerCredencialesPayPhone();
+            console.log("Credenciales de PayPhone cargadas con éxito.");
+            // console.log("Token:", payphoneCredentials.token); // No imprimir en producción
+            // console.log("Store ID:", payphoneCredentials.storeId); // No imprimir en producción
+        } catch (error) {
+            console.error("Error al cargar credenciales de PayPhone:", error.message);
+            alert("No se pudieron cargar las credenciales de pago. Por favor, intente de nuevo más tarde o contacte a soporte.");
+            btnPagar.disabled = true; // Deshabilita el botón de pago si no hay credenciales
+        }
+    });
+
+    // --- FIN DE FUNCIONES PARA OBTENER CREDENCIALES ---
+
 
     // Event Listeners
     regionSelect.addEventListener('change', () => {
@@ -412,8 +479,8 @@
       precioInput.value = `$${(total / 100).toFixed(2)} (${numeroPersonas} persona${numeroPersonas !== 1 ? 's' : ''})`;
     }
 
-    // Resto del código (event listeners para el botón de pago, etc.)
-    btnPagar.addEventListener('click', () => {
+    // --- Función para generar el botón de pago (modificada para usar credenciales dinámicas) ---
+    btnPagar.addEventListener('click', async () => { // Convertido a async
       if (!regionSelect.value) {
         alert("Por favor, selecciona una región.");
         regionSelect.focus();
@@ -443,168 +510,55 @@
         alert("Por favor, completa todos los campos correctamente para calcular el precio.");
         return;
       }
+
+      // *** VERIFICA SI LAS CREDENCIALES ESTÁN CARGADAS ***
+      if (!payphoneCredentials) {
+          alert("Las credenciales de pago aún no se han cargado. Por favor, espera un momento o refresca la página.");
+          console.error("Intento de generar botón de pago sin credenciales.");
+          return;
+      }
       
       ajustarAlturaIframe(600);
-      generarBotonPago(priceBaseCentavos, fechaInput.value);
+      // Pasa las credenciales a la función generarBotonPago
+      generarBotonPago(priceBaseCentavos, fechaInput.value, payphoneCredentials);
     });
 
-    // URL de tu Google Apps Script (REEMPLAZA CON TU URL REAL)
-    const PAYPHONE_API_URL = 'https://script.google.com/macros/s/AKfycbzisbTJzxPkKuB10lb3D8XHL-WN7p9y1isAf9UBvtWg/dev';
+    // Modificada para recibir las credenciales
+    function generarBotonPago(priceBase, fechaViaje, credentials) {
+      const ivaNormal = Math.round(priceBase * 0.15);
+      const subtotal = priceBase + ivaNormal;
+      const comision = Math.round(subtotal * 0.05);
+      const ivaComision = Math.round(comision * 0.15);
+      const amountWithTax = comision + ivaComision;
+      const totalAmount = subtotal + amountWithTax;
 
-    /**
-     * Obtiene las credenciales de PayPhone desde Google Apps Script
-     */
- // --- Tu código HTML/JavaScript en tu frontend ---
+      const destinoSeleccionado = destinoSelect.value;
+      const tipoExperiencia = tipoExperienciaSelect.value || "Estándar";
 
-/**
- * Obtiene las credenciales de PayPhone llamando a tu aplicación web de Google Apps Script.
- * Retorna una Promesa que se resuelve con el token y storeId, o se rechaza en caso de error.
- */
-function obtenerCredencialesPayPhone() {
-  return new Promise((resolve, reject) => {
-    // ***** IMPORTANTE: Reemplaza esta URL con la URL de despliegue de tu Google Apps Script. *****
-    // Es la URL que termina en /exec.
-    const YOUR_APPS_SCRIPT_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby8ixUPK5zpuT7ck71kTJ1IzDHACU5q9oUtkpmR5EtXKsHysCv47EmY1_Fz6NRDztVDgQ/exec';
+      document.getElementById("pp-button").innerHTML = "";
 
-    const script = document.createElement('script');
-    // Asegúrate que el parámetro 'origin' coincida con el dominio de tu frontend
-    script.src = `${YOUR_APPS_SCRIPT_WEB_APP_URL}?origin=${encodeURIComponent(window.location.origin)}&callback=handlePayPhoneCredentials`;
+      const pago = new PPaymentButtonBox({
+        token: credentials.token, // USA EL TOKEN OBTENIDO DE APPS SCRIPT
+        clientTransactionId: `TRANS-${Date.now()}-${Math.floor(Math.random() * 100000)}`,
+        amount: totalAmount,
+        amountWithoutTax: priceBase,
+        amountWithTax: amountWithTax,
+        tax: ivaNormal,
+        currency: "USD",
+        storeId: credentials.storeId, // USA EL STORE_ID OBTENIDO DE APPS SCRIPT
+        reference: `Reserva para ${destinoSeleccionado} (${tipoExperiencia}) - ${numeroPersonas} persona${numeroPersonas !== 1 ? 's' : ''} - Fecha de viaje: ${fechaViaje}`
+      });
 
-    // Define la función de callback global que el script de Google Apps Script llamará
-    window.handlePayPhoneCredentials = (data) => {
-      document.body.removeChild(script); // Limpia el script del DOM
-      delete window.handlePayPhoneCredentials; // Elimina la función global
+      pago.render('pp-button');
 
-      if (data.token && data.storeId) {
-        resolve(data); // Resuelve la promesa con las credenciales
-      } else if (data.error) {
-        reject(new Error('Error del script de Apps Script: ' + data.error)); // Rechaza si el script reporta un error
-      } else {
-        reject(new Error('Credenciales incompletas o formato inesperado recibido.'));
-      }
-    };
-
-    // Manejo de errores si el script no se carga
-    script.onerror = () => {
-        document.body.removeChild(script);
-        delete window.handlePayPhoneCredentials;
-        reject(new Error('Error al cargar el script de credenciales de PayPhone desde Google Apps Script.'));
-    };
-
-    document.body.appendChild(script); // Añade el script al DOM para que se ejecute
-  });
-}
-
-/**
- * Ejemplo de cómo usar la función obtenerCredencialesPayPhone.
- * Llama a esta función cuando necesites las credenciales para inicializar PayPhone.
- */
-async function iniciarProcesoConPayPhone() {
-  console.log('Intentando obtener credenciales de PayPhone...');
-  try {
-    const credenciales = await obtenerCredencialesPayPhone();
-    console.log('Credenciales de PayPhone obtenidas con éxito:');
-    console.log('Token:', credenciales.token);
-    console.log('Store ID:', credenciales.storeId);
-
-    // --- AQUÍ ES DONDE USARÍAS TUS CREDENCIALES ---
-    // Por ejemplo, para inicializar el SDK de PayPhone:
-    // payphone.init({ token: credenciales.token, storeId: credenciales.storeId });
-
-    // O para realizar una llamada a la API que requiera el token:
-    // const response = await fetch('https://payphone.com/api/some_endpoint', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Authorization': `Bearer ${credenciales.token}`,
-    //     'Content-Type': 'application/json'
-    //   },
-    //   body: JSON.stringify({ /* tus datos de pago */ })
-    // });
-    // const result = await response.json();
-    // console.log('Resultado de la API de PayPhone:', result);
-
-  } catch (error) {
-    console.error('Error al obtener o usar credenciales de PayPhone:', error.message);
-    // Aquí puedes mostrar un mensaje de error al usuario en tu interfaz
-    alert('No se pudieron cargar las credenciales de pago. Por favor, inténtelo de nuevo más tarde.');
-  }
-}
-
-// Llama a la función para iniciar el proceso cuando sea apropiado,
-// por ejemplo, al cargar la página o al hacer clic en un botón de pago.
-// iniciarProcesoConPayPhone(); // Puedes descomentar esta línea para probarlo al cargar la página
-async function testAPI() {
-  try {
-    const test = await fetch(PAYPHONE_API_URL);
-    console.log("Respuesta cruda:", test);
-    
-    const data = await test.json();
-    console.log("Datos recibidos:", data);
-    
-    return true;
-  } catch (error) {
-    console.error("Error en testAPI:", error);
-    return false;
-  }
-}
-
-// Ejecuta el test al cargar la página
-window.addEventListener('DOMContentLoaded', async () => {
-  const apiFunciona = await testAPI();
-  console.log("¿API funciona?", apiFunciona);
-});
-    /**
-     * Genera el botón de pago con credenciales seguras
-     */
-    async function generarBotonPago(priceBase, fechaViaje) {
-      try {
-        // 1. Obtener credenciales de forma segura
-        const { token, storeId } = await obtenerCredencialesPayPhone();
-        
-        // 2. Calcular montos (lógica existente)
-        const ivaNormal = Math.round(priceBase * 0.15);
-        const subtotal = priceBase + ivaNormal;
-        const comision = Math.round(subtotal * 0.05);
-        const ivaComision = Math.round(comision * 0.15);
-        const totalAmount = subtotal + comision + ivaComision;
-
-        // 3. Renderizar botón de pago
-        document.getElementById("pp-button").innerHTML = "";
-        
-        const pago = new PPaymentButtonBox({
-          token: token, // ✅ Credencial segura
-          storeId: storeId, // ✅ Credencial segura
-          clientTransactionId: `TRANS-${Date.now()}-${Math.floor(Math.random() * 100000)}`,
-          amount: totalAmount,
-          amountWithoutTax: priceBase,
-          amountWithTax: comision + ivaComision,
-          tax: ivaNormal,
-          currency: "USD",
-          reference: `Reserva para ${destinoSelect.value} (${tipoExperienciaSelect.value || "Estándar"}) - ${numeroPersonas} persona${numeroPersonas !== 1 ? 's' : ''} - Fecha: ${fechaViaje}`,
-          onSuccess: (response) => {
-            console.log("Pago exitoso:", response);
-            // Aquí puedes redirigir o mostrar mensaje de éxito
-          },
-          onError: (error) => {
-            console.error("Error en pago:", error);
-            alert("Error al procesar el pago. Por favor intente nuevamente.");
-          }
-        });
-
-        pago.render('pp-button');
-
-        setTimeout(() => {
-          ajustarAlturaIframe(1000);
-        }, 500);
-
-      } catch (error) {
-        console.error("Error en generarBotonPago:", error);
-        alert("No se pudo iniciar el proceso de pago. Por favor recargue la página.");
-        // Opcional: Mostrar UI de error al usuario
-      }
+      setTimeout(() => {
+        ajustarAlturaIframe(1000);
+      }, 500);
     }
 
     function ajustarAlturaIframe(altura) {
+      // Esta función se usaría si tu HTML está incrustado en un iframe.
+      // Si no es así, esta función no hace nada en una página independiente.
       window.parent.postMessage({ tipo: 'ajustarAltura', altura }, '*');
     }
   </script>
