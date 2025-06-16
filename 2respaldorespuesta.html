@@ -1,143 +1,16 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta charset="UTF-8" />
-  <title>YOUR TOURS - Comprobante de Pago</title>
-  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-  <style>
-    /* Tus estilos CSS existentes permanecen igual */
-    body {
-      margin: 0;
-      padding: 2rem;
-      background: linear-gradient(to right, #f8f9fa, #f8f9fa);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-      font-family: 'Archivo', sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-    }
-
-    /* ... (mantén todos tus estilos existentes) ... */
-    
-  </style>
-  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
-</head>
+<!-- [HEAD y CSS se mantienen igual que en tu código original] -->
 <body>
-  <!-- Contenedor padre con separación -->
-  <div class="ticket-container">
-    <div class="ticket">
-      <div class="stripe top"></div>
-      <div class="stripe bottom"></div>
-      <div class="left">
-        
-        <div class="section row">
-          <div class="info-block">
-            <div class="label">Estado</div>
-            <div class="value" id="estado">Verificando...</div>
-          </div>
-          <div class="info-block">
-            <div class="label">Autorización</div>
-            <div class="value" id="autorizacion">—</div>
-          </div>
-        </div>
-
-        <div class="section row">
-          <div class="info-block">
-            <div class="label">Transacción ID</div>
-            <div class="value" id="transaccionId">—</div>
-          </div>
-          <div class="info-block">
-            <div class="label">Identificador Cliente</div>
-            <div class="value" id="clientTxId">—</div>
-          </div>
-        </div>
-
-        <div class="section row">
-          <div class="info-block">
-            <div class="label">Cliente</div>
-            <div class="value" id="cliente">—</div>
-          </div>
-          <div class="info-block">
-            <div class="label">Email</div>
-            <div class="value" id="email">—</div>
-          </div>
-        </div>
-
-        <div class="section row">
-          <div class="info-block">
-            <div class="label">Teléfono</div>
-            <div class="value" id="telefono">—</div>
-          </div>
-          <div class="info-block">
-            <div class="label">Fecha</div>
-            <div class="value" id="fecha">—</div>
-          </div>
-        </div>
-
-        <div class="section row">
-          <div class="info-block">
-            <div class="label">Banco / Marca</div>
-            <div class="value" id="banco">—</div>
-          </div>
-          <div class="info-block">
-            <div class="label">Últimos dígitos</div>
-            <div class="value" id="ultimos">—</div>
-          </div>
-        </div>
-
-        <div class="section row">
-          <div class="info-block" style="flex: 1 1 100%;">
-            <div class="label">Referencia</div>
-            <div class="value" id="referencia">—</div>
-          </div>
-        </div>
-
-        <button class="print-button" onclick="window.print()" aria-label="Imprimir Comprobante">
-          🖨️ Imprimir
-        </button>
-
-        <div class="barcode">
-          <svg id="barcode"></svg>
-          <div id="barcode-text" class="barcode-text"></div>
-        </div>
-
-        <div class="thank-you">¡La vida se mide en experiencias!</div>
-      </div>
-    </div>
-
-    <div class="ticket">
-       <div class="stripe top"></div>
-      <div class="stripe bottom"></div>
-
-      <div class="right">
-        <span class="aro" style="width: 80px; height: 80px; top: -35px; left: 30px;"></span>
-        <span class="aro" style="width: 60px; height: 60px; top: 130px; right: -20px;"></span>
-        <span class="aro" style="width: 250px; height: 250px; bottom: 40px; left: 120px;"></span>
-        <span class="aro" style="width: 50px; height: 50px; bottom: -50px; right: 280px;"></span>
-        <span class="aro" style="width: 120px; height: 120px; top: 50%; left: 10%; transform: translate(-50%, -50%);"></span>
-
-        <div class="comprobantedepago"><h1>Comprobante de Pago</h1> </div> 
-        
-        <img src="img/logo sin fondo.png" class="logo-right" alt="Logo Your Tours" />
-        <div>
-          <div class="totalpagado">Total Pagado</div>
-          <div class="amount" id="monto">$--</div>
-          <div class="incluyeimpuestos"></div>
-        </div>
-        <div class="website">www.yourtours.com.ec</div>
-      </div>
-    </div>
-  </div>
+  <!-- [Todo el HTML de tu comprobante se mantiene igual] -->
 
   <script>
-    // URL de tu script de Google Apps Script (debes reemplazarla)
-    const BACKEND_URL = "https://script.google.com/macros/s/AKfycbwbqiw7znxNsXi9Hhsl_p-JrS780NCiPwDMPvBevEN2yDc_Da3ZCkQXRYL6bUjl_PtB/exec";
-    
     const params = new URLSearchParams(window.location.search);
-    const id = parseInt(params.get("id") || 0);
+    const id = params.get("id") || "0";
     const clientTransactionId = params.get("clientTransactionId") || "";
+
+    // URL de tu Google Apps Script publicado (REEMPLAZA ESTO)
+    const BACKEND_URL = "https://script.google.com/macros/s/AKfycbxXtXNWnm_IIbdW0GC0NpDb0NVbov-D9CYgawwF8gN787rTTPxksWlMuuGd7XSLBrD7/exec";
 
     function setEstado(text, aprobado) {
       const el = document.getElementById("estado");
@@ -163,16 +36,8 @@
     }
 
     if (id && clientTransactionId) {
-      fetch(BACKEND_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          id: id,
-          clientTxId: clientTransactionId
-        })
-      })
+      // Usamos GET en lugar de POST para evitar problemas CORS
+      fetch(`${BACKEND_URL}?id=${id}&clientTransactionId=${clientTransactionId}`)
       .then(response => {
         if (!response.ok) {
           throw new Error(`Error HTTP: ${response.status}`);
@@ -184,7 +49,6 @@
           throw new Error(data.error);
         }
 
-        // Actualizar UI con los datos de la respuesta
         if (data.transactionStatus === "Approved") {
           setEstado("✅ Transacción aprobada", true);
         } else {
@@ -215,13 +79,13 @@
         document.getElementById("referencia").textContent = data.reference || "—";
       })
       .catch(error => {
-        setEstado("⚠️ Error al verificar la transacción", false);
-        console.error("Error:", error);
-        document.getElementById("estado").textContent = `⚠️ ${error.message}`;
+        setEstado(`⚠️ ${error.message}`, false);
+        console.error("Error al verificar:", error);
       });
     } else {
       setEstado("❌ Faltan parámetros en la URL (id y clientTransactionId)", false);
     }
   </script>
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
 </body>
 </html>
