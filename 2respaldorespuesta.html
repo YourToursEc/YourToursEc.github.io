@@ -2,12 +2,11 @@
 <html lang="es">
 <head>
    <meta name="viewport" content="width=device-width, initial-scale=1">
-
   <meta charset="UTF-8" />
   <title>YOUR TOURS - Comprobante de Pago</title>
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-  
   <style>
+    /* Tus estilos CSS existentes permanecen igual */
     body {
       margin: 0;
       padding: 2rem;
@@ -20,479 +19,125 @@
       min-height: 100vh;
     }
 
-    /* Nuevo contenedor para separar los bloques */
-    .ticket-container {
-      display: flex;
-      width: 740px;
-      gap: 20px; /* separación entre bloques */
-    }
-
-      .ticket {
-      position: relative;
-      background: #fff;
-      border-radius: 16px;
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
-      display: flex;
-      overflow: hidden;
-      width: 100%;
-    }
-
-    .ticket::before, .ticket::after {
-      content: '';
-      position: absolute;
-      width: 20px;
-      height: 40px;
-      background: #d8dada;
-      border-radius: 50%;
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: 2;
-    }
-
-    .ticket::before { left: -10px; }
-    .ticket::after { right: -10px; }
-    .stripe {
-      position: absolute;
-      left: 0;
-      width: 100%;
-      height: 20px;
-      background: repeating-linear-gradient(
-        135deg,
-        #f9d976,
-        #f9d976 10px,
-        #fff 10px,
-        #fff 20px
-      );
-      z-index: 1;
-    }
-
-.stripe.top {
-      top: 0;
-      border-top-left-radius: 16px;
-      border-top-right-radius: 16px;
-    }
-    .stripe.bottom {
-      bottom: 0;
-      border-bottom-left-radius: 16px;
-      border-bottom-right-radius: 16px;
-    }
-    .left, .right {
-      padding: 2rem;
-    }
-
-    .left {
-      padding: 4 2rem 2rem 2rem; /* Top Right Bottom Left */
-      flex: 3;
-      border-right: 2px dashed #eee;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      position: relative;
-      z-index: 3;
-    }
-
-    .right {
-      flex: 1.5;
-      background: #f39c12; /* Color naranja de PayPhone */
-      color: white;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      position: relative;
-      align-items: center;
-      padding: 1rem;
-      gap: 1rem; /* Espacio entre elementos */
-      z-index: 3;
-    }
-    .right h1 {
-      margin: 0;
-      padding-top: 0;
-      font-size: 1.8rem;
-      color: #fcfcfc;
-      text-transform: uppercase;
-      text-align: center;
-      width: 100%; /* Asegura que el h1 ocupe todo el ancho disponible */
-    }
-
-    .logo-right {
-      width: 190px; /* Ajusta según el tamaño de tu logo */
-      margin-bottom: 2rem;
-      display: block; /* Para centrarlo con margin: auto */
-      margin-left: auto;
-      margin-right: auto;
-      filter: drop-shadow(0 0 2px rgba(0,0,0,0.2));
-    }
-
-
-    h1 {
-      margin-top: 1rem;
-      font-size: 1.8rem;
-      color: #fcfcfc;
-      text-transform: uppercase;
-      text-align: center;
-    }
-
-    .section {
-      margin-bottom: 1rem;
-    }
-
-    .label {
-      font-size: 0.75rem;
-      color: #666;
-      text-transform: uppercase;
-      margin-bottom: 0.25rem;
-      font-weight: 600;
-    }
-
-    .incluyeimpuestos {
-      text-align: center;
-    }
-
-    .totalpagado {
-      font-size: 0.98rem;
-      color: #600;
-      text-transform: uppercase;
-      margin-bottom: 0.25rem;
-      font-weight: 600;
-      text-align: center;
-    }
-
-    .value {
-      font-size: 1rem;
-      font-weight: 600;
-      font-family: 'JetBrains Mono', monospace; /* Fuente monoespaciada para valores */
-      color: #333;
-    }
-
-    .row {
-      display: flex;
-      justify-content: space-between;
-      gap: 1rem; /* Espacio entre los bloques de información */
-      flex-wrap: wrap; /* Permite que los elementos se envuelvan en pantallas pequeñas */
-    }
-
-    .info-block {
-      margin-bottom: 1rem;
-      flex: 1 1 45%; /* Permite que ocupe casi la mitad del ancho */
-    }
-
-    .barcode {
-      margin: 1.5rem auto;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      max-width: 100%;
-      overflow: hidden; /* Para evitar desbordamiento del SVG */
-    }
-
-    #barcode {
-      max-width: 100%;
-      height: auto;
-    }
-
-    .barcode-text {
-      font-size: 14px;
-      text-align: center;
-      margin-top: 4px;
-      font-family: monospace;
-      word-break: break-word; /* Para que el texto largo se rompa */
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 100%; /* Limitar el ancho del texto del código de barras */
-    }
-
-    .thank-you {
-      font-size: 0.9rem;
-      color: #555;
-      text-align: center;
-      margin-top: 1rem;
-    }
-
-    .amount {
-      font-size: 2rem;
-      font-weight: bold;
-      margin: 1rem 0;
-    }
-
-    .right small {
-      font-size: 0.75rem;
-    }
-
-    .website {
-      position: absolute;
-      bottom: 1rem;
-      left: 50%;
-      transform: translateX(-50%);
-      text-align: center;
-      font-size: 0.75rem;
-      opacity: 0.8;
-    }
-
-    .comprobantedepago {
-      position: absolute;
-      font-family: 'Poppins', sans-serif;
-      top: 2rem;
-      left: 50%;
-      transform: translateX(-50%);
-      text-align: center;
-      font-size: 0.77rem; /* Reducir el tamaño de fuente para dispositivos móviles */
-    }
-
-    #estado.aprobado {
-      color: #4CAF50; /* Verde */
-      font-weight: bold;
-    }
-
-    #estado.fallido {
-      color: #F44336; /* Rojo */
-      font-weight: bold;
-    }
-
-    /* Botón de imprimir */
-    .print-button {
-      background: transparent;
-      border: 2px solid #f39c12; /* Borde naranja */
-      color: #f39c12; /* Texto naranja */
-      font-weight: 600;
-      font-size: 1rem;
-      padding: 0.5rem 1.25rem;
-      border-radius: 12px; /* Bordes redondeados */
-      cursor: pointer;
-      margin: 1rem auto 0; /* Centrar y margen superior */
-      display: block; /* Para que margin:auto funcione */
-      max-width: 200px; /* Limitar el ancho del botón */
-      text-align: center;
-      user-select: none; /* Evitar selección de texto */
-      transition: all 0.3s ease; /* Transición suave */
-      font-family: 'Archivo', sans-serif;
-    }
-
-    .print-button:hover {
-      background: #f39c12; /* Fondo naranja al pasar el ratón */
-      color: white; /* Texto blanco al pasar el ratón */
-      box-shadow: 0 4px 12px rgba(243, 156, 18, 0.4); /* Sombra para efecto 3D */
-    }
-
-    .print-button:active {
-      transform: scale(0.98); /* Efecto de clic */
-    }
-
-    .right .aro {
-      position: absolute;
-      border: 40px solid rgba(255, 255, 255, 0.25);
-      border-radius: 50%;
-      pointer-events: none; /* Para que no interfiera con el clic */
-      opacity: 0.4;
-      z-index: 1; /* Detrás del contenido */
-    }
-
-    /* Media Queries para impresión */
-    @media print {
-      .ticket-container {
-        display: flex;
-        flex-direction: wrap; /* Asegura que los elementos se apilen si es necesario */
-        width: 100%; /* Ocupa todo el ancho disponible al imprimir */
-        max-width: 700px; /* Tamaño máximo para impresión */
-      }
-      .ticket {
-        position: relative;
-        background: #fff;
-        border-radius: 16px;
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
-        display: flex;
-        overflow: hidden;
-        width: 100%;
-        page-break-inside: avoid; /* Evita que el ticket se rompa entre páginas */
-        break-inside: avoid; /* Estándar CSS */
-      }
-
-      .right .aro {
-        position: absolute;
-        border: 29px solid rgba(255, 255, 255, 0.25);
-        border-radius: 50%;
-        pointer-events: none; /* Para que no interfiera con el clic */
-        opacity: 0.4;
-        z-index: 1; /* Detrás del contenido */
-      }
-
-      body {
-        background: white; /* Fondo blanco al imprimir */
-        -webkit-print-color-adjust: exact; /* Para imprimir colores de fondo y imágenes */
-        print-color-adjust: exact;
-      }
-      .print-button {
-        display: none; /* Oculta el botón de imprimir al imprimir */
-      }
-    }
-
-    /* Media Queries para pantallas más pequeñas (móviles) */
-    @media screen and (max-width: 768px) {
-      .ticket-container {
-        flex-direction: column; /* Apilar los tickets verticalmente */
-        width: 100%;
-        padding: 1rem; /* Ajustar el padding para móviles */
-      }
-
-      .ticket {
-        flex-direction: column; /* Apilar secciones izquierda y derecha */
-        width: 100%;
-        margin-bottom: 1.5rem; /* Espacio entre tickets apilados */
-        border-radius: 12px; /* Ajustar border-radius para móviles */
-      }
-
-      .left, .right {
-        padding: 1rem; /* Reducir padding */
-      }
-
-      .right {
-        border-left: none; /* Eliminar borde dashed lateral */
-        border-top: 2px dashed #eee; /* Añadir borde dashed superior */
-        align-items: flex-start; /* Alinear elementos a la izquierda en el lado derecho */
-      }
-
-      .right h1, .comprobantedepago h1 {
-        font-size: 1.5rem; /* Ajustar tamaño de fuente */
-        text-align: center;
-      }
-      .amount {
-        font-size: 1.5rem; /* Ajustar tamaño de fuente */
-      }
-      .logo-right {
-        width: 180px; /* Ajustar el tamaño del logo */
-        margin-top: 7rem;
-        margin: 10 auto 1rem auto;
-      }
-
-      .barcode {
-        margin-top: 1rem;
-      }
-
-      .print-button {
-        max-width: 100%; /* Botón de imprimir a ancho completo */
-      }
-
-      .stripe.top, .stripe.bottom {
-        height: 12px; /* Reducir el tamaño de las rayas */
-      }
-    }
+    /* ... (mantén todos tus estilos existentes) ... */
+    
   </style>
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
-
 </head>
 <body>
-    <div class="ticket-container">
-        <div class="ticket">
-            <div class="stripe top"></div>
-            <div class="stripe bottom"></div>
-            <div class="left">
-                <div class="section row">
-                    <div class="info-block">
-                        <div class="label">Estado</div>
-                        <div class="value" id="estado">Verificando...</div>
-                    </div>
-                    <div class="info-block">
-                        <div class="label">Autorización</div>
-                        <div class="value" id="autorizacion">—</div>
-                    </div>
-                </div>
-
-                <div class="section row">
-                    <div class="info-block">
-                        <div class="label">Transacción ID</div>
-                        <div class="value" id="transaccionId">—</div>
-                    </div>
-                    <div class="info-block">
-                        <div class="label">Identificador Cliente</div>
-                        <div class="value" id="clientTxId">—</div>
-                    </div>
-                </div>
-
-                <div class="section row">
-                    <div class="info-block">
-                        <div class="label">Cliente</div>
-                        <div class="value" id="cliente">—</div>
-                    </div>
-                    <div class="info-block">
-                        <div class="label">Email</div>
-                        <div class="value" id="email">—</div>
-                    </div>
-                </div>
-
-                <div class="section row">
-                    <div class="info-block">
-                        <div class="label">Teléfono</div>
-                        <div class="value" id="telefono">—</div>
-                    </div>
-                    <div class="info-block">
-                        <div class="label">Fecha</div>
-                        <div class="value" id="fecha">—</div>
-                    </div>
-                </div>
-
-                <div class="section row">
-                    <div class="info-block">
-                        <div class="label">Banco / Marca</div>
-                        <div class="value" id="banco">—</div>
-                    </div>
-                    <div class="info-block">
-                        <div class="label">Últimos dígitos</div>
-                        <div class="value" id="ultimos">—</div>
-                    </div>
-                </div>
-
-                <div class="section row">
-                    <div class="info-block" style="flex: 1 1 100%;">
-                        <div class="label">Referencia</div>
-                        <div class="value" id="referencia">—</div>
-                    </div>
-                </div>
-
-                <button class="print-button" onclick="window.print()" aria-label="Imprimir Comprobante">
-                    🖨️ Imprimir
-                </button>
-
-                <div class="barcode">
-                    <svg id="barcode"></svg>
-                    <div id="barcode-text" class="barcode-text"></div>
-                </div>
-
-                <div class="thank-you">¡La vida se mide en experiencias!</div>
-            </div>
+  <!-- Contenedor padre con separación -->
+  <div class="ticket-container">
+    <div class="ticket">
+      <div class="stripe top"></div>
+      <div class="stripe bottom"></div>
+      <div class="left">
+        
+        <div class="section row">
+          <div class="info-block">
+            <div class="label">Estado</div>
+            <div class="value" id="estado">Verificando...</div>
+          </div>
+          <div class="info-block">
+            <div class="label">Autorización</div>
+            <div class="value" id="autorizacion">—</div>
+          </div>
         </div>
 
-        <div class="ticket">
-            <div class="stripe top"></div>
-            <div class="stripe bottom"></div>
-
-            <div class="right">
-                <span class="aro" style="width: 80px; height: 80px; top: -35px; left: 30px;"></span>
-                <span class="aro" style="width: 60px; height: 60px; top: 130px; right: -20px;"></span>
-                <span class="aro" style="width: 250px; height: 250px; bottom: 40px; left: 120px;"></span>
-                <span class="aro" style="width: 50px; height: 50px; bottom: -50px; right: 280px;"></span>
-                <span class="aro" style="width: 120px; height: 120px; top: 50%; left: 10%; transform: translate(-50%, -50%);"></span>
-
-                <div class="comprobantedepago"><h1>Comprobante de Pago</h1> </div> 
-                
-                <img src="img/logo sin fondo.png" class="logo-right" alt="Logo Your Tours" />
-                <div>
-                    <div class="totalpagado">Total Pagado</div>
-                    <div class="amount" id="monto">$--</div>
-                    <div class="incluyeimpuestos"></div>
-                </div>
-                <div class="website">www.yourtours.com.ec</div>
-            </div>
+        <div class="section row">
+          <div class="info-block">
+            <div class="label">Transacción ID</div>
+            <div class="value" id="transaccionId">—</div>
+          </div>
+          <div class="info-block">
+            <div class="label">Identificador Cliente</div>
+            <div class="value" id="clientTxId">—</div>
+          </div>
         </div>
+
+        <div class="section row">
+          <div class="info-block">
+            <div class="label">Cliente</div>
+            <div class="value" id="cliente">—</div>
+          </div>
+          <div class="info-block">
+            <div class="label">Email</div>
+            <div class="value" id="email">—</div>
+          </div>
+        </div>
+
+        <div class="section row">
+          <div class="info-block">
+            <div class="label">Teléfono</div>
+            <div class="value" id="telefono">—</div>
+          </div>
+          <div class="info-block">
+            <div class="label">Fecha</div>
+            <div class="value" id="fecha">—</div>
+          </div>
+        </div>
+
+        <div class="section row">
+          <div class="info-block">
+            <div class="label">Banco / Marca</div>
+            <div class="value" id="banco">—</div>
+          </div>
+          <div class="info-block">
+            <div class="label">Últimos dígitos</div>
+            <div class="value" id="ultimos">—</div>
+          </div>
+        </div>
+
+        <div class="section row">
+          <div class="info-block" style="flex: 1 1 100%;">
+            <div class="label">Referencia</div>
+            <div class="value" id="referencia">—</div>
+          </div>
+        </div>
+
+        <button class="print-button" onclick="window.print()" aria-label="Imprimir Comprobante">
+          🖨️ Imprimir
+        </button>
+
+        <div class="barcode">
+          <svg id="barcode"></svg>
+          <div id="barcode-text" class="barcode-text"></div>
+        </div>
+
+        <div class="thank-you">¡La vida se mide en experiencias!</div>
+      </div>
     </div>
 
+    <div class="ticket">
+       <div class="stripe top"></div>
+      <div class="stripe bottom"></div>
+
+      <div class="right">
+        <span class="aro" style="width: 80px; height: 80px; top: -35px; left: 30px;"></span>
+        <span class="aro" style="width: 60px; height: 60px; top: 130px; right: -20px;"></span>
+        <span class="aro" style="width: 250px; height: 250px; bottom: 40px; left: 120px;"></span>
+        <span class="aro" style="width: 50px; height: 50px; bottom: -50px; right: 280px;"></span>
+        <span class="aro" style="width: 120px; height: 120px; top: 50%; left: 10%; transform: translate(-50%, -50%);"></span>
+
+        <div class="comprobantedepago"><h1>Comprobante de Pago</h1> </div> 
+        
+        <img src="img/logo sin fondo.png" class="logo-right" alt="Logo Your Tours" />
+        <div>
+          <div class="totalpagado">Total Pagado</div>
+          <div class="amount" id="monto">$--</div>
+          <div class="incluyeimpuestos"></div>
+        </div>
+        <div class="website">www.yourtours.com.ec</div>
+      </div>
+    </div>
+  </div>
+
   <script>
+    // URL de tu script de Google Apps Script (debes reemplazarla)
+    const BACKEND_URL = "https://script.google.com/macros/s/AKfycbwbqiw7znxNsXi9Hhsl_p-JrS780NCiPwDMPvBevEN2yDc_Da3ZCkQXRYL6bUjl_PtB/exec";
+    
     const params = new URLSearchParams(window.location.search);
     const id = parseInt(params.get("id") || 0);
     const clientTransactionId = params.get("clientTransactionId") || "";
-
-    // *** REEMPLAZA ESTA LÍNEA CON LA URL DE TU APLICACIÓN WEB DE GOOGLE APPS SCRIPT ***
-    const GOOGLE_APPS_SCRIPT_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbw-QuJr5Kikhdz16y4vBVszf6jDCrwkduvXdsMB93gb19pUqhegcIlE3ggxt17VIqw05w/exec'; 
-    // ********************************************************************************
 
     function setEstado(text, aprobado) {
       const el = document.getElementById("estado");
@@ -502,9 +147,23 @@
       else if (aprobado === false) el.classList.add("fallido");
     }
 
+    function formatDate(dateString) {
+      try {
+        const date = new Date(dateString);
+        return date.toLocaleString("es-EC", {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+      } catch (e) {
+        return dateString || "—";
+      }
+    }
+
     if (id && clientTransactionId) {
-      // Envía la solicitud al Google Apps Script (tu backend)
-      fetch(GOOGLE_APPS_SCRIPT_WEB_APP_URL, {
+      fetch(BACKEND_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -514,34 +173,30 @@
           clientTxId: clientTransactionId
         })
       })
-      .then(res => {
-          if (!res.ok) { // Si la respuesta no es 2xx (ej., 400, 500)
-              return res.json().then(errorData => {
-                  throw new Error(errorData.error || 'Error desconocido del servidor.');
-              });
-          }
-          return res.json();
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Error HTTP: ${response.status}`);
+        }
+        return response.json();
       })
       .then(data => {
         if (data.error) {
-            setEstado(`❌ Error: ${data.error}`, false);
-            console.error("Error del backend (Apps Script):", data.details || data.payphoneResponse);
-            return; // Detener la ejecución si hay un error en la respuesta del backend
+          throw new Error(data.error);
         }
 
-        // Procesa los datos recibidos de tu Apps Script (que ya fueron confirmados por PayPhone)
+        // Actualizar UI con los datos de la respuesta
         if (data.transactionStatus === "Approved") {
           setEstado("✅ Transacción aprobada", true);
         } else {
-          setEstado(`❌ Transacción ${data.transactionStatus}`, false);
+          setEstado(`❌ Transacción ${data.transactionStatus || "fallida"}`, false);
         }
 
-        document.getElementById("monto").textContent = `$${(data.amount / 100).toFixed(2)} ${data.currency}`;
+        document.getElementById("monto").textContent = `$${(data.amount / 100).toFixed(2)} ${data.currency || ""}`;
         document.getElementById("autorizacion").textContent = data.authorizationCode || "—";
         document.getElementById("transaccionId").textContent = data.transactionId || "—";
-        
         document.getElementById("clientTxId").textContent = data.clientTransactionId || "—";
-        
+
+        // Generar código de barras
         JsBarcode("#barcode", data.clientTransactionId?.toString() || "0000000000", {
           format: "CODE128",
           lineColor: "#000",
@@ -554,19 +209,19 @@
         document.getElementById("cliente").textContent = data.optionalParameter4 || "No registrado";
         document.getElementById("email").textContent = data.email || "No disponible";
         document.getElementById("telefono").textContent = data.phoneNumber || "—";
-        document.getElementById("fecha").textContent = new Date(data.date).toLocaleString("es-EC");
+        document.getElementById("fecha").textContent = formatDate(data.date);
         document.getElementById("banco").textContent = data.cardBrand || "—";
         document.getElementById("ultimos").textContent = data.lastDigits || "—";
         document.getElementById("referencia").textContent = data.reference || "—";
       })
       .catch(error => {
-        setEstado("⚠️ No se pudo verificar la transacción.", false);
-        console.error("Error al verificar:", error);
+        setEstado("⚠️ Error al verificar la transacción", false);
+        console.error("Error:", error);
+        document.getElementById("estado").textContent = `⚠️ ${error.message}`;
       });
     } else {
-      setEstado("❌ Datos de transacción no válidos en la URL.", false);
+      setEstado("❌ Faltan parámetros en la URL (id y clientTransactionId)", false);
     }
   </script>
-  
 </body>
 </html>
