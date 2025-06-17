@@ -136,9 +136,11 @@
             margin: 0;
         }
 
-        input[type="number"] {
-            -moz-appearance: textfield; /* Firefox */
-        }
+       input[type="number"] {
+    -webkit-appearance: textfield; /* Safari/Chrome */
+    -moz-appearance: textfield;    /* Firefox */
+    appearance: textfield;         /* Estándar */
+}
 
         /* Sugerencias de estilos adicionales para hover y active */
         #region-select:hover, #destino-select:hover,
