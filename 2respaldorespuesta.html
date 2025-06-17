@@ -508,33 +508,48 @@ left: 50%;
     </div>
   </div>
 
-  <script>
-    const params = new URLSearchParams(window.location.search);
-    const id = parseInt(params.get("id") || 0);
-    const clientTransactionId = params.get("clientTransactionId") || "";
+ <script>
+  const params = new URLSearchParams(window.location.search);
+  const id = parseInt(params.get("id") || 0);
+  const clientTransactionId = params.get("clientTransactionId") || "";
 
-    function setEstado(text, aprobado) {
-      const el = document.getElementById("estado");
-      el.textContent = text;
-      el.classList.remove("aprobado", "fallido");
-      if (aprobado === true) el.classList.add("aprobado");
-      else if (aprobado === false) el.classList.add("fallido");
-    }
+  function setEstado(text, aprobado) {
+    const el = document.getElementById("estado");
+    el.textContent = text;
+    el.classList.remove("aprobado", "fallido");
+    if (aprobado === true) el.classList.add("aprobado");
+    else if (aprobado === false) el.classList.add("fallido");
+  }
 
-    if (id && clientTransactionId) {
-      fetch("https://pay.payphonetodoesposible.com/api/button/V2/Confirm", {
-        method: "POST",
-        headers: {
-          "Authorization": "Bearer Khq6ctYWdd_IeGWedFpLsTPzaMp86Bx3h_yydV-X36ZakMJecNDfo4-VYeZ2kWtHXAtNe-dnyokgJGZhaEfzJh4CrNS5YDSACedO1y8hHKdbyT72KUmH02DxkaPoeef2iyrfHPb83OU8pQW-xMPQ8D0qw4-e8SUjxRP7crfzGbX2mLbUCUt67JNB_Y1AhgdFyZxY7pBNQW29-iyQoHH4GlghlpWx_cTo54rXvHpv_JYTAQLTdsqGsDs_DfYtDYhK7vJsY7OatDBIAlfcgbofwyH5gLoPPPLVx2MYod8EO1WWYlne33ZyDWSJ0SmQRN1krY8YMLYhGu1raiVk9BObfb2_GCs",
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          id: id,
-          clientTxId: clientTransactionId
-        })
+  if (id && clientTransactionId) {
+    // ¡IMPORTANTE! Reemplaza esta URL con la URL de tu aplicación web de Google Apps Script
+    const appsScriptUrl = "https://script.google.com/macros/s/AKfycbz_mXY8qX82JeDAgz03RUJaIiwtTXWDrdV9RWNmI9UIlCMb5Hox6BZJw7BMbbXoo7pq/exec"; // EJ: https://script.google.com/macros/s/AKfycb.../exec
+
+    fetch(appsScriptUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        id: id,
+        clientTxId: clientTransactionId
       })
-      .then(res => res.json())
+    })
+      .then(res => {
+        if (!res.ok) {
+          // Si la respuesta no es OK (ej. 400, 500), lanzamos un error
+          return res.json().then(err => { throw new Error(err.details || err.error || "Error de red o del servidor."); });
+        }
+        return res.json();
+      })
       .then(data => {
+        // Manejo de posibles errores devueltos por el script o la API de PayPhone
+        if (data.error) {
+          setEstado(`❌ Error: ${data.error}`, false);
+          console.error("Error del backend:", data.details || data.error);
+          return;
+        }
+
         if (data.transactionStatus === "Approved") {
           setEstado("✅ Transacción aprobada", true);
         } else {
@@ -544,18 +559,17 @@ left: 50%;
         document.getElementById("monto").textContent = `$${(data.amount / 100).toFixed(2)} ${data.currency}`;
         document.getElementById("autorizacion").textContent = data.authorizationCode || "—";
         document.getElementById("transaccionId").textContent = data.transactionId || "—";
-        
-
         document.getElementById("clientTxId").textContent = data.clientTransactionId || "—";
-        // 🔽 Generar código de barras basado en el ID de transacción
-  JsBarcode("#barcode", data.clientTransactionId?.toString() || "0000000000", {
-    format: "CODE128",
-    lineColor: "#000",
-    width: 2,
-    height: 40,
-    displayValue: false
-  });
-  document.getElementById("barcode-text").textContent = data.clientTransactionId || "0000000000";
+
+        // Generar código de barras
+        JsBarcode("#barcode", data.clientTransactionId?.toString() || "0000000000", {
+          format: "CODE128",
+          lineColor: "#000",
+          width: 2,
+          height: 40,
+          displayValue: false
+        });
+        document.getElementById("barcode-text").textContent = data.clientTransactionId || "0000000000";
 
         document.getElementById("cliente").textContent = data.optionalParameter4 || "No registrado";
         document.getElementById("email").textContent = data.email || "No disponible";
@@ -566,13 +580,13 @@ left: 50%;
         document.getElementById("referencia").textContent = data.reference || "—";
       })
       .catch(error => {
-        setEstado("⚠️ No se pudo verificar la transacción.", false);
+        setEstado("⚠️ No se pudo verificar la transacción. " + error.message, false);
         console.error("Error al verificar:", error);
       });
-    } else {
-      setEstado("❌ Datos de transacción no válidos en la URL.", false);
-    }
-  </script>
+  } else {
+    setEstado("❌ Datos de transacción no válidos en la URL.", false);
+  }
+</script>
   
 </body>
 </html>
