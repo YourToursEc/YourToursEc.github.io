@@ -1,598 +1,399 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>YOUR TOURS - Comprobante de Pago</title>
-    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.payphonetodoesposible.com/box/v1.1/payphone-payment-box.js" type="module"></script>
-    <link href="https://cdn.payphonetodoesposible.com/box/v1.1/payphone-payment-box.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <link href="css/style.css" rel="stylesheet" />
+   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <style>
-        /* Definición de Variables CSS para un control de tema más fácil */
-        :root {
-            --primary-yellow: #f39c12;
-            --secondary-yellow: #f9d976; /* Para las franjas del ticket */
-            --primary-green: #28a745; /* Para elementos como el botón de pago */
-            --secondary-green: #5cb85c; /* Para degradados de botones */
-            --dark-green-focus: #0f5132; /* Para el borde en foco */
-            --light-green-bg: #e6f4ea; /* Fondo claro para inputs en foco */
-            --light-green-border: #a5d6a7; /* Para hover en fechas disponibles */
-            --light-grey-bg: #f8f9fa; /* Fondo general del body */
-            --medium-grey-punched: #d8dada; /* Color de los círculos perforados */
-            --text-dark: #333;
-            --text-medium: #555;
-            --text-light: #666;
-            --success-color: #4CAF50; /* Color para estado APROBADO */
-            --error-color: #F44336; /* Color para estado FALLIDO */
-        }
+  <meta charset="UTF-8" />
+  <title>YOUR TOURS - Comprobante de Pago</title>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  
+  <style>
+    body {
+      margin: 0;
+      padding: 2rem;
+      background: linear-gradient(to right, #f8f9fa, #f8f9fa);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      font-family: 'Archivo', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
 
-        /* --- Estilos Generales y del Contenedor de Pago --- */
-        body {
-            margin-top: 0rem;
-            /* Fondo sutil */
-            background: linear-gradient(to bottom, var(--light-grey-bg), #e9ecef);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            font-family: 'Archivo', sans-serif; /* Consistencia de fuente */
-            padding: 2rem; /* Asegura un padding mínimo en pantallas pequeñas */
-        }
+    /* Nuevo contenedor para separar los bloques */
+    .ticket-container {
+      display: flex;
+      width: 740px;
+      gap: 20px; /* separación entre bloques */
+    }
 
-        .container-fluid.booking {
-            margin-top: 2rem;
-            padding-bottom: 0rem;
-        }
+      .ticket {
+      position: relative;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+      display: flex;
+      overflow: hidden;
+      width: 100%;
+    }
 
-        /* Estilos base para inputs y selects */
-        .custom-select, .form-control {
-            height: 47px;
-            /* Transición más específica y suave */
-            transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out, background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
-        }
+    .ticket::before, .ticket::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 40px;
+      background: #d8dada;
+      border-radius: 50%;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 2;
+    }
 
-        /* Estilo del botón de pago */
-        #btn-pagar {
-            margin-top: 1rem;
-            height: 47px;
-            width: 100%;
-            background: linear-gradient(135deg, var(--primary-green) 0%, var(--secondary-green) 100%);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
-            will-change: background, transform, box-shadow; /* Optimización opcional */
-        }
-        #btn-pagar:hover {
-            background: linear-gradient(135deg, #2dca4f 0%, #5cd85c 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(45, 202, 79, 0.4);
-        }
-        #btn-pagar:active {
-            transform: translateY(0);
-        }
+    .ticket::before { left: -10px; }
+    .ticket::after { right: -10px; }
+    .stripe {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 20px;
+      background: repeating-linear-gradient(
+        135deg,
+        #f9d976,
+        #f9d976 10px,
+        #fff 10px,
+        #fff 20px
+      );
+      z-index: 1;
+    }
 
-        /* Estilos para el layout de los inputs en fila */
-        .flex-row-inputs {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-        .flex-row-inputs > * {
-            flex: 1 1 100%; /* Por defecto, ocupan todo el ancho en pantallas pequeñas */
-        }
+.stripe.top {
+      top: 0;
+      border-top-left-radius: 16px;
+      border-top-right-radius: 16px;
+    }
+    .stripe.bottom {
+      bottom: 0;
+      border-bottom-left-radius: 16px;
+      border-bottom-right-radius: 16px;
+    }
 
-        /* Media query para pantallas más grandes (Desktop) */
-        @media (min-width: 768px) {
-            body {
-                margin-top: 7rem;
-            }
-            .flex-row-inputs > * {
-                flex: 1 1 0; /* Permite que los elementos se distribuyan equitativamente */
-            }
-        }
-        
-        /* Estilos generales para todos los inputs/selects con iconos */
-        #region-select, #destino-select, #fecha-calendario, 
-        #precio-pagar, #tipo-experiencia, #numero-personas {
-            flex: 1 1 0;
-            padding: 12px 15px;
-            font-size: 1rem;
-            border: 2px solid #b9b9b9;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(25, 135, 84, 0.2);
-            /* Transición específica para un control más fino */
-            transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out, background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
-            background-color: #f9fff9;
-            color: var(--text-dark);
-            font-weight: 600;
-            outline: none;
-            background-repeat: no-repeat;
-            background-position: right 15px center;
-            background-size: 20px;
-            will-change: border-color, box-shadow, background-color, transform; /* Optimización opcional */
-        }
-        
-        /* Iconos SVG para inputs específicos */
-        #fecha-calendario {
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2328a745'%3E%3Cpath d='M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM9 10H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z'/%3E%3C/svg%3E");
-        }
-        
-        #numero-personas {
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2328a745'%3E%3Cpath d='M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V18c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-1.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05.02.01.03.03.04.04 1.14.83 1.93 1.94 1.93 3.41V18c0 .35-.07.69-.18 1H22c.55 0 1-.45 1-1v-1.5c0-2.33-4.67-3.5-7-3.5z'/%3E%3C/svg%3E");
-        }
-        
-        #precio-pagar {
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2328a745'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z'/%3E%3C/svg%3E");
-            background-color: #d4edda; /* Ya lo tenías aquí, lo mantengo */
-            cursor: not-allowed;
-        }
-        
-        /* Mejoras en los estados interactivos para inputs/selects */
-        #region-select:hover, #destino-select:hover,
-        #fecha-calendario:hover, #numero-personas:hover,
-        #tipo-experiencia:hover {
-            border-color: var(--primary-green); /* Un verde más brillante al pasar el ratón */
-            box-shadow: 0 5px 10px rgba(25, 135, 84, 0.25); /* Sombra ligeramente más grande y menos opaca para sutileza */
-        }
+    .left, .right {
+      padding: 2rem;
+    }
 
-        #region-select:focus, #destino-select:focus, 
-        #fecha-calendario:focus, #precio-pagar:focus, 
-        #tipo-experiencia:focus, #numero-personas:focus {
-            border-color: var(--dark-green-focus);
-            box-shadow: 0 0 0 4px rgba(40, 167, 69, 0.25); /* Sombra más difusa y visible para un efecto de "aura" */
-            background-color: var(--light-green-bg);
-        }
+    .left {
+  padding: 4 2rem 2rem 2rem; /* sin padding-top */
+  flex: 3;
+  border-right: 2px dashed #eee;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  z-index: 3;
+}
 
-        /* Efecto al hacer click/activar */
-        #region-select:active, #destino-select:active,
-        #fecha-calendario:active, #numero-personas:active,
-        #tipo-experiencia:active {
-            transform: translateY(1px); /* Ligeramente hacia abajo */
-            box-shadow: 0 2px 4px rgba(25, 135, 84, 0.2); /* Sombra más suave */
-            transition: transform 0.1s ease-out, box-shadow 0.1s ease-out; /* Transición más rápida para el clic */
-        }
 
-        /* Estilo para placeholders */
-        #fecha-calendario::placeholder,
-        #precio-pagar::placeholder {
-            color: var(--text-light); /* Usando variable */
-            font-weight: 400;
-        }
+    .right {
+  flex: 1.5;
+  background: #f39c12;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* para que los hijos empiecen desde arriba */
+  position: relative;
+  align-items: center;
+  padding: 1rem; /* puedes ajustar este padding si quieres */
+  gap: 1rem;
+  z-index: 3;
+}
 
-        /* Estilos para fechas disponibles en el calendario (Flatpickr) */
-        .fechas-disponibles {
-            background-color: #d4edda !important; /* Mantiene tu color original */
-            color: #155724 !important; /* Mantiene tu color original */
-            border-radius: 50% !important;
-            transition: all 0.2s ease;
-        }
-        .fechas-disponibles:hover {
-            border: 2px solid var(--primary-green) !important;
-            box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.3) !important;
-            background-color: var(--light-green-border) !important;
-            transform: scale(1.05);
-            cursor: pointer;
-        }
+.right h1 {
+  margin: 0;       /* quita margen superior */
+  padding-top: 0;  /* asegura que no tenga padding arriba */
+  font-size: 1.8rem;
+  color: #fcfcfc;
+  text-transform: uppercase;
+  text-align: center;
+  width: 100%;     /* para que ocupe el ancho completo y se centre */
+}
 
-        /* Reglas para ocultar las flechas de los inputs number */
-        input[type="number"]::-webkit-outer-spin-button,
-        input[type="number"]::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-        input[type="number"] {
-            -moz-appearance: textfield; /* Firefox */
-        }
 
-        /* --- Estilos del Comprobante de Pago (Ticket) --- */
+    .logo-right {
+      width: 190px;
+      margin-bottom: 2rem;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      filter: drop-shadow(0 0 2px rgba(0,0,0,0.2));
+    }
 
-        /* Contenedor principal de los tickets */
-        .ticket-container {
-            display: flex;
-            width: 740px; /* Ancho fijo para desktop */
-            gap: 20px; /* Separación entre bloques de ticket */
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Sombra ligera para el contenedor principal */
-            border-radius: 16px; /* Borde redondeado al contenedor */
-        }
+    h1 {
+      margin-top: 1rem;
+      font-size: 1.8rem;
+      color: #fcfcfc;
+      text-transform: uppercase;
+      text-align: center;
+    }
 
-        /* Estilo del ticket individual */
-        .ticket {
-            position: relative;
-            background: #fff;
-            border-radius: 16px;
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
-            display: flex;
-            overflow: hidden; /* Importante para que los círculos perforados funcionen bien */
-            width: 100%;
-            flex-grow: 1; /* Permite que cada ticket ocupe el espacio disponible */
-        }
+    .section {
+      margin-bottom: 1rem;
+    }
 
-        /* Círculos perforados en los lados del ticket */
-        .ticket::before, .ticket::after {
-            content: '';
-            position: absolute;
-            width: 20px;
-            height: 40px;
-            background: var(--medium-grey-punched); /* Usando variable */
-            border-radius: 50%;
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 2;
-        }
-        .ticket::before { left: -10px; }
-        .ticket::after { right: -10px; }
+    .label {
+      font-size: 0.75rem;
+      color: #666;
+      text-transform: uppercase;
+      margin-bottom: 0.25rem;
+      font-weight: 600;
+    }
+    .incluyeimpuestos {
+text-align: center;
+    }
+    
+    .totalpagado {
+      font-size: 0.98rem;
+      color: #600;
+      text-transform: uppercase;
+      margin-bottom: 0.25rem;
+      font-weight: 600;
+      text-align: center;
+    }
 
-        /* Franjas decorativas superior e inferior */
-        .stripe {
-            position: absolute;
-            left: 0;
-            width: 100%;
-            height: 20px;
-            background: repeating-linear-gradient(
-                135deg,
-                var(--secondary-yellow),
-                var(--secondary-yellow) 10px,
-                #fff 10px,
-                #fff 20px
-            );
-            z-index: 1;
-        }
-        .stripe.top {
-            top: 0;
-            border-top-left-radius: 16px;
-            border-top-right-radius: 16px;
-        }
-        .stripe.bottom {
-            bottom: 0;
-            border-bottom-left-radius: 16px;
-            border-bottom-right-radius: 16px;
-        }
+    .value {
+      font-size: 1rem;
+      font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
+      color: #333;
+    }
 
-        /* Secciones izquierda y derecha del ticket */
-        .left, .right {
-            padding: 2rem; /* Padding uniforme por defecto */
-            position: relative;
-            z-index: 3; /* Asegura que el contenido esté por encima de franjas y círculos */
-        }
+    .row {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
 
-        .left {
-            flex: 3;
-            border-right: 2px dashed #eee;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-        /* Espaciado mejorado entre secciones en el lado izquierdo */
-        .section:not(:last-child) {
-            margin-bottom: 1.5rem; /* Más espacio entre bloques de información */
-        }
+    .info-block {
+      margin-bottom: 1rem;
+      flex: 1 1 45%;
+    }
 
-        .right {
-            flex: 1.5;
-            background: var(--primary-yellow); /* Usando variable */
-            color: white;
-            display: flex;
-            flex-direction: column;
-            justify-content: center; /* Centra verticalmente el contenido */
-            align-items: center; /* Centra horizontalmente el contenido */
-            padding: 1.5rem; /* Ajuste de padding */
-            gap: 1rem;
-        }
+   .barcode {
+  margin: 1.5rem auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 100%;
+  overflow: hidden;
+}
 
-        /* Títulos */
-        h1 {
-            margin-top: 0; /* Asegura que el título no tenga margen superior por defecto */
-            padding-top: 0;
-            font-size: 1.8rem;
-            color: #fcfcfc;
-            text-transform: uppercase;
-            text-align: center;
-            width: 100%;
-        }
+#barcode {
+  max-width: 100%;
+  height: auto;
+}
 
-        /* Estilos específicos del logo en el lado derecho */
-        .logo-right {
-            width: 190px;
-            margin-bottom: 2rem;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-            filter: drop-shadow(0 0 2px rgba(0,0,0,0.2));
-        }
+.barcode-text {
+  font-size: 14px;
+  text-align: center;
+  margin-top: 4px;
+  font-family: monospace;
+  word-break: break-word;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
 
-        /* Labels e Información */
-        .label {
-            font-size: 0.75rem;
-            color: var(--text-medium); /* Usando variable para mejor legibilidad */
-            text-transform: uppercase;
-            margin-bottom: 0.25rem;
-            font-weight: 600;
-        }
-        .incluyeimpuestos {
-            text-align: center;
-            font-size: 0.8rem; /* Tamaño más legible */
-            color: var(--text-medium);
-        }
-        .totalpagado {
-            font-size: 0.98rem;
-            color: #600; /* Color que tenías, si quieres usar variable: --dark-red */
-            text-transform: uppercase;
-            margin-bottom: 0.25rem;
-            font-weight: 600;
-            text-align: center;
-        }
-        .value {
-            font-size: 1rem;
-            font-weight: 600;
-            font-family: 'JetBrains Mono', monospace;
-            color: var(--text-dark);
-        }
-        .row {
-            display: flex;
-            justify-content: space-between;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-        .info-block {
-            margin-bottom: 1rem;
-            flex: 1 1 45%; /* Permite 2 columnas en pantallas medianas */
-        }
+    .thank-you {
+      font-size: 0.9rem;
+      color: #555;
+      text-align: center;
+      margin-top: 1rem;
+    }
 
-        /* Código de Barras */
-        .barcode {
-            margin: 1.5rem auto;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            max-width: 100%;
-            overflow: hidden;
-        }
-        #barcode {
-            max-width: 100%;
-            height: auto;
-        }
-        .barcode-text {
-            font-size: 14px;
-            text-align: center;
-            margin-top: 4px;
-            font-family: 'JetBrains Mono', monospace; /* Consistencia con fuente mono */
-            word-break: break-all; /* Asegura que el texto largo se rompa */
-            white-space: normal; /* Permite saltos de línea */
-            overflow: hidden;
-            text-overflow: ellipsis; /* Si aún así es demasiado largo, añade puntos suspensivos */
-            max-width: 100%;
-        }
+    .amount {
+      font-size: 2rem;
+      font-weight: bold;
+      margin: 1rem 0;
+    }
 
-        /* Mensaje de agradecimiento y monto */
-        .thank-you {
-            font-size: 0.9rem;
-            color: var(--text-medium); /* Usando variable */
-            text-align: center;
-            margin-top: 1rem;
-        }
-        .amount {
-            font-size: 2rem;
-            font-weight: bold;
-            margin: 1rem 0;
-            color: white; /* Asegura que el monto sea blanco sobre el fondo amarillo */
-        }
-        .right small {
-            font-size: 0.75rem;
-            color: rgba(255, 255, 255, 0.9); /* Más visible sobre el fondo amarillo */
-        }
+    .right small {
+      font-size: 0.75rem;
+    }
 
-        /* Posicionamiento de elementos específicos en el lado derecho */
-        .website {
-            position: absolute;
-            bottom: 1rem; /* distancia desde el borde inferior */
-            left: 50%;
-            transform: translateX(-50%);
-            text-align: center;
-            font-size: 0.75rem;
-            opacity: 0.9; /* Un poco más visible */
-            color: white; /* Asegura que el texto sea blanco */
-        }
-        .comprobantedepago {
-            position: absolute;
-            font-family: 'Archivo', sans-serif; /* Consistencia de fuente */
-            top: 1rem; /* Más cerca del borde superior */
-            left: 50%;
-            transform: translateX(-50%);
-            text-align: center;
-            font-size: 0.77rem;
-            color: rgba(255, 255, 255, 0.9); /* Más visible */
-        }
+    .website {
+  position: absolute;
+  bottom: 1rem; /* distancia desde el borde inferior */
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+.comprobantedepago  {
+  position: absolute;
+  font-family: 'Poppins', sans-serif;
+top: 2rem;
+left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  font-size: 0.77rem;
+  
+}
 
-        /* Estilos para el estado del pago */
-        #estado.aprobado {
-            color: var(--success-color);
-            font-weight: bold;
-        }
-        #estado.fallido {
-            color: var(--error-color);
-            font-weight: bold;
-        }
+    #estado.aprobado {
+      color: #4CAF50;
+      font-weight: bold;
+    }
 
-        /* Estilo del botón de imprimir */
-        .print-button {
-            background: transparent;
-            border: 2px solid var(--primary-yellow); /* Usando variable */
-            color: var(--primary-yellow); /* Usando variable */
-            font-weight: 600;
-            font-size: 1rem;
-            padding: 0.5rem 1.25rem;
-            border-radius: 12px;
-            cursor: pointer;
-            margin: 1.5rem auto 0; /* Más espacio arriba del botón */
-            display: block;
-            max-width: 200px;
-            text-align: center;
-            user-select: none;
-            transition: all 0.3s ease;
-            font-family: 'Archivo', sans-serif;
-            text-decoration: none; /* Si lo usas como <a> */
-        }
-        .print-button:hover {
-            background: var(--primary-yellow);
-            color: white;
-            box-shadow: 0 4px 12px rgba(243, 156, 18, 0.4);
-        }
-        .print-button:active {
-            transform: scale(0.98);
-        }
+    #estado.fallido {
+      color: #F44336;
+      font-weight: bold;
+    }
 
-        /* Aro decorativo en el lado derecho */
-        .right .aro {
-            position: absolute;
-            border: 40px solid rgba(255, 255, 255, 0.2); /* Aro blanco con un poco menos de transparencia para visibilidad */
-            border-radius: 50%;
-            pointer-events: none;
-            opacity: 0.4;
-            z-index: 1;
-            /* Puedes centrarlo manualmente si lo necesitas, o dejarlo que el flexbox lo posicione */
-            width: 150px; /* Ajusta el tamaño si es necesario */
-            height: 150px; /* Ajusta el tamaño si es necesario */
-        }
+    .print-button {
+      background: transparent;
+      border: 2px solid #f39c12;
+      color: #f39c12;
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 0.5rem 1.25rem;
+      border-radius: 12px;
+      cursor: pointer;
+      margin: 1rem auto 0;
+      display: block;
+      max-width: 200px;
+      text-align: center;
+      user-select: none;
+      transition: all 0.3s ease;
+      font-family: 'Archivo', sans-serif;
+    }
 
-        /* --- Media Queries para Adaptabilidad --- */
+    .print-button:hover {
+      background: #f39c12;
+      color: white;
+      box-shadow: 0 4px 12px rgba(243, 156, 18, 0.4);
+    }
 
-        /* Estilos de Impresión */
-        @media print {
-            body {
-                background: white; /* Fondo blanco para impresión */
-                -webkit-print-color-adjust: exact; /* Fuerza la impresión de colores de fondo */
-                print-color-adjust: exact;
-                padding: 0; /* Sin padding en el cuerpo para maximizar espacio */
-                margin: 0;
-                display: block; /* Desactiva flex para impresión del body */
-                min-height: auto; /* Desactiva min-height */
-            }
-            .ticket-container {
-                flex-direction: column; /* Apila los tickets */
-                width: 100%;
-                max-width: 650px; /* Ancho máximo para impresión (ajusta según necesites) */
-                margin: 1rem auto; /* Centra el contenedor en la página */
-                box-shadow: none; /* No sombras en impresión */
-                gap: 15px; /* Espacio entre tickets apilados */
-            }
-            .ticket {
-                flex-direction: column; /* También apila contenido del ticket si es necesario */
-                box-shadow: none; /* No sombras en impresión */
-                border: 1px solid #ddd; /* Borde sutil para definir el ticket */
-                break-inside: avoid; /* Evita cortar esta sección por la mitad */
-                margin-bottom: 10px; /* Margen para evitar que los tickets se peguen */
-            }
-            .ticket::before, .ticket::after {
-                background: white; /* Oculta los círculos perforados si no quieres que se impriman */
-                border: none;
-            }
-            .stripe {
-                height: 15px; /* Franjas un poco más delgadas en impresión */
-            }
-            .left, .right {
-                padding: 1.5rem; /* Ajusta el padding para impresión */
-                border-right: none !important; /* Elimina la línea discontinua si se apila */
-                border-bottom: 1px dashed #eee; /* Añade una línea si el right se pone debajo del left */
-            }
-            .right {
-                border-top: none; /* Si ya tiene border-bottom en left */
-            }
-            .right h1 {
-                font-size: 1.6rem; /* Ajusta tamaño de título para impresión */
-            }
-            .amount {
-                font-size: 1.8rem;
-            }
-            .logo-right {
-                width: 150px; /* Tamaño más pequeño para el logo en impresión */
-                margin-top: 1rem;
-                margin-bottom: 0.5rem;
-            }
-            .right .aro {
-                border-width: 25px; /* Aro más pequeño en impresión */
-                opacity: 0.3;
-            }
-            .print-button {
-                display: none; /* Oculta el botón de imprimir al imprimir */
-            }
-            .website, .comprobantedepago {
-                position: static; /* Restablece el posicionamiento absoluto */
-                transform: none;
-                margin-top: 0.5rem; /* Agrega un pequeño margen */
-                font-size: 0.7rem;
-            }
-        }
+    .print-button:active {
+      transform: scale(0.98);
+    }
+   
+.right .aro {
+  position: absolute;
+  border: 40px solid rgba(255, 255, 255, 0.25); /* Aro blanco con transparencia */
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0.4;
+  z-index: 1;
+}
 
-        /* Estilos para Teléfonos Móviles y Tabletas (Responsive) */
-        @media screen and (max-width: 768px) {
-            body {
-                padding: 1rem; /* Menos padding en pantallas pequeñas */
-            }
-            .ticket-container {
-                flex-direction: column; /* Apila los tickets verticalmente */
-                width: 100%;
-                gap: 1.5rem; /* Espacio entre tickets */
-                box-shadow: none; /* Sin sombra en el contenedor principal */
-            }
-            .ticket {
-                flex-direction: column; /* Apila el contenido del ticket */
-                width: 100%;
-                margin-bottom: 0; /* Ya el gap del ticket-container maneja el espacio */
-                border-radius: 12px; /* Un poco menos redondeado para mobile */
-            }
-            .left, .right {
-                padding: 1.5rem; /* Menos padding en mobile */
-            }
-            .right {
-                border-left: none; /* Elimina el borde de la izquierda */
-                border-top: 2px dashed #eee; /* Añade un borde superior al pasar a columna */
-                align-items: center; /* Centra el contenido en mobile */
-                text-align: center;
-            }
-            .right h1 {
-                font-size: 1.5rem;
-                text-align: center;
-            }
-            .amount {
-                font-size: 1.8rem; /* Un poco más pequeño para mobile */
-            }
-            .logo-right {
-                width: 150px; /* Tamaño del logo para mobile */
-                margin-top: 1rem; /* Ajusta el margen superior */
-                margin-bottom: 1rem;
-            }
-            .barcode {
-                margin-top: 1rem;
-            }
-            .print-button {
-                max-width: 100%; /* El botón ocupa todo el ancho disponible */
-            }
-            .stripe.top, .stripe.bottom {
-                height: 12px; /* Franjas más delgadas */
-            }
-            .comprobantedepago, .website {
-                position: static; /* Permite que se fluyan con el contenido */
-                transform: none;
-                margin-top: 0.5rem;
-                font-size: 0.7rem;
-                width: 100%;
-            }
-            .right .aro {
-                border-width: 30px; /* Aro más pequeño en mobile */
-            }
-        }
-    </style>
+ @media print {
 
+      .ticket-container {
+  display: flex;
+  flex-direction: wrap; /* ✅ De row a column */
+  width: 100%;
+  max-width: 700px;
+ 
+}
+ .ticket {
+  
+      position: relative;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+      display: flex;
+      overflow: hidden;
+      width: 100%;
+       page-break-inside: avoid; /* Evita cortar esta sección por la mitad */
+    break-inside: avoid;       /* Compatibilidad moderna */
+  
+
+    }
+/* Oculta el botón de imprimir al imprimir    
+  .logo-right {
+    width: 150px;       
+  height: auto;       
+   margin-top: 80px;
+    margin-bottom: 0px;
+  }  */
+
+  .right .aro {
+  position: absolute;
+  border: 29px solid rgba(255, 255, 255, 0.25); /* Aro blanco con transparencia */
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0.4;
+  z-index: 1;
+}
+
+  body {
+    background: white; /* Si no quieres fondo en impresión, o ajusta el color */
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+
+
+  .print-button {
+    display: none; /* Oculta el botón de imprimir al imprimir */
+  }
+}
+@media screen and (max-width: 768px) {
+  .ticket-container {
+    flex-direction: column;
+    width: 100%;
+    padding: 1rem;
+  }
+
+  .ticket {
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 1.5rem;
+    border-radius: 12px;
+  }
+
+  .left, .right {
+    padding: 1rem;
+  }
+
+  .right {
+    border-left: none;
+    border-top: 2px dashed #eee;
+    align-items: flex-start;
+  }
+
+  .right h1, .comprobantedepago h1 {
+    font-size: 1.5rem;
+    text-align: center;
+  }
+
+  .amount {
+    font-size: 1.5rem;
+  }
+
+  .logo-right {
+    width: 180px;
+    margin-top: 7rem;
+    margin: 10 auto 1rem auto;
+  }
+
+  .barcode {
+    margin-top: 1rem;
+  }
+
+  .print-button {
+    max-width: 100%;
+  }
+
+  .stripe.top, .stripe.bottom {
+    height: 12px;
+  }
+}
+
+
+  </style>
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
 
 </head>
