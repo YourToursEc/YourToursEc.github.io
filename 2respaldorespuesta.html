@@ -3,31 +3,64 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Reserva y Pago</title>
+    <title>YOUR TOURS - Comprobante de Pago</title>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.payphonetodoesposible.com/box/v1.1/payphone-payment-box.js" type="module"></script>
     <link href="https://cdn.payphonetodoesposible.com/box/v1.1/payphone-payment-box.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <link href="css/style.css" rel="stylesheet" />
+
     <style>
-        /* Tu CSS existente - asegúrate de que esté completo */
+        /* Definición de Variables CSS para un control de tema más fácil */
+        :root {
+            --primary-yellow: #f39c12;
+            --secondary-yellow: #f9d976; /* Para las franjas del ticket */
+            --primary-green: #28a745; /* Para elementos como el botón de pago */
+            --secondary-green: #5cb85c; /* Para degradados de botones */
+            --dark-green-focus: #0f5132; /* Para el borde en foco */
+            --light-green-bg: #e6f4ea; /* Fondo claro para inputs en foco */
+            --light-green-border: #a5d6a7; /* Para hover en fechas disponibles */
+            --light-grey-bg: #f8f9fa; /* Fondo general del body */
+            --medium-grey-punched: #d8dada; /* Color de los círculos perforados */
+            --text-dark: #333;
+            --text-medium: #555;
+            --text-light: #666;
+            --success-color: #4CAF50; /* Color para estado APROBADO */
+            --error-color: #F44336; /* Color para estado FALLIDO */
+        }
+
+        /* --- Estilos Generales y del Contenedor de Pago --- */
         body {
             margin-top: 0rem;
+            /* Fondo sutil */
+            background: linear-gradient(to bottom, var(--light-grey-bg), #e9ecef);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Archivo', sans-serif; /* Consistencia de fuente */
+            padding: 2rem; /* Asegura un padding mínimo en pantallas pequeñas */
         }
+
         .container-fluid.booking {
             margin-top: 2rem;
             padding-bottom: 0rem;
         }
+
+        /* Estilos base para inputs y selects */
         .custom-select, .form-control {
             height: 47px;
             /* Transición más específica y suave */
             transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out, background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
         }
+
+        /* Estilo del botón de pago */
         #btn-pagar {
             margin-top: 1rem;
             height: 47px;
             width: 100%;
-            background: linear-gradient(135deg, #28a745 0%, #5cb85c 100%);
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--secondary-green) 100%);
             color: white;
             border: none;
             border-radius: 12px;
@@ -47,24 +80,29 @@
         #btn-pagar:active {
             transform: translateY(0);
         }
+
+        /* Estilos para el layout de los inputs en fila */
         .flex-row-inputs {
             display: flex;
             flex-wrap: wrap;
             gap: 15px;
         }
         .flex-row-inputs > * {
-            flex: 1 1 100%;
+            flex: 1 1 100%; /* Por defecto, ocupan todo el ancho en pantallas pequeñas */
         }
+
+        /* Media query para pantallas más grandes (Desktop) */
         @media (min-width: 768px) {
             body {
                 margin-top: 7rem;
             }
             .flex-row-inputs > * {
-                flex: 1 1 0;
+                flex: 1 1 0; /* Permite que los elementos se distribuyan equitativamente */
             }
         }
-
-        #region-select, #destino-select, #fecha-calendario,
+        
+        /* Estilos generales para todos los inputs/selects con iconos */
+        #region-select, #destino-select, #fecha-calendario, 
         #precio-pagar, #tipo-experiencia, #numero-personas {
             flex: 1 1 0;
             padding: 12px 15px;
@@ -75,7 +113,7 @@
             /* Transición específica para un control más fino */
             transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out, background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
             background-color: #f9fff9;
-            color: var(--text-dark); /* Asegúrate de que esta variable esté definida en tu :root o archivo style.css */
+            color: var(--text-dark);
             font-weight: 600;
             outline: none;
             background-repeat: no-repeat;
@@ -83,48 +121,65 @@
             background-size: 20px;
             will-change: border-color, box-shadow, background-color, transform; /* Optimización opcional */
         }
-
+        
+        /* Iconos SVG para inputs específicos */
         #fecha-calendario {
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2328a745'%3E%3Cpath d='M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM9 10H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z'/%3E%3C/svg%3E");
         }
-
+        
         #numero-personas {
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2328a745'%3E%3Cpath d='M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V18c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-1.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05.02.01.03.03.04.04 1.14.83 1.93 1.94 1.93 3.41V18c0 .35-.07.69-.18 1H22c.55 0 1-.45 1-1v-1.5c0-2.33-4.67-3.5-7-3.5z'/%3E%3C/svg%3E");
         }
-
+        
         #precio-pagar {
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2328a745'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z'/%3E%3C/svg%3E");
-            background-color: var(--primary-light); /* Asegúrate de que esta variable esté definida */
+            background-color: #d4edda; /* Ya lo tenías aquí, lo mantengo */
             cursor: not-allowed;
+        }
+        
+        /* Mejoras en los estados interactivos para inputs/selects */
+        #region-select:hover, #destino-select:hover,
+        #fecha-calendario:hover, #numero-personas:hover,
+        #tipo-experiencia:hover {
+            border-color: var(--primary-green); /* Un verde más brillante al pasar el ratón */
+            box-shadow: 0 5px 10px rgba(25, 135, 84, 0.25); /* Sombra ligeramente más grande y menos opaca para sutileza */
         }
 
-        /* Mejora del estado :focus para un efecto más suave y envolvente */
-        #region-select:focus, #destino-select:focus,
-        #fecha-calendario:focus, #precio-pagar:focus,
+        #region-select:focus, #destino-select:focus, 
+        #fecha-calendario:focus, #precio-pagar:focus, 
         #tipo-experiencia:focus, #numero-personas:focus {
-            border-color: #0f5132;
-            box-shadow: 0 5px 10px rgba(25, 135, 84, 0.25); /* Sombra ligeramente más grande y menos opaca para sutileza */
-            background-color: #e6f4ea;
+            border-color: var(--dark-green-focus);
+            box-shadow: 0 0 0 4px rgba(40, 167, 69, 0.25); /* Sombra más difusa y visible para un efecto de "aura" */
+            background-color: var(--light-green-bg);
         }
-        #precio-pagar {
-            background-color: #d4edda;
-            cursor: not-allowed;
+
+        /* Efecto al hacer click/activar */
+        #region-select:active, #destino-select:active,
+        #fecha-calendario:active, #numero-personas:active,
+        #tipo-experiencia:active {
+            transform: translateY(1px); /* Ligeramente hacia abajo */
+            box-shadow: 0 2px 4px rgba(25, 135, 84, 0.2); /* Sombra más suave */
+            transition: transform 0.1s ease-out, box-shadow 0.1s ease-out; /* Transición más rápida para el clic */
         }
+
+        /* Estilo para placeholders */
         #fecha-calendario::placeholder,
         #precio-pagar::placeholder {
-            color: #6c757d;
+            color: var(--text-light); /* Usando variable */
             font-weight: 400;
         }
+
+        /* Estilos para fechas disponibles en el calendario (Flatpickr) */
         .fechas-disponibles {
-            background-color: #d4edda !important;
-            color: #155724 !important;
+            background-color: #d4edda !important; /* Mantiene tu color original */
+            color: #155724 !important; /* Mantiene tu color original */
             border-radius: 50% !important;
             transition: all 0.2s ease;
         }
         .fechas-disponibles:hover {
-            border: 2px solid #28a745 !important;
+            border: 2px solid var(--primary-green) !important;
             box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.3) !important;
-            background-color: #a5d6a7 !important;
+            background-color: var(--light-green-border) !important;
             transform: scale(1.05);
             cursor: pointer;
         }
@@ -135,796 +190,588 @@
             -webkit-appearance: none;
             margin: 0;
         }
-
         input[type="number"] {
             -moz-appearance: textfield; /* Firefox */
         }
 
-        /* Sugerencias de estilos adicionales para hover y active */
-        #region-select:hover, #destino-select:hover,
-        #fecha-calendario:hover, #numero-personas:hover,
-        #tipo-experiencia:hover {
-            border-color: #28a745; /* Un verde más brillante al pasar el ratón */
-            box-shadow: 0 5px 10px rgba(25, 135, 84, 0.25); /* Sombra ligeramente más grande y menos opaca para sutileza */
+        /* --- Estilos del Comprobante de Pago (Ticket) --- */
+
+        /* Contenedor principal de los tickets */
+        .ticket-container {
+            display: flex;
+            width: 740px; /* Ancho fijo para desktop */
+            gap: 20px; /* Separación entre bloques de ticket */
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Sombra ligera para el contenedor principal */
+            border-radius: 16px; /* Borde redondeado al contenedor */
         }
 
-        /* Opcional: Un pequeño efecto al hacer click/activar con transición */
-        #region-select:active, #destino-select:active,
-        #fecha-calendario:active, #numero-personas:active,
-        #tipo-experiencia:active {
-            transform: translateY(1px); /* Ligeramente hacia abajo */
-            box-shadow: 0 2px 4px rgba(25, 135, 84, 0.2); /* Sombra más suave */
-            transition: transform 0.1s ease-out, box-shadow 0.1s ease-out; /* Transición más rápida para el clic */
+        /* Estilo del ticket individual */
+        .ticket {
+            position: relative;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+            display: flex;
+            overflow: hidden; /* Importante para que los círculos perforados funcionen bien */
+            width: 100%;
+            flex-grow: 1; /* Permite que cada ticket ocupe el espacio disponible */
+        }
+
+        /* Círculos perforados en los lados del ticket */
+        .ticket::before, .ticket::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 40px;
+            background: var(--medium-grey-punched); /* Usando variable */
+            border-radius: 50%;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 2;
+        }
+        .ticket::before { left: -10px; }
+        .ticket::after { right: -10px; }
+
+        /* Franjas decorativas superior e inferior */
+        .stripe {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 20px;
+            background: repeating-linear-gradient(
+                135deg,
+                var(--secondary-yellow),
+                var(--secondary-yellow) 10px,
+                #fff 10px,
+                #fff 20px
+            );
+            z-index: 1;
+        }
+        .stripe.top {
+            top: 0;
+            border-top-left-radius: 16px;
+            border-top-right-radius: 16px;
+        }
+        .stripe.bottom {
+            bottom: 0;
+            border-bottom-left-radius: 16px;
+            border-bottom-right-radius: 16px;
+        }
+
+        /* Secciones izquierda y derecha del ticket */
+        .left, .right {
+            padding: 2rem; /* Padding uniforme por defecto */
+            position: relative;
+            z-index: 3; /* Asegura que el contenido esté por encima de franjas y círculos */
+        }
+
+        .left {
+            flex: 3;
+            border-right: 2px dashed #eee;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        /* Espaciado mejorado entre secciones en el lado izquierdo */
+        .section:not(:last-child) {
+            margin-bottom: 1.5rem; /* Más espacio entre bloques de información */
+        }
+
+        .right {
+            flex: 1.5;
+            background: var(--primary-yellow); /* Usando variable */
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Centra verticalmente el contenido */
+            align-items: center; /* Centra horizontalmente el contenido */
+            padding: 1.5rem; /* Ajuste de padding */
+            gap: 1rem;
+        }
+
+        /* Títulos */
+        h1 {
+            margin-top: 0; /* Asegura que el título no tenga margen superior por defecto */
+            padding-top: 0;
+            font-size: 1.8rem;
+            color: #fcfcfc;
+            text-transform: uppercase;
+            text-align: center;
+            width: 100%;
+        }
+
+        /* Estilos específicos del logo en el lado derecho */
+        .logo-right {
+            width: 190px;
+            margin-bottom: 2rem;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            filter: drop-shadow(0 0 2px rgba(0,0,0,0.2));
+        }
+
+        /* Labels e Información */
+        .label {
+            font-size: 0.75rem;
+            color: var(--text-medium); /* Usando variable para mejor legibilidad */
+            text-transform: uppercase;
+            margin-bottom: 0.25rem;
+            font-weight: 600;
+        }
+        .incluyeimpuestos {
+            text-align: center;
+            font-size: 0.8rem; /* Tamaño más legible */
+            color: var(--text-medium);
+        }
+        .totalpagado {
+            font-size: 0.98rem;
+            color: #600; /* Color que tenías, si quieres usar variable: --dark-red */
+            text-transform: uppercase;
+            margin-bottom: 0.25rem;
+            font-weight: 600;
+            text-align: center;
+        }
+        .value {
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-dark);
+        }
+        .row {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .info-block {
+            margin-bottom: 1rem;
+            flex: 1 1 45%; /* Permite 2 columnas en pantallas medianas */
+        }
+
+        /* Código de Barras */
+        .barcode {
+            margin: 1.5rem auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 100%;
+            overflow: hidden;
+        }
+        #barcode {
+            max-width: 100%;
+            height: auto;
+        }
+        .barcode-text {
+            font-size: 14px;
+            text-align: center;
+            margin-top: 4px;
+            font-family: 'JetBrains Mono', monospace; /* Consistencia con fuente mono */
+            word-break: break-all; /* Asegura que el texto largo se rompa */
+            white-space: normal; /* Permite saltos de línea */
+            overflow: hidden;
+            text-overflow: ellipsis; /* Si aún así es demasiado largo, añade puntos suspensivos */
+            max-width: 100%;
+        }
+
+        /* Mensaje de agradecimiento y monto */
+        .thank-you {
+            font-size: 0.9rem;
+            color: var(--text-medium); /* Usando variable */
+            text-align: center;
+            margin-top: 1rem;
+        }
+        .amount {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 1rem 0;
+            color: white; /* Asegura que el monto sea blanco sobre el fondo amarillo */
+        }
+        .right small {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.9); /* Más visible sobre el fondo amarillo */
+        }
+
+        /* Posicionamiento de elementos específicos en el lado derecho */
+        .website {
+            position: absolute;
+            bottom: 1rem; /* distancia desde el borde inferior */
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            font-size: 0.75rem;
+            opacity: 0.9; /* Un poco más visible */
+            color: white; /* Asegura que el texto sea blanco */
+        }
+        .comprobantedepago {
+            position: absolute;
+            font-family: 'Archivo', sans-serif; /* Consistencia de fuente */
+            top: 1rem; /* Más cerca del borde superior */
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            font-size: 0.77rem;
+            color: rgba(255, 255, 255, 0.9); /* Más visible */
+        }
+
+        /* Estilos para el estado del pago */
+        #estado.aprobado {
+            color: var(--success-color);
+            font-weight: bold;
+        }
+        #estado.fallido {
+            color: var(--error-color);
+            font-weight: bold;
+        }
+
+        /* Estilo del botón de imprimir */
+        .print-button {
+            background: transparent;
+            border: 2px solid var(--primary-yellow); /* Usando variable */
+            color: var(--primary-yellow); /* Usando variable */
+            font-weight: 600;
+            font-size: 1rem;
+            padding: 0.5rem 1.25rem;
+            border-radius: 12px;
+            cursor: pointer;
+            margin: 1.5rem auto 0; /* Más espacio arriba del botón */
+            display: block;
+            max-width: 200px;
+            text-align: center;
+            user-select: none;
+            transition: all 0.3s ease;
+            font-family: 'Archivo', sans-serif;
+            text-decoration: none; /* Si lo usas como <a> */
+        }
+        .print-button:hover {
+            background: var(--primary-yellow);
+            color: white;
+            box-shadow: 0 4px 12px rgba(243, 156, 18, 0.4);
+        }
+        .print-button:active {
+            transform: scale(0.98);
+        }
+
+        /* Aro decorativo en el lado derecho */
+        .right .aro {
+            position: absolute;
+            border: 40px solid rgba(255, 255, 255, 0.2); /* Aro blanco con un poco menos de transparencia para visibilidad */
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0.4;
+            z-index: 1;
+            /* Puedes centrarlo manualmente si lo necesitas, o dejarlo que el flexbox lo posicione */
+            width: 150px; /* Ajusta el tamaño si es necesario */
+            height: 150px; /* Ajusta el tamaño si es necesario */
+        }
+
+        /* --- Media Queries para Adaptabilidad --- */
+
+        /* Estilos de Impresión */
+        @media print {
+            body {
+                background: white; /* Fondo blanco para impresión */
+                -webkit-print-color-adjust: exact; /* Fuerza la impresión de colores de fondo */
+                print-color-adjust: exact;
+                padding: 0; /* Sin padding en el cuerpo para maximizar espacio */
+                margin: 0;
+                display: block; /* Desactiva flex para impresión del body */
+                min-height: auto; /* Desactiva min-height */
+            }
+            .ticket-container {
+                flex-direction: column; /* Apila los tickets */
+                width: 100%;
+                max-width: 650px; /* Ancho máximo para impresión (ajusta según necesites) */
+                margin: 1rem auto; /* Centra el contenedor en la página */
+                box-shadow: none; /* No sombras en impresión */
+                gap: 15px; /* Espacio entre tickets apilados */
+            }
+            .ticket {
+                flex-direction: column; /* También apila contenido del ticket si es necesario */
+                box-shadow: none; /* No sombras en impresión */
+                border: 1px solid #ddd; /* Borde sutil para definir el ticket */
+                break-inside: avoid; /* Evita cortar esta sección por la mitad */
+                margin-bottom: 10px; /* Margen para evitar que los tickets se peguen */
+            }
+            .ticket::before, .ticket::after {
+                background: white; /* Oculta los círculos perforados si no quieres que se impriman */
+                border: none;
+            }
+            .stripe {
+                height: 15px; /* Franjas un poco más delgadas en impresión */
+            }
+            .left, .right {
+                padding: 1.5rem; /* Ajusta el padding para impresión */
+                border-right: none !important; /* Elimina la línea discontinua si se apila */
+                border-bottom: 1px dashed #eee; /* Añade una línea si el right se pone debajo del left */
+            }
+            .right {
+                border-top: none; /* Si ya tiene border-bottom en left */
+            }
+            .right h1 {
+                font-size: 1.6rem; /* Ajusta tamaño de título para impresión */
+            }
+            .amount {
+                font-size: 1.8rem;
+            }
+            .logo-right {
+                width: 150px; /* Tamaño más pequeño para el logo en impresión */
+                margin-top: 1rem;
+                margin-bottom: 0.5rem;
+            }
+            .right .aro {
+                border-width: 25px; /* Aro más pequeño en impresión */
+                opacity: 0.3;
+            }
+            .print-button {
+                display: none; /* Oculta el botón de imprimir al imprimir */
+            }
+            .website, .comprobantedepago {
+                position: static; /* Restablece el posicionamiento absoluto */
+                transform: none;
+                margin-top: 0.5rem; /* Agrega un pequeño margen */
+                font-size: 0.7rem;
+            }
+        }
+
+        /* Estilos para Teléfonos Móviles y Tabletas (Responsive) */
+        @media screen and (max-width: 768px) {
+            body {
+                padding: 1rem; /* Menos padding en pantallas pequeñas */
+            }
+            .ticket-container {
+                flex-direction: column; /* Apila los tickets verticalmente */
+                width: 100%;
+                gap: 1.5rem; /* Espacio entre tickets */
+                box-shadow: none; /* Sin sombra en el contenedor principal */
+            }
+            .ticket {
+                flex-direction: column; /* Apila el contenido del ticket */
+                width: 100%;
+                margin-bottom: 0; /* Ya el gap del ticket-container maneja el espacio */
+                border-radius: 12px; /* Un poco menos redondeado para mobile */
+            }
+            .left, .right {
+                padding: 1.5rem; /* Menos padding en mobile */
+            }
+            .right {
+                border-left: none; /* Elimina el borde de la izquierda */
+                border-top: 2px dashed #eee; /* Añade un borde superior al pasar a columna */
+                align-items: center; /* Centra el contenido en mobile */
+                text-align: center;
+            }
+            .right h1 {
+                font-size: 1.5rem;
+                text-align: center;
+            }
+            .amount {
+                font-size: 1.8rem; /* Un poco más pequeño para mobile */
+            }
+            .logo-right {
+                width: 150px; /* Tamaño del logo para mobile */
+                margin-top: 1rem; /* Ajusta el margen superior */
+                margin-bottom: 1rem;
+            }
+            .barcode {
+                margin-top: 1rem;
+            }
+            .print-button {
+                max-width: 100%; /* El botón ocupa todo el ancho disponible */
+            }
+            .stripe.top, .stripe.bottom {
+                height: 12px; /* Franjas más delgadas */
+            }
+            .comprobantedepago, .website {
+                position: static; /* Permite que se fluyan con el contenido */
+                transform: none;
+                margin-top: 0.5rem;
+                font-size: 0.7rem;
+                width: 100%;
+            }
+            .right .aro {
+                border-width: 30px; /* Aro más pequeño en mobile */
+            }
         }
     </style>
 
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+
 </head>
 <body>
-    <div>
-        <div class="container-fluid booking">
-            <div class="container">
-                <div class="row align-items-center" style="min-height: 60px;">
-                    <div class="col-md-12">
-                        <div class="flex-row-inputs">
-                            <select id="region-select">
-                                <option selected disabled>Elige una región</option>
-                                <option value="Sierra">Sierra</option>
-                                <option value="Costa">Costa</option>
-                                <option value="Amazonía">Amazonía</option>
-                                <option value="Internacional">Internacional</option>
-                            </select>
-
-                            <select id="destino-select" disabled>
-                                <option selected disabled>Elige destino</option>
-                            </select>
-
-                            <select id="tipo-experiencia" disabled>
-                                <option selected disabled>Tipo de experiencia</option>
-                            </select>
-
-                            <input type="text" id="fecha-calendario" placeholder="Fecha salida" readonly disabled />
-                            
-                            <input
-                                type="number"
-                                id="numero-personas"
-                                min="1"
-                                max="99"
-                                value="1"
-                                placeholder="Número de personas"
-                            />
-                            <input type="text" id="precio-pagar" placeholder="Total a pagar" readonly />
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <button id="btn-pagar" class="btn btn-success btn-block" style="height: 47px;">
-                                    Pagar con Tarjeta
-                                </button>
-                                <div id="pp-button"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <script>
-        // *** IMPORTANTE: PEGA AQUÍ LA URL DE TU APLICACIÓN WEB DE GOOGLE APPS SCRIPT ***
-        const GOOGLE_APPS_SCRIPT_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxCwei_x7GoaoWNW68wERWjKVrdL9efbnLMgfQmQqzg_WYOLL-Y7gMXQt5SI-i61o4P/exec'; 
-        // Ejemplo: 'https://script.google.com/macros/s/AKfycbz_tu_id_de_despliegue/exec';
-
-        // Funciones para generar fechas disponibles (mantener estas funciones y datos)
-        function generarFechasBañosTodoIncluido() {
-      const fechasManuales = [
- 
-  '2025-06-01', '2025-06-24', '2025-06-08', '2025-06-14', '2025-06-15', '2025-06-21', '2025-06-22', '2025-06-28', '2025-06-29',
-  '2025-07-05', '2025-07-06', '2025-07-12', '2025-07-13', '2025-07-19', '2025-07-20', '2025-07-26', '2025-07-27',
-  '2025-08-02', '2025-08-03', '2025-08-09', '2025-08-10', '2025-08-16', '2025-08-17', '2025-08-23', '2025-08-24', '2025-08-30', '2025-08-31',
-  '2025-09-06', '2025-09-07', '2025-09-13', '2025-09-14', '2025-09-20', '2025-09-21', '2025-09-27', '2025-09-28',
-  '2025-10-04', '2025-10-05', '2025-10-11', '2025-10-12', '2025-10-18', '2025-10-19', '2025-10-25', '2025-10-26',
-  // Noviembre 2025
-  '2025-11-01', '2025-11-02', '2025-11-08', '2025-11-09', '2025-11-15', '2025-11-16', '2025-11-22', '2025-11-23', '2025-11-29', '2025-11-30',
-  // Diciembre 2025
-  '2025-12-06', '2025-12-07', '2025-12-13', '2025-12-14', '2025-12-20', '2025-12-21', '2025-12-27', '2025-12-28',
-  // Enero 2026
-  '2026-01-04', '2026-01-05', '2026-01-11', '2026-01-12', '2026-01-18', '2026-01-19', '2026-01-25', '2026-01-26',
-  // Febrero 2026
-  '2026-02-01', '2026-02-02', '2026-02-08', '2026-02-09', '2026-02-15', '2026-02-16', '2026-02-22', '2026-02-23',
-  // Marzo 2026
-  '2026-03-01', '2026-03-02', '2026-03-08', '2026-03-09', '2026-03-15', '2026-03-16', '2026-03-22', '2026-03-23', '2026-03-29', '2026-03-30',
-  // Abril 2026
-  '2026-04-05', '2026-04-06', '2026-04-12', '2026-04-13', '2026-04-19', '2026-04-20', '2026-04-26', '2026-04-27',
-  // Mayo 2026
-  '2026-05-03', '2026-05-04', '2026-05-10', '2026-05-11', '2026-05-17', '2026-05-18', '2026-05-24', '2026-05-25', '2026-05-31'
-]
-
-            const fechasValidas = [];
-            const ahora = new Date();
-            for (const fechaStr of fechasManuales) {
-                const fecha = new Date(fechaStr);
-                const fechaCorte = new Date(fecha);
-                fechaCorte.setDate(fechaCorte.getDate() - 1);
-                fechaCorte.setHours(17, 0, 0, 0); // Corte a las 5 PM del día anterior
-                if (ahora <= fechaCorte) {
-                    fechasValidas.push(fechaStr);
-                }
-            }
-            return fechasValidas;
-        }
-
-          function generarFechasBañosCompartido() {
-      const fechasManuales = [
-  // Junio 2025
-  '2025-06-04', '2025-06-06', '2025-06-11', '2025-06-13', '2025-06-18', '2025-06-20', '2025-06-25', '2025-06-27',
-  // Julio 2025
-  '2025-07-02', '2025-07-04', '2025-07-09', '2025-07-11', '2025-07-16', '2025-07-18', '2025-07-23', '2025-07-25', '2025-07-30',
-  // Agosto 2025
-  '2025-08-01', '2025-08-06', '2025-08-08', '2025-08-13', '2025-08-15', '2025-08-20', '2025-08-22', '2025-08-27', '2025-08-29',
-  // Septiembre 2025
-  '2025-09-03', '2025-09-05', '2025-09-10', '2025-09-12', '2025-09-17', '2025-09-19', '2025-09-24', '2025-09-26',
-  // Octubre 2025
-  '2025-10-01', '2025-10-03', '2025-10-08', '2025-10-10', '2025-10-15', '2025-10-17', '2025-10-22', '2025-10-24', '2025-10-29', '2025-10-31',
-  // Noviembre 2025
-  '2025-11-05', '2025-11-07', '2025-11-12', '2025-11-14', '2025-11-19', '2025-11-21', '2025-11-26', '2025-11-28',
-  // Diciembre 2025
-  '2025-12-03', '2025-12-05', '2025-12-10', '2025-12-12', '2025-12-17', '2025-12-19', '2025-12-24', '2025-12-26', '2025-12-31',
-  // Enero 2026
-  '2026-01-02', '2026-01-07', '2026-01-09', '2026-01-14', '2026-01-16', '2026-01-21', '2026-01-23', '2026-01-28', '2026-01-30',
-  // Febrero 2026
-  '2026-02-04', '2026-02-06', '2026-02-11', '2026-02-13', '2026-02-18', '2026-02-20', '2026-02-25', '2026-02-27',
-  // Marzo 2026
-  '2026-03-04', '2026-03-06', '2026-03-11', '2026-03-13', '2026-03-18', '2026-03-20', '2026-03-25', '2026-03-27',
-  // Abril 2026
-  '2026-04-01', '2026-04-03', '2026-04-08', '2026-04-10', '2026-04-15', '2026-04-17', '2026-04-22', '2026-04-24', '2026-04-29',
-  // Mayo 2026
-  '2026-05-01', '2026-05-06', '2026-05-08', '2026-05-13', '2026-05-15', '2026-05-20', '2026-05-22', '2026-05-27', '2026-05-29'
-]
-
-      
-      const fechasValidas = [];
-      const ahora = new Date();
-      
-      for (const fechaStr of fechasManuales) {
-        const fecha = new Date(fechaStr);
-        const fechaCorte = new Date(fecha);
-        fechaCorte.setDate(fechaCorte.getDate() - 1);
-        fechaCorte.setHours(17, 0, 0, 0);
+  <!-- Contenedor padre con separación -->
+  <div class="ticket-container">
+    <div class="ticket">
+      <div class="stripe top"></div>
+      <div class="stripe bottom"></div>
+      <div class="left">
         
-        if (ahora <= fechaCorte) {
-          fechasValidas.push(fechaStr);
-        }
-      }
+        
+        <div class="section row">
+          <div class="info-block">
+            <div class="label">Estado</div>
+            <div class="value" id="estado">Verificando...</div>
+          </div>
+          <div class="info-block">
+            <div class="label">Autorización</div>
+            <div class="value" id="autorizacion">—</div>
+          </div>
+        </div>
+
+        <div class="section row">
+          <div class="info-block">
+            <div class="label">Transacción ID</div>
+            <div class="value" id="transaccionId">—</div>
+          </div>
+          <div class="info-block">
+            <div class="label">Identificador Cliente</div>
+            <div class="value" id="clientTxId">—</div>
+          </div>
+        </div>
+
+        <div class="section row">
+          <div class="info-block">
+            <div class="label">Cliente</div>
+            <div class="value" id="cliente">—</div>
+          </div>
+          <div class="info-block">
+            <div class="label">Email</div>
+            <div class="value" id="email">—</div>
+          </div>
+        </div>
+
+        <div class="section row">
+          <div class="info-block">
+            <div class="label">Teléfono</div>
+            <div class="value" id="telefono">—</div>
+          </div>
+          <div class="info-block">
+            <div class="label">Fecha</div>
+            <div class="value" id="fecha">—</div>
+          </div>
+        </div>
+
+        <div class="section row">
+          <div class="info-block">
+            <div class="label">Banco / Marca</div>
+            <div class="value" id="banco">—</div>
+          </div>
+          <div class="info-block">
+            <div class="label">Últimos dígitos</div>
+            <div class="value" id="ultimos">—</div>
+          </div>
+        </div>
+
+        <div class="section row">
+          <div class="info-block" style="flex: 1 1 100%;">
+            <div class="label">Referencia</div>
+            <div class="value" id="referencia">—</div>
+          </div>
+        </div>
+
+        <button class="print-button" onclick="window.print()" aria-label="Imprimir Comprobante">
+          🖨️ Imprimir
+        </button>
+
+        <div class="barcode">
+  <svg id="barcode"></svg>
+  <div id="barcode-text" class="barcode-text"></div>
+</div>
+
+
+        <div class="thank-you">¡La vida se mide en experiencias!</div>
+      </div>
+    </div>
+
+    <div class="ticket">
+       <div class="stripe top"></div>
+      <div class="stripe bottom"></div>
+
+      <div class="right">
       
-      return fechasValidas;
+<span class="aro" style="width: 80px; height: 80px; top: -35px; left: 30px;"></span>
+<span class="aro" style="width: 60px; height: 60px; top: 130px; right: -20px;"></span>
+<span class="aro" style="width: 250px; height: 250px; bottom: 40px; left: 120px;"></span>
+<span class="aro" style="width: 50px; height: 50px; bottom: -50px; right: 280px;"></span>
+       <span class="aro" style="width: 120px; height: 120px; top: 50%; left: 10%; transform: translate(-50%, -50%);"></span>
+
+<div class="comprobantedepago"><h1>Comprobante de Pago</h1> </div> 
+        
+        <img src="img/logo sin fondo.png" class="logo-right" alt="Logo Your Tours" />
+        <div>
+          <div class="totalpagado">Total Pagado</div>
+          <div class="amount" id="monto">$--</div>
+          <div class="incluyeimpuestos"</div>
+         <!-- <small>Incluye impuestos</small> Contenedor padre con separación -->
+        </div>
+        <div class="website">www.yourtours.com.ec</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const id = parseInt(params.get("id") || 0);
+    const clientTransactionId = params.get("clientTransactionId") || "";
+
+    function setEstado(text, aprobado) {
+      const el = document.getElementById("estado");
+      el.textContent = text;
+      el.classList.remove("aprobado", "fallido");
+      if (aprobado === true) el.classList.add("aprobado");
+      else if (aprobado === false) el.classList.add("fallido");
     }
 
-     function generarFechasCotopaxi() {
-      const fechas = [];
-      const ahora = new Date();
-      const inicio = new Date();
-      const fin = new Date();
-      fin.setMonth(fin.getMonth() + 12);
-
-      let actual = new Date(inicio);
-      actual.setHours(0, 0, 0, 0);
-
-      while (actual <= fin) {
-        const fechaCorte = new Date(actual);
-        fechaCorte.setDate(fechaCorte.getDate() - 1);
-        fechaCorte.setHours(17, 0, 0, 0);
-
-        if (ahora <= fechaCorte) {
-          fechas.push(actual.toISOString().split('T')[0]);
-        }
-
-        actual.setDate(actual.getDate() + 1);
-      }
-
-      return fechas;
-    }
-
-     // Funciones para generar fechas disponibles
-    function generarFechasCuenca() {
-      const fechas = [];
-      const hoy = new Date();
-      const limite = new Date(hoy.getFullYear(), hoy.getMonth() + 12, hoy.getDate());
-
-      const primera = new Date('2025-06-19');
-      fechas.push(new Date(primera));
-
-      let siguiente = new Date('2025-06-19');
-      while (siguiente <= limite) {
-        fechas.push(new Date(siguiente));
-        siguiente.setDate(siguiente.getDate() + 14);
-      }
-
-      
-      return fechas.map(f => f.toISOString().split('T')[0]);
-    }
-
-    function generarFechasFinesDeSemanaConSalto(fechaInicioStr) {
-      const fechas = [];
-      const hoy = new Date();
-      const limite = new Date(hoy.getFullYear(), hoy.getMonth() + 14, hoy.getDate());
-
-      let fechaInicio = new Date(fechaInicioStr);
-      while (fechaInicio.getDay() !== 5) {
-        fechaInicio.setDate(fechaInicio.getDate() + 1);
-      }
-
-      while (fechaInicio <= limite) {
-        fechas.push(new Date(fechaInicio));
-        const domingo = new Date(fechaInicio);
-        domingo.setDate(domingo.getDate() + 1);
-        if (domingo <= limite) fechas.push(domingo);
-
-        fechaInicio.setDate(fechaInicio.getDate() + 14);
-      }
-
-      return fechas.map(f => f.toISOString().split('T')[0]);
-    }
-
-
-
-     function generarFechasQuilotoa(tipoExperiencia) {
-      const ahora = new Date();
-      const fechasManuales = [
-        {fecha: '2025-06-15', tipo: 'Privado'},
-      {fecha: '2025-06-03', tipo: 'Compartido'},
-{fecha: '2025-06-05', tipo: 'Compartido'},
-{fecha: '2025-06-07', tipo: 'Compartido'},
-{fecha: '2025-06-10', tipo: 'Compartido'},
-{fecha: '2025-06-12', tipo: 'Compartido'},
-{fecha: '2025-06-14', tipo: 'Compartido'},
-{fecha: '2025-06-17', tipo: 'Compartido'},
-{fecha: '2025-06-19', tipo: 'Compartido'},
-{fecha: '2025-06-21', tipo: 'Compartido'},
-{fecha: '2025-06-24', tipo: 'Compartido'},
-{fecha: '2025-06-26', tipo: 'Compartido'},
-{fecha: '2025-06-28', tipo: 'Compartido'},
-{fecha: '2025-07-01', tipo: 'Compartido'},
-{fecha: '2025-07-03', tipo: 'Compartido'},
-{fecha: '2025-07-05', tipo: 'Compartido'},
-{fecha: '2025-07-08', tipo: 'Compartido'},
-{fecha: '2025-07-10', tipo: 'Compartido'},
-{fecha: '2025-07-12', tipo: 'Compartido'},
-{fecha: '2025-07-15', tipo: 'Compartido'},
-{fecha: '2025-07-17', tipo: 'Compartido'},
-{fecha: '2025-07-19', tipo: 'Compartido'},
-{fecha: '2025-07-22', tipo: 'Compartido'},
-{fecha: '2025-07-24', tipo: 'Compartido'},
-{fecha: '2025-07-26', tipo: 'Compartido'},
-{fecha: '2025-07-29', tipo: 'Compartido'},
-{fecha: '2025-07-31', tipo: 'Compartido'},
-{fecha: '2025-08-02', tipo: 'Compartido'},
-{fecha: '2025-08-05', tipo: 'Compartido'},
-{fecha: '2025-08-07', tipo: 'Compartido'},
-{fecha: '2025-08-09', tipo: 'Compartido'},
-{fecha: '2025-08-12', tipo: 'Compartido'},
-{fecha: '2025-08-14', tipo: 'Compartido'},
-{fecha: '2025-08-16', tipo: 'Compartido'},
-{fecha: '2025-08-19', tipo: 'Compartido'},
-{fecha: '2025-08-21', tipo: 'Compartido'},
-{fecha: '2025-08-23', tipo: 'Compartido'},
-{fecha: '2025-08-26', tipo: 'Compartido'},
-{fecha: '2025-08-28', tipo: 'Compartido'},
-{fecha: '2025-08-30', tipo: 'Compartido'},
-
-        ];
-
-      const fechasDisponibles = [];
-
-      fechasManuales.forEach(item => {
-        const fecha = new Date(item.fecha);
-        const fechaLimite = new Date(fecha);
-        fechaLimite.setDate(fecha.getDate() - 0);
-        fechaLimite.setHours(17, 0, 0, 0);
-
-        if (ahora < fechaLimite && item.tipo === tipoExperiencia) {
-          fechasDisponibles.push(item.fecha);
-        }
-      });
-
-      return fechasDisponibles;
-    }
-
-     function generarFechasPapallacta(tipoExperiencia) {
-      const ahora = new Date();
-      const fechasManuales = [
-    
-  {fecha: '2025-06-15', tipo: 'Todo Incluido'},
-  {fecha: '2025-06-22', tipo: 'Todo Incluido'},
-  {fecha: '2025-06-29', tipo: 'Todo Incluido'},
-  {fecha: '2025-07-06', tipo: 'Todo Incluido'},
-  {fecha: '2025-07-13', tipo: 'Todo Incluido'},
-  {fecha: '2025-07-20', tipo: 'Todo Incluido'},
-  {fecha: '2025-07-27', tipo: 'Todo Incluido'},
-  {fecha: '2025-08-03', tipo: 'Todo Incluido'},
-  {fecha: '2025-08-10', tipo: 'Todo Incluido'},
-  {fecha: '2025-08-17', tipo: 'Todo Incluido'},
-  {fecha: '2025-08-24', tipo: 'Todo Incluido'},
-  {fecha: '2025-08-31', tipo: 'Todo Incluido'},
-  {fecha: '2025-09-07', tipo: 'Todo Incluido'}
-];
-
-
-      const fechasDisponibles = [];
-
-      fechasManuales.forEach(item => {
-        const fecha = new Date(item.fecha);
-        const fechaLimite = new Date(fecha);
-        fechaLimite.setDate(fecha.getDate() - 0);
-        fechaLimite.setHours(17, 0, 0, 0);
-
-        if (ahora < fechaLimite && item.tipo === tipoExperiencia) {
-          fechasDisponibles.push(item.fecha);
-        }
-      });
-
-      return fechasDisponibles;
-    }
-
-    
-
-
-     function generarFechasMisahualli() {
-  // Lista de fechas manuales (formato YYYY-MM-DD)
- const fechasManuales = [
-  '2025-06-15',  // Primer domingo después de hoy
-  '2025-06-22',
-  '2025-06-29',
-  '2025-07-06',
-  '2025-07-13',
-  '2025-07-20',
-  '2025-07-27',
-  '2025-08-03',
-  '2025-08-10',
-  '2025-08-17',
-  '2025-08-24',
-  '2025-08-31',
-  '2025-09-07',
-  '2025-09-14',
-  '2025-09-21',
-  '2025-09-28',
-  '2025-10-05',
-  '2025-10-12',
-  '2025-10-19',
-  '2025-10-26',
-  '2025-11-02',
-  '2025-11-09',
-  '2025-11-16',
-  '2025-11-23',
-  '2025-11-30',
-  '2025-12-07',
-  '2025-12-14',
-  '2025-12-21',
-  '2025-12-28'
-]
-  const fechasValidas = [];
-  const ahora = new Date();
-
-  for (const fechaStr of fechasManuales) {
-    const fecha = new Date(fechaStr);
-    const fechaCorte = new Date(fecha);
-    fechaCorte.setDate(fechaCorte.getDate() - 1);
-    fechaCorte.setHours(17, 0, 0, 0); // Corte a las 17:00 del día anterior
-
-    if (ahora <= fechaCorte) {
-      fechasValidas.push(fechaStr);
-    }
-  }
-
-  return fechasValidas;
-}
-
-        // Datos de la aplicación
-        const fechasDisponibles = {
-            "Cuenca": generarFechasCuenca(),
-
-        "Cotopaxi": function(tipoExperiencia) {
-        return generarFechasCotopaxi(tipoExperiencia);
-      },
-
-      "Chimborazo": generarFechasFinesDeSemanaConSalto('2025-06-11'),
-
-      "Quilotoa": function(tipoExperiencia) {
-        return generarFechasQuilotoa(tipoExperiencia);
-      },
-      "Papallacta": function(tipoExperiencia) {
-        return generarFechasPapallacta(tipoExperiencia);
-      },
-
-      "Mitad del Mundo": generarFechasCotopaxi(),
-
-      "Puerto Lopez": generarFechasCuenca(),
-
-      "Atacames":generarFechasCuenca(),
-      
-
-
-
-      "Baños de Agua Santa": function(tipoExperiencia) {
-        if (tipoExperiencia === "Todo Incluido") {
-          return generarFechasBañosTodoIncluido();
-        } else if (tipoExperiencia === "Compartido") {
-          return generarFechasBañosCompartido();
-        }
-        return [];
-      },
-
-      "Cotundo" :generarFechasMisahualli(),
-      "Misahualli": generarFechasMisahualli(),
-      // Otras funciones de fechas...
-            // Agrega aquí otras funciones de fechas para tus otros destinos si las tienes
-        };
-
-        const regiones = {
-            "Sierra": ["Cotopaxi", "Cuenca", "Chimborazo", "Quilotoa", "Papallacta", "Mitad del Mundo"],
-            "Amazonía": ["Misahualli", "Baños de Agua Santa", "Cotundo"],
-            "Internacional": ["Proximamente"],
-            "Costa": ["Puerto Lopez", "Atacames"]
-        };
-
-        const tiposExperiencia = {
-             "Cotopaxi": ["Compartido"],
-        "Quilotoa": ["Compartido"],
-        "Papallacta": ["Todo Incluido"],
-        "Mitad del Mundo": ["PREMIUM", "GOLD"],
-        "Baños de Agua Santa": ["Todo Incluido", "Compartido"],
-
-      // Otros tipos de experiencia...
-      "_default": ["Todo Incluido"]
-    };
-        const preciosBase = {
-            "Cotopaxi":   42.61,
-    
-         "Cuenca": 156.52,
-         "Chimborazo": 33.04,
-         "Quilotoa": 42.61,
-        //finDeSemana: 55.00,
-        //entreSemana: 40.00
-     // },
-         "Papallacta": {
-         "Todo Incluido": 51.30,
-        //"Privado": 150
-      },
-         "Mitad del Mundo": {
-         "PREMIUM": {
-          finDeSemana: 21.74,
-          entreSemana: 21.74
+    if (id && clientTransactionId) {
+      fetch("https://pay.payphonetodoesposible.com/api/button/V2/Confirm", {
+        method: "POST",
+        headers: {
+          "Authorization": "Bearer Khq6ctYWdd_IeGWedFpLsTPzaMp86Bx3h_yydV-X36ZakMJecNDfo4-VYeZ2kWtHXAtNe-dnyokgJGZhaEfzJh4CrNS5YDSACedO1y8hHKdbyT72KUmH02DxkaPoeef2iyrfHPb83OU8pQW-xMPQ8D0qw4-e8SUjxRP7crfzGbX2mLbUCUt67JNB_Y1AhgdFyZxY7pBNQW29-iyQoHH4GlghlpWx_cTo54rXvHpv_JYTAQLTdsqGsDs_DfYtDYhK7vJsY7OatDBIAlfcgbofwyH5gLoPPPLVx2MYod8EO1WWYlne33ZyDWSJ0SmQRN1krY8YMLYhGu1raiVk9BObfb2_GCs",
+          "Content-Type": "application/json"
         },
-        "GOLD": {
-          finDeSemana: 39.13,
-          entreSemana: 39.13
-        }
-      },
-         "Puerto Lopez": 152.17,
-         "Atacames": 113.04,
-      
-
-         "Baños de Agua Santa": {
-         "Todo Incluido": {
-          finDeSemana: 33.91,
-          entreSemana: 33.91
-        },
-        "Compartido": {
-          finDeSemana: 60,
-          entreSemana: 60
-        }
-      },
-
-         "Cotundo": 33.91,
-         "Misahualli": 33.91
-      // Otros precios...
-    };
-
-        // Elementos del DOM
-        const regionSelect = document.getElementById('region-select');
-        const destinoSelect = document.getElementById('destino-select');
-        const tipoExperienciaSelect = document.getElementById('tipo-experiencia');
-        const fechaInput = document.getElementById('fecha-calendario');
-        const numeroPersonasInput = document.getElementById('numero-personas');
-        const precioInput = document.getElementById('precio-pagar');
-        const btnPagar = document.getElementById('btn-pagar');
-        const ppButtonContainer = document.getElementById('pp-button'); // Contenedor del botón de PayPhone
-
-        // Variables globales
-        let priceBaseCentavos = 0; // Almacena el precio base total en centavos (precio por persona * # personas)
-        let numeroPersonas = 1;
-        let calendario; // Instancia de Flatpickr
-
-        // --- NUEVA VARIABLE GLOBAL PARA ALMACENAR EL DESGLOSE DE PAGO ---
-        let paymentBreakdown = {
-            amount: 0,
-            amountWithoutTax: 0,
-            tax: 0,
-            amountWithTax: 0
-        };
-
-        // --- Event Listeners (Mantener estos como están) ---
-        regionSelect.addEventListener('change', () => {
-            const destinos = regiones[regionSelect.value] || [];
-            destinoSelect.innerHTML = '<option selected disabled>Elige destino</option>';
-            destinos.forEach(dest => {
-                const opt = document.createElement('option');
-                opt.value = dest;
-                opt.textContent = dest;
-                destinoSelect.appendChild(opt);
-            });
-            destinoSelect.disabled = destinos.length === 0;
-            tipoExperienciaSelect.innerHTML = '<option selected disabled>Tipo de experiencia</option>';
-            tipoExperienciaSelect.disabled = true;
-            fechaInput.value = '';
-            fechaInput.disabled = true;
-            precioInput.value = '';
-            if (calendario) calendario.destroy();
-            ppButtonContainer.innerHTML = ""; // Limpiar botón de pago
-            // Resetear desglose
-            paymentBreakdown = { amount: 0, amountWithoutTax: 0, tax: 0, amountWithTax: 0 };
-        });
-
-        destinoSelect.addEventListener('change', () => {
-            const destino = destinoSelect.value;
-            const tipos = tiposExperiencia[destino] || tiposExperiencia["_default"];
-            tipoExperienciaSelect.innerHTML = '<option selected disabled>Tipo de experiencia</option>';
-            tipos.forEach(tipo => {
-                const opt = document.createElement('option');
-                opt.value = tipo;
-                opt.textContent = tipo;
-                tipoExperienciaSelect.appendChild(opt);
-            });
-            tipoExperienciaSelect.disabled = tipos.length === 0;
-            fechaInput.value = '';
-            fechaInput.disabled = true;
-            precioInput.value = '';
-            if (calendario) calendario.destroy();
-            ppButtonContainer.innerHTML = ""; // Limpiar botón de pago
-            // Resetear desglose
-            paymentBreakdown = { amount: 0, amountWithoutTax: 0, tax: 0, amountWithTax: 0 };
-        });
-
-        tipoExperienciaSelect.addEventListener('change', () => {
-            const destino = destinoSelect.value;
-            const tipoExperienciaSeleccionado = tipoExperienciaSelect.value; // ¡Corregido!
-            
-            let fechas;
-            if (typeof fechasDisponibles[destino] === 'function') {
-                fechas = fechasDisponibles[destino](tipoExperienciaSeleccionado);
-            } else {
-                fechas = fechasDisponibles[destino]; // Para destinos con fechas fijas o no condicionales
-            }
-            
-            if (calendario) calendario.destroy(); // Destruye cualquier instancia anterior del calendario
-
-            if (fechas && fechas.length > 0) { // Solo inicializa Flatpickr si hay fechas disponibles
-                calendario = flatpickr(fechaInput, {
-                    dateFormat: "Y-m-d",
-                    minDate: "today",
-                    enable: fechas,
-                    onOpen: () => {
-                        ajustarAlturaIframe(400); // Ajusta la altura del iframe si estás en uno
-                    },
-                    onClose: () => {
-                        ajustarAlturaIframe(190); // Ajusta la altura del iframe si estás en uno
-                    },
-                    onDayCreate: function (dObj, dStr, fp, dayElem) {
-                        const fecha = dayElem.dateObj.toISOString().split('T')[0];
-                        if (fechas.includes(fecha)) {
-                            dayElem.classList.add('fechas-disponibles');
-                        }
-                    }
-                });
-            } else {
-                // Si no hay fechas o el destino no las tiene definidas, inhabilita el input
-                fechaInput.disabled = true;
-                alert("No hay fechas disponibles para esta experiencia o destino. Selecciona otra opción.");
-            }
-
-            fechaInput.disabled = false; // Habilita el input de fecha si hay un calendario
-            precioInput.value = '';
-            ppButtonContainer.innerHTML = ""; // Limpiar botón de pago
-            // Resetear desglose
-            paymentBreakdown = { amount: 0, amountWithoutTax: 0, tax: 0, amountWithTax: 0 };
-        });
-
-        fechaInput.addEventListener('change', () => {
-            calcularYMostrarPrecio();
-            ppButtonContainer.innerHTML = ""; // Limpiar botón de pago
-        });
-
-        numeroPersonasInput.addEventListener('change', () => {
-            if (fechaInput.value) { // Solo recalcular si ya hay una fecha seleccionada
-                calcularYMostrarPrecio();
-                ppButtonContainer.innerHTML = ""; // Limpiar botón de pago
-            }
-        });
-
-        // --- Función para calcular el precio (MODIFICADA) ---
-        function calcularYMostrarPrecio() {
-            const destino = destinoSelect.value;
-            const tipoExperienciaSeleccionado = tipoExperienciaSelect.value;
-            const fecha = fechaInput.value;
-            numeroPersonas = parseInt(numeroPersonasInput.value) || 1;
-            
-            if (!destino || !fecha || !tipoExperienciaSeleccionado) {
-                precioInput.value = '';
-                // Resetear desglose si los datos son inválidos
-                paymentBreakdown = { amount: 0, amountWithoutTax: 0, tax: 0, amountWithTax: 0 };
-                return;
-            }
-
-            const fechaObj = new Date(fecha);
-            const diaSemana = fechaObj.getDay();
-            const esFinDeSemana = (diaSemana === 5 || diaSemana === 6); // 0 es domingo, 6 es sábado
-
-            let precioBaseUnitario; // Precio por persona antes de cualquier cálculo
-
-            const precioDestino = preciosBase[destino];
-
-            if (precioDestino) {
-                if (typeof precioDestino === 'object' && precioDestino.hasOwnProperty(tipoExperienciaSeleccionado)) {
-                    const precioTipoExperiencia = precioDestino[tipoExperienciaSeleccionado];
-                    if (typeof precioTipoExperiencia === 'object' && (precioTipoExperiencia.hasOwnProperty('finDeSemana') || precioTipoExperiencia.hasOwnProperty('entreSemana'))) {
-                        precioBaseUnitario = esFinDeSemana ? precioTipoExperiencia.finDeSemana : precioTipoExperiencia.entreSemana;
-                    } else {
-                        precioBaseUnitario = precioTipoExperiencia;
-                    }
-                } else if (typeof precioDestino === 'number') {
-                    precioBaseUnitario = precioDestino;
-                } else {
-                    precioBaseUnitario = 0; 
-                }
-            } else {
-                precioBaseUnitario = 0;
-            }
-
-            if (!precioBaseUnitario || precioBaseUnitario <= 0) {
-                precioInput.value = 'Consultar';
-                // Resetear desglose si el precio base es inválido
-                paymentBreakdown = { amount: 0, amountWithoutTax: 0, tax: 0, amountWithTax: 0 };
-                return;
-            }
-
-            // Convertir todos los cálculos a centavos inmediatamente (multiplicar por 100)
-            const precioTotalSinImpuestosCents = Math.round(precioBaseUnitario * 100 * numeroPersonas);
-
-            const ivaNormalCents = Math.round(precioTotalSinImpuestosCents * 0.15);
-            const subtotalConIVACents = precioTotalSinImpuestosCents + ivaNormalCents;
-            const comisionPayphoneCents = Math.round(subtotalConIVACents * 0.05);
-            const ivaComisionCents = Math.round(comisionPayphoneCents * 0.15);
-            
-            const totalAmountCalculatedCents = subtotalConIVACents + comisionPayphoneCents + ivaComisionCents;
-
-            // Actualiza la variable global para el total (se usa para validación)
-            priceBaseCentavos = totalAmountCalculatedCents; 
-
-            // --- ¡IMPORTANTE! Almacena el desglose exacto para PayPhone ---
-            // PayPhone espera que amount = amountWithoutTax + amountWithTax + tax
-            // En tu caso, vamos a asignar:
-            // amountWithoutTax: el precio base de la reserva antes de cualquier IVA
-            // tax: la suma de todos los IVAs (IVA del tour + IVA de la comisión)
-            // amountWithTax: la comisión de PayPhone (como otro item que puede o no tener su propio IVA)
-            paymentBreakdown = {
-                amount: totalAmountCalculatedCents, // Total final a cobrar
-                amountWithoutTax: precioTotalSinImpuestosCents, // El valor base de los servicios (e.g., el tour)
-                tax: ivaNormalCents + ivaComisionCents, // El IVA total aplicado a la transacción
-                amountWithTax: comisionPayphoneCents // La comisión de PayPhone
-            };
-
-            // Asegurarse de que la suma sea correcta para PayPhone (esto es una auto-validación)
-            if (paymentBreakdown.amount !== (paymentBreakdown.amountWithoutTax + paymentBreakdown.amountWithTax + paymentBreakdown.tax)) {
-                console.warn("ADVERTENCIA: La suma de los componentes de PayPhone no coincide con el total. Esto podría causar 'Failed validation'.");
-                console.warn("Total:", paymentBreakdown.amount, "Suma de componentes:", paymentBreakdown.amountWithoutTax + paymentBreakdown.amountWithTax + paymentBreakdown.tax);
-            }
-
-            precioInput.value = `$${(totalAmountCalculatedCents / 100).toFixed(2)} (${numeroPersonas} persona${numeroPersonas !== 1 ? 's' : ''})`;
+        body: JSON.stringify({
+          id: id,
+          clientTxId: clientTransactionId
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.transactionStatus === "Approved") {
+          setEstado("✅ Transacción aprobada", true);
+        } else {
+          setEstado(`❌ Transacción ${data.transactionStatus}`, false);
         }
 
+        document.getElementById("monto").textContent = `$${(data.amount / 100).toFixed(2)} ${data.currency}`;
+        document.getElementById("autorizacion").textContent = data.authorizationCode || "—";
+        document.getElementById("transaccionId").textContent = data.transactionId || "—";
+        
 
-        // --- Lógica del botón de pago (MODIFICADA para usar paymentBreakdown) ---
-        btnPagar.addEventListener('click', async () => {
-            // Validaciones antes de intentar generar el botón de pago
-            if (!regionSelect.value || regionSelect.value === "Elige una región") {
-                alert("Por favor, selecciona una región.");
-                regionSelect.focus();
-                return;
-            }
-            
-            if (!destinoSelect.value || destinoSelect.value === "Elige destino") {
-                alert("Por favor, selecciona un destino.");
-                destinoSelect.focus();
-                return;
-            }
-            
-            const destino = destinoSelect.value;
-            if (tiposExperiencia[destino] && (!tipoExperienciaSelect.value || tipoExperienciaSelect.value === "Tipo de experiencia")) {
-                alert("Por favor, selecciona un tipo de experiencia.");
-                tipoExperienciaSelect.focus();
-                return;
-            }
-            
-            if (!fechaInput.value) {
-                alert("Por favor, selecciona una fecha de viaje.");
-                fechaInput.focus();
-                return;
-            }
-            
-            // Asegurarse de que el precio y el desglose estén calculados y válidos
-            calcularYMostrarPrecio(); 
+        document.getElementById("clientTxId").textContent = data.clientTransactionId || "—";
+        // 🔽 Generar código de barras basado en el ID de transacción
+  JsBarcode("#barcode", data.clientTransactionId?.toString() || "0000000000", {
+    format: "CODE128",
+    lineColor: "#000",
+    width: 2,
+    height: 40,
+    displayValue: false
+  });
+  document.getElementById("barcode-text").textContent = data.clientTransactionId || "0000000000";
 
-            if (!priceBaseCentavos || priceBaseCentavos <= 0 || paymentBreakdown.amount === 0) {
-                alert("Por favor, completa todos los campos correctamente para calcular el precio y generar el pago.");
-                return;
-            }
-
-            // Deshabilitar botón para evitar múltiples clics
-            btnPagar.disabled = true;
-            btnPagar.textContent = 'Procesando...';
-            ppButtonContainer.innerHTML = ""; // Limpiar contenedor por si acaso
-
-            try {
-                // Preparar los datos para enviar a Google Apps Script
-                // ¡Usamos directamente los valores de paymentBreakdown!
-                const dataToSend = {
-                    clientTransactionId: `TRANS-${Date.now()}-${Math.floor(Math.random() * 100000)}`,
-                    amount: paymentBreakdown.amount, 
-                    currency: "USD",
-                    amountWithoutTax: paymentBreakdown.amountWithoutTax,
-                    tax: paymentBreakdown.tax,
-                    amountWithTax: paymentBreakdown.amountWithTax,
-                    
-                    reference: `Reserva para ${destino} (${tipoExperienciaSelect.value || "Estándar"}) - ${numeroPersonas} persona${numeroPersonas !== 1 ? 's' : ''} - Fecha: ${fechaInput.value}`,
-                    numPersons: numeroPersonas,
-                    fechaViaje: fechaInput.value,
-                };
-                
-                // Realizar la solicitud Fetch al Google Apps Script
-                const response = await fetch(GOOGLE_APPS_SCRIPT_WEB_APP_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'text/plain;charset=utf-8', // Importante para Google Apps Script
-                    },
-                    body: JSON.stringify(dataToSend), // Envía los datos como JSON stringificado
-                });
-
-                // Analizar la respuesta del Apps Script
-                const responseData = await response.json();
-
-                if (response.ok && responseData.success) {
-                    // Si el Apps Script respondió con éxito y nos dio la configuración
-                    const payphoneConfig = responseData.payphoneConfig;
-
-                    // Generar el botón de pago de PayPhone con la configuración obtenida
-                    const pago = new PPaymentButtonBox(payphoneConfig);
-                    pago.render('pp-button');
-
-                    // Ajustar altura del iframe si es necesario
-                    setTimeout(() => {
-                        ajustarAlturaIframe(1000); // Dar tiempo para que el iframe de PayPhone se cargue
-                    }, 500);
-
-                } else {
-                    // Si hubo un error en la respuesta del Apps Script
-                    console.error('Error del Apps Script:', responseData.message || 'Respuesta inesperada');
-                    alert(`Error en el servidor de pago: ${responseData.message || 'Por favor, intenta de nuevo más tarde.'}`);
-                }
-
-            } catch (error) {
-                // Si hubo un error en la comunicación (red, CORS, etc.)
-                console.error('Fetch error:', error);
-                alert('Hubo un problema al comunicarse con el servidor de pago. Por favor, intenta de nuevo más tarde.');
-            } finally {
-                // Habilitar el botón de nuevo al finalizar
-                btnPagar.disabled = false;
-                btnPagar.textContent = 'Pagar con Tarjeta';
-            }
-        });
-
-        // Función para ajustar la altura del iframe (si tu HTML está incrustado en uno)
-        function ajustarAlturaIframe(altura) {
-            if (window.parent !== window) { // Solo si estamos dentro de un iframe
-                window.parent.postMessage({ tipo: 'ajustarAltura', altura }, '*');
-            }
-        }
-    </script>
+        document.getElementById("cliente").textContent = data.optionalParameter4 || "No registrado";
+        document.getElementById("email").textContent = data.email || "No disponible";
+        document.getElementById("telefono").textContent = data.phoneNumber || "—";
+        document.getElementById("fecha").textContent = new Date(data.date).toLocaleString("es-EC");
+        document.getElementById("banco").textContent = data.cardBrand || "—";
+        document.getElementById("ultimos").textContent = data.lastDigits || "—";
+        document.getElementById("referencia").textContent = data.reference || "—";
+      })
+      .catch(error => {
+        setEstado("⚠️ No se pudo verificar la transacción.", false);
+        console.error("Error al verificar:", error);
+      });
+    } else {
+      setEstado("❌ Datos de transacción no válidos en la URL.", false);
+    }
+  </script>
+  
 </body>
 </html>
