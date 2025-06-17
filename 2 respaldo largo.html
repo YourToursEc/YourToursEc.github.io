@@ -8,134 +8,156 @@
     <link href="https://cdn.payphonetodoesposible.com/box/v1.1/payphone-payment-box.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-      <link href="css/style.css" rel="stylesheet" />
+    <link href="css/style.css" rel="stylesheet" />
     <style>
         /* Tu CSS existente - asegúrate de que esté completo */
-        
-    body {
-      margin-top: 0rem; 
-    }
-    .container-fluid.booking {
-      margin-top: 2rem;
-      padding-bottom: 0rem;
-    }
-    .custom-select, .form-control {
-      height: 47px;
-       transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* Transición más suave */
-    }
-    #btn-pagar {
-      margin-top: 1rem;
-      height: 47px;
-      width: 100%;
-     background: linear-gradient(135deg, #28a745 0%, #5cb85c 100%); /* Degradado verde */
-      color: white;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      font-size: 16px;
-      font-weight: 600;
-        letter-spacing: 0.5px; /* Mejor espaciado de letras */
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3); /* Sombra verde */
-    }
-    #btn-pagar:hover {
-      background: linear-gradient(135deg, #2dca4f 0%, #5cd85c 100%);
-      transform: translateY(-2px); /* Efecto de levitación */
-      box-shadow: 0 6px 16px rgba(45, 202, 79, 0.4);
-    }
-     #btn-pagar:active {
-      transform: translateY(0);
-    }
-    .flex-row-inputs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-    }
-    .flex-row-inputs > * {
-      flex: 1 1 100%;
-    }
-    @media (min-width: 768px) {
-      body {
-        margin-top: 7rem;
-      }
-      .flex-row-inputs > * {
-        flex: 1 1 0;
-      }
-    }
-    
-    #region-select, #destino-select, #fecha-calendario, 
-    #precio-pagar, #tipo-experiencia, #numero-personas {
-      flex: 1 1 0;
-      padding: 12px 15px;
-      font-size: 1rem;
-      border: 2px solid #b9b9b9;
-      border-radius: 12px;
-      box-shadow: 0 4px 6px rgba(25, 135, 84, 0.2);
-      transition: border-color 0.3s ease, box-shadow 0.3s ease;
-      background-color: #f9fff9;
-       color: var(--text-dark);
-      font-weight: 600;
-      outline: none;
-      background-repeat: no-repeat;
-      background-position: right 15px center;
-      background-size: 20px;
-        
-    }
-    
-   
-  
-   /* #destino-select {
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2328a745'%3E%3Cpath d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z'/%3E%3C/svg%3E");
-    }*/
-    
-    #fecha-calendario {
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2328a745'%3E%3Cpath d='M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM9 10H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z'/%3E%3C/svg%3E");
-    }
-    
-    
-    #numero-personas {
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2328a745'%3E%3Cpath d='M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V18c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-1.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05.02.01.03.03.04.04 1.14.83 1.93 1.94 1.93 3.41V18c0 .35-.07.69-.18 1H22c.55 0 1-.45 1-1v-1.5c0-2.33-4.67-3.5-7-3.5z'/%3E%3C/svg%3E");
-    }
-    
-    #precio-pagar {
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2328a745'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z'/%3E%3C/svg%3E");
-      background-color: var(--primary-light);
-      cursor: not-allowed;
-    }
+        body {
+            margin-top: 0rem;
+        }
+        .container-fluid.booking {
+            margin-top: 2rem;
+            padding-bottom: 0rem;
+        }
+        .custom-select, .form-control {
+            height: 47px;
+            /* Transición más específica y suave */
+            transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out, background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+        #btn-pagar {
+            margin-top: 1rem;
+            height: 47px;
+            width: 100%;
+            background: linear-gradient(135deg, #28a745 0%, #5cb85c 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+            will-change: background, transform, box-shadow; /* Optimización opcional */
+        }
+        #btn-pagar:hover {
+            background: linear-gradient(135deg, #2dca4f 0%, #5cd85c 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(45, 202, 79, 0.4);
+        }
+        #btn-pagar:active {
+            transform: translateY(0);
+        }
+        .flex-row-inputs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .flex-row-inputs > * {
+            flex: 1 1 100%;
+        }
+        @media (min-width: 768px) {
+            body {
+                margin-top: 7rem;
+            }
+            .flex-row-inputs > * {
+                flex: 1 1 0;
+            }
+        }
 
-    
-    #region-select:focus, #destino-select:focus, 
-    #fecha-calendario:focus, #precio-pagar:focus, 
-    #tipo-experiencia:focus, #numero-personas:focus {
-      border-color: #0f5132;
-      box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.2); /* Efecto outline */
-      background-color: #e6f4ea;
-    }
-    #precio-pagar {
-      background-color: #d4edda;
-      cursor: not-allowed;
-    }
-    #fecha-calendario::placeholder,
-    #precio-pagar::placeholder {
-      color: #6c757d;
-      font-weight: 400;
-    }
-    .fechas-disponibles {
-      background-color: #d4edda !important;
-      color: #155724 !important;
-      border-radius: 50% !important;
-      transition: all 0.2s ease;
-    }
-    .fechas-disponibles:hover {
-       
-      border: 2px solid #28a745 !important;
-      box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.3) !important;
-       background-color: #a5d6a7 !important; /* Verde pastel */
-      transform: scale(1.05); /* Efecto de zoom */
-      cursor: pointer;
-    }
-    
-  </style>
+        #region-select, #destino-select, #fecha-calendario,
+        #precio-pagar, #tipo-experiencia, #numero-personas {
+            flex: 1 1 0;
+            padding: 12px 15px;
+            font-size: 1rem;
+            border: 2px solid #b9b9b9;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(25, 135, 84, 0.2);
+            /* Transición específica para un control más fino */
+            transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out, background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
+            background-color: #f9fff9;
+            color: var(--text-dark); /* Asegúrate de que esta variable esté definida en tu :root o archivo style.css */
+            font-weight: 600;
+            outline: none;
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 20px;
+            will-change: border-color, box-shadow, background-color, transform; /* Optimización opcional */
+        }
+
+        #fecha-calendario {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2328a745'%3E%3Cpath d='M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM9 10H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z'/%3E%3C/svg%3E");
+        }
+
+        #numero-personas {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2328a745'%3E%3Cpath d='M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V18c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-1.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05.02.01.03.03.04.04 1.14.83 1.93 1.94 1.93 3.41V18c0 .35-.07.69-.18 1H22c.55 0 1-.45 1-1v-1.5c0-2.33-4.67-3.5-7-3.5z'/%3E%3C/svg%3E");
+        }
+
+        #precio-pagar {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2328a745'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z'/%3E%3C/svg%3E");
+            background-color: var(--primary-light); /* Asegúrate de que esta variable esté definida */
+            cursor: not-allowed;
+        }
+
+        /* Mejora del estado :focus para un efecto más suave y envolvente */
+        #region-select:focus, #destino-select:focus,
+        #fecha-calendario:focus, #precio-pagar:focus,
+        #tipo-experiencia:focus, #numero-personas:focus {
+            border-color: #0f5132;
+            box-shadow: 0 5px 10px rgba(25, 135, 84, 0.25); /* Sombra ligeramente más grande y menos opaca para sutileza */
+            background-color: #e6f4ea;
+        }
+        #precio-pagar {
+            background-color: #d4edda;
+            cursor: not-allowed;
+        }
+        #fecha-calendario::placeholder,
+        #precio-pagar::placeholder {
+            color: #6c757d;
+            font-weight: 400;
+        }
+        .fechas-disponibles {
+            background-color: #d4edda !important;
+            color: #155724 !important;
+            border-radius: 50% !important;
+            transition: all 0.2s ease;
+        }
+        .fechas-disponibles:hover {
+            border: 2px solid #28a745 !important;
+            box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.3) !important;
+            background-color: #a5d6a7 !important;
+            transform: scale(1.05);
+            cursor: pointer;
+        }
+
+        /* Reglas para ocultar las flechas de los inputs number */
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield; /* Firefox */
+        }
+
+        /* Sugerencias de estilos adicionales para hover y active */
+        #region-select:hover, #destino-select:hover,
+        #fecha-calendario:hover, #numero-personas:hover,
+        #tipo-experiencia:hover {
+            border-color: #28a745; /* Un verde más brillante al pasar el ratón */
+            box-shadow: 0 5px 10px rgba(25, 135, 84, 0.25); /* Sombra ligeramente más grande y menos opaca para sutileza */
+        }
+
+        /* Opcional: Un pequeño efecto al hacer click/activar con transición */
+        #region-select:active, #destino-select:active,
+        #fecha-calendario:active, #numero-personas:active,
+        #tipo-experiencia:active {
+            transform: translateY(1px); /* Ligeramente hacia abajo */
+            box-shadow: 0 2px 4px rgba(25, 135, 84, 0.2); /* Sombra más suave */
+            transition: transform 0.1s ease-out, box-shadow 0.1s ease-out; /* Transición más rápida para el clic */
+        }
+    </style>
+
 </head>
 <body>
     <div>
@@ -161,20 +183,15 @@
                             </select>
 
                             <input type="text" id="fecha-calendario" placeholder="Fecha salida" readonly disabled />
-                             <div style="position: relative; flex: 1 1 0; max-width: 100%;">
-                <input
-                  type="number"
-                  id="numero-personas"
-                  min="1"
-                  max="99"
-                  value="1"
-                  placeholder="Número de personas"
-                  style="padding-left: 30xp; padding-right: 60px; width: 100%; font-size: 1rem; border: 2px solid #b9b9b9; border-radius: 12px; box-shadow: 0 4px 6px rgba(25, 135, 84, 0.2); transition: border-color 0.3s ease, box-shadow 0.3s ease; background-color: #f9fff9; color: #155724; font-weight: 600; outline: none; height: 48px; direction: rtl;">
-                <span
-                  style="position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #6c757d; pointer-events: none; font-weight: 600; font-size: 1.2rem;">
-                  
-                </span>
-              </div>
+                            
+                            <input
+                                type="number"
+                                id="numero-personas"
+                                min="1"
+                                max="99"
+                                value="1"
+                                placeholder="Número de personas"
+                            />
                             <input type="text" id="precio-pagar" placeholder="Total a pagar" readonly />
                         </div>
                         <div class="row">
@@ -190,10 +207,9 @@
             </div>
         </div>
     </div>
-
     <script>
         // *** IMPORTANTE: PEGA AQUÍ LA URL DE TU APLICACIÓN WEB DE GOOGLE APPS SCRIPT ***
-        const GOOGLE_APPS_SCRIPT_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbySF4jJalQGdBqzVdnOlyXmL6x1OauD08ZHeL-uckBVSG5PpaBlf2yJtQjzWsu9wvOl/exec'; 
+        const GOOGLE_APPS_SCRIPT_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxCwei_x7GoaoWNW68wERWjKVrdL9efbnLMgfQmQqzg_WYOLL-Y7gMXQt5SI-i61o4P/exec'; 
         // Ejemplo: 'https://script.google.com/macros/s/AKfycbz_tu_id_de_despliegue/exec';
 
         // Funciones para generar fechas disponibles (mantener estas funciones y datos)
@@ -535,7 +551,7 @@
         return [];
       },
 
-      "Cotundo" :generarFechasMisahualli,
+      "Cotundo" :generarFechasMisahualli(),
       "Misahualli": generarFechasMisahualli(),
       // Otras funciones de fechas...
             // Agrega aquí otras funciones de fechas para tus otros destinos si las tienes
