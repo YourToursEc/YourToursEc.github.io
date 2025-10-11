@@ -2888,6 +2888,40 @@ updateCarousel();
 document.querySelector('.carousel-control-next')?.addEventListener('click', next);
 document.querySelector('.carousel-control-prev')?.addEventListener('click', prev);
 
+
+// === SWIPE TÁCTIL PARA CARRUSEL DE SERVICIOS (compatible con tu lógica) ===
+let touchStartX = 0;
+let touchEndX = 0;
+
+const carouselContainer = document.querySelector('.carousel-container8');
+
+if (carouselContainer) {
+  carouselContainer.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].clientX;
+  }, { passive: true });
+
+  carouselContainer.addEventListener('touchend', (e) => {
+    touchEndX = e.changedTouches[0].clientX;
+    handleSwipe();
+  }, { passive: true });
+}
+
+function handleSwipe() {
+  const minSwipeDistance = 50;
+  const diff = touchStartX - touchEndX;
+
+  if (Math.abs(diff) > minSwipeDistance) {
+    if (diff > 0) {
+      // Swipe izquierda → siguiente
+      next();
+    } else {
+      // Swipe derecha → anterior
+      prev();
+    }
+  }
+}
+
+
 // ==================== GALERÍA HORIZONTAL SCROLLABLE ====================
 const gallery = document.getElementById('gallery');
 const leftBtn = document.querySelector('.left6');
