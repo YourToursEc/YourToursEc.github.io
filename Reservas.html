@@ -242,14 +242,15 @@
 
     /* Responsive iframe */
     .iframe-container {
-      width: 100%;
-      height: 620px;
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.12);
-      background: white;
-      position: relative;
-    }
+  width: 100%;
+  min-height: 580px; /* Altura inicial en escritorio */
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+  background: white;
+  position: relative;
+}
+
 
     .iframe-skeleton {
       position: absolute;
@@ -274,10 +275,10 @@
     }
 
     @media (max-width: 768px) {
-      .iframe-container {
-        height: 500px;
-      }
-    }
+  .iframe-container {
+    min-height: 500px; /* Altura inicial en móviles */
+  }
+}
 
     /* Custom styles for reservation instructions */
     .reservation-steps {
@@ -957,7 +958,7 @@
               src="reserva.html"
               title="Formulario de reserva segura"
               width="100%"
-              height="600"
+              height="580"
               frameborder="0"
               class="border-none opacity-0 transition-opacity duration-300"
               onload="this.style.opacity=1; this.previousElementSibling.style.display='none'"
@@ -1018,6 +1019,8 @@
       window.addEventListener('load', animateOnScroll);
       window.addEventListener('scroll', animateOnScroll);
     });
+
+    
   </script>
 </body>
 </html>
